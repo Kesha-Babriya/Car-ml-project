@@ -1,0 +1,1713 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>UsedCar AI</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="header">
+
+    <div class="logo-section">
+
+        <div class="logo-icon">🚗</div>
+
+        <div>
+            <div class="logo-title">UsedCar AI</div>
+            <div class="logo-subtitle">Intelligence System</div>
+        </div>
+
+    </div>
+
+    {% if page != "home" %}
+
+    <a href="/" class="back-home">
+        ← Home
+    </a>
+
+    {% endif %}
+
+</header>
+
+
+<!-- =====================================================
+     HOME PAGE
+===================================================== -->
+
+{% if page == "home" %}
+
+<section class="role-page">
+
+    <div class="role-badge">
+        ✦ AI-POWERED USED CAR PLATFORM
+    </div>
+
+    <h1>
+        Smart Decisions for
+        <span>Used Cars</span>
+    </h1>
+
+    <p class="role-description">
+        An intelligent platform that helps buyers
+        and sellers make better decisions using
+        machine learning.
+    </p>
+
+    <h2 class="choose-title">
+        What would you like to do?
+    </h2>
+
+    <div class="role-cards">
+
+        <!-- BUYER -->
+
+        <a href="/buyer" class="role-card buyer-card">
+
+            <div class="role-icon">
+                🔍
+            </div>
+
+            <div class="role-card-content">
+
+                <span class="role-label">I AM A</span>
+
+                <h3>Buyer</h3>
+
+                <p>
+                    Analyze used cars, compare vehicles,
+                    check AI-based purchase quality and
+                    understand estimated vehicle value.
+                </p>
+
+                <span class="role-button">
+                    Enter Buyer Mode →
+                </span>
+
+            </div>
+
+        </a>
+
+
+        <!-- SELLER -->
+
+        <a href="/seller" class="role-card seller-card">
+
+            <div class="role-icon">
+                💰
+            </div>
+
+            <div class="role-card-content">
+
+                <span class="role-label">I AM A</span>
+
+                <h3>Seller</h3>
+
+                <p>
+                    Get an AI-based vehicle valuation
+                    and understand how your car may
+                    be classified by the ML model.
+                </p>
+
+                <span class="role-button">
+                    Enter Seller Mode →
+                </span>
+
+            </div>
+
+        </a>
+
+    </div>
+
+    <div class="role-note">
+        🤖 Powered by Balanced Random Forest
+        + Random Forest Regressor
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     BUYER PAGE
+===================================================== -->
+
+{% elif page == "buyer" %}
+
+<section class="buyer-page">
+
+    <div class="buyer-hero">
+
+        <div class="buyer-car-icon">
+            🚗
+        </div>
+
+        <div class="mode-badge buyer-badge">
+            🔍 BUYER MODE
+        </div>
+
+        <h1>
+            Find a Car with
+            <span>Confidence</span>
+        </h1>
+
+        <p>
+            Analyze, compare and understand used cars
+            before making your buying decision.
+        </p>
+
+    </div>
+
+
+    <!-- BUYER FEATURE CARDS -->
+
+    <div class="buyer-feature-grid">
+
+        <!-- AI ANALYSIS -->
+
+        <a href="/seller" class="buyer-feature-card">
+
+            <div class="feature-big-icon">
+                🤖
+            </div>
+
+            <div class="buyer-feature-content">
+
+                <span class="feature-number">01</span>
+
+                <h2>AI Car Analysis</h2>
+
+                <p>
+                    Analyze a vehicle using our trained
+                    machine learning models.
+                </p>
+
+                <span class="feature-link">
+                    Analyze a Car →
+                </span>
+
+            </div>
+
+        </a>
+
+
+        <!-- COMPARE -->
+
+        <a href="/compare" class="buyer-feature-card compare-feature">
+
+            <div class="feature-big-icon">
+                ⚖️
+            </div>
+
+            <div class="buyer-feature-content">
+
+                <span class="feature-number">02</span>
+
+                <h2>Compare Cars</h2>
+
+                <p>
+                    Compare two used cars using AI-based
+                    quality and price predictions.
+                </p>
+
+                <span class="feature-link">
+                    Compare Cars →
+                </span>
+
+            </div>
+
+        </a>
+
+
+        <!-- INSPECTION -->
+
+        <div class="buyer-feature-card disabled-feature">
+
+            <div class="feature-big-icon">
+                🛡️
+            </div>
+
+            <div class="buyer-feature-content">
+
+                <span class="feature-number">03</span>
+
+                <h2>Inspection Assistant</h2>
+
+                <p>
+                    Check important vehicle factors
+                    before buying a used car.
+                </p>
+
+                <span class="coming-soon">
+                    Coming Soon
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- AI ASSISTANT -->
+
+        <div class="buyer-feature-card disabled-feature">
+
+            <div class="feature-big-icon">
+                💬
+            </div>
+
+            <div class="buyer-feature-content">
+
+                <span class="feature-number">04</span>
+
+                <h2>AI Car Assistant</h2>
+
+                <p>
+                    Get helpful guidance for your
+                    used-car buying decision.
+                </p>
+
+                <span class="coming-soon">
+                    Coming Soon
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <a href="/" class="secondary-button">
+        ← Back to Home
+    </a>
+
+</section>
+
+
+<!-- =====================================================
+     COMPARE PAGE
+===================================================== -->
+
+{% elif page == "compare" %}
+
+<section class="compare-page">
+
+    <div class="compare-hero">
+
+        <div class="compare-icon">
+            ⚖️
+        </div>
+
+        <div class="mode-badge buyer-badge">
+            🤖 AI CAR COMPARISON
+        </div>
+
+        <h1>
+            Smart Car <span>Comparison</span>
+        </h1>
+
+        <p>
+            Enter the details of both cars. Our AI models
+            will analyze them and help you compare their
+            purchase quality and estimated value.
+        </p>
+
+    </div>
+
+
+    <!-- COMPARISON FORM -->
+
+    <div class="compare-container">
+
+        <!-- CAR A -->
+
+        <div class="car-input-card car-a-card">
+
+            <div class="car-card-top">
+                <div class="car-card-icon">🚘</div>
+
+                <div>
+                    <span class="car-label">OPTION 01</span>
+                    <h2>Car A</h2>
+                    <p>First vehicle</p>
+                </div>
+            </div>
+
+
+            <div class="compare-form-group">
+
+                <label>Brand</label>
+
+                <input
+                    type="text"
+                    id="brandA"
+                    placeholder="e.g. Hyundai"
+                    required
+                >
+
+            </div>
+
+
+            <div class="compare-form-group">
+
+                <label>Model</label>
+
+                <input
+                    type="text"
+                    id="modelA"
+                    placeholder="e.g. Grand i10"
+                    required
+                >
+
+            </div>
+
+
+            <div class="compare-two-column">
+
+                <div class="compare-form-group">
+
+                    <label>Year</label>
+
+                    <input
+                        type="number"
+                        id="yearA"
+                        min="1980"
+                        max="2024"
+                        placeholder="2020"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="compare-form-group">
+
+                    <label>Kilometers</label>
+
+                    <input
+                        type="number"
+                        id="kmA"
+                        min="1"
+                        placeholder="90000"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="compare-form-group">
+
+                <label>Transmission</label>
+
+                <select id="transmissionA" required>
+
+                    <option value="">
+                        Select Transmission
+                    </option>
+
+                    <option value="Manual">
+                        Manual
+                    </option>
+
+                    <option value="Automatic">
+                        Automatic
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="compare-form-group">
+
+                <label>Owner</label>
+
+                <select id="ownerA" required>
+
+                    <option value="">
+                        Select Owner
+                    </option>
+
+                    <option value="First Owner">
+                        First Owner
+                    </option>
+
+                    <option value="Second Owner">
+                        Second Owner
+                    </option>
+
+                    <option value="Third Owner">
+                        Third Owner
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="compare-form-group">
+
+                <label>Fuel Type</label>
+
+                <select id="fuelA" required>
+
+                    <option value="">
+                        Select Fuel Type
+                    </option>
+
+                    <option value="Petrol">Petrol</option>
+                    <option value="Diesel">Diesel</option>
+                    <option value="CNG">CNG</option>
+                    <option value="LPG">LPG</option>
+                    <option value="Electric">Electric</option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- VS -->
+
+        <div class="vs-section">
+
+            <div class="vs-line"></div>
+
+            <div class="vs-circle">
+                VS
+            </div>
+
+            <div class="vs-line"></div>
+
+        </div>
+
+
+        <!-- CAR B -->
+
+        <div class="car-input-card car-b-card">
+
+            <div class="car-card-top">
+
+                <div class="car-card-icon">
+                    🚗
+                </div>
+
+                <div>
+                    <span class="car-label">OPTION 02</span>
+                    <h2>Car B</h2>
+                    <p>Second vehicle</p>
+                </div>
+
+            </div>
+
+
+            <div class="compare-form-group">
+
+                <label>Brand</label>
+
+                <input
+                    type="text"
+                    id="brandB"
+                    placeholder="e.g. Maruti"
+                    required
+                >
+
+            </div>
+
+
+            <div class="compare-form-group">
+
+                <label>Model</label>
+
+                <input
+                    type="text"
+                    id="modelB"
+                    placeholder="e.g. Swift"
+                    required
+                >
+
+            </div>
+
+
+            <div class="compare-two-column">
+
+                <div class="compare-form-group">
+
+                    <label>Year</label>
+
+                    <input
+                        type="number"
+                        id="yearB"
+                        min="1980"
+                        max="2024"
+                        placeholder="2021"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="compare-form-group">
+
+                    <label>Kilometers</label>
+
+                    <input
+                        type="number"
+                        id="kmB"
+                        min="1"
+                        placeholder="70000"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="compare-form-group">
+
+                <label>Transmission</label>
+
+                <select id="transmissionB" required>
+
+                    <option value="">
+                        Select Transmission
+                    </option>
+
+                    <option value="Manual">
+                        Manual
+                    </option>
+
+                    <option value="Automatic">
+                        Automatic
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="compare-form-group">
+
+                <label>Owner</label>
+
+                <select id="ownerB" required>
+
+                    <option value="">
+                        Select Owner
+                    </option>
+
+                    <option value="First Owner">
+                        First Owner
+                    </option>
+
+                    <option value="Second Owner">
+                        Second Owner
+                    </option>
+
+                    <option value="Third Owner">
+                        Third Owner
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="compare-form-group">
+
+                <label>Fuel Type</label>
+
+                <select id="fuelB" required>
+
+                    <option value="">
+                        Select Fuel Type
+                    </option>
+
+                    <option value="Petrol">Petrol</option>
+                    <option value="Diesel">Diesel</option>
+                    <option value="CNG">CNG</option>
+                    <option value="LPG">LPG</option>
+                    <option value="Electric">Electric</option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- COMPARE BUTTON -->
+
+    <div class="compare-action">
+
+        <button
+            type="button"
+            id="compareButton"
+            class="compare-button"
+            onclick="compareCars()"
+        >
+            ⚖️ Compare Cars with AI
+        </button>
+
+        <p class="compare-hint">
+            🤖 Both trained ML models will analyze the two vehicles
+        </p>
+
+    </div>
+
+
+    <!-- ERROR -->
+
+    <div
+        id="compareError"
+        class="compare-error"
+    ></div>
+
+
+    <!-- RESULTS -->
+
+    <section
+        id="compareResults"
+        class="compare-results"
+    >
+
+        <div class="compare-result-heading">
+
+            <span class="result-badge">
+                ✦ AI ANALYSIS COMPLETE
+            </span>
+
+            <h2>
+                Comparison <span>Results</span>
+            </h2>
+
+            <p>
+                Here's what our machine learning models found.
+            </p>
+
+        </div>
+
+
+        <div class="comparison-result-grid">
+
+            <!-- RESULT A -->
+
+            <div class="comparison-result-card">
+
+                <div class="result-car-title">
+                    🚘 Car A
+                </div>
+
+                <div
+                    id="resultCarAName"
+                    class="result-car-name"
+                >
+                    Car A
+                </div>
+
+                <div class="result-item">
+
+                    <span>Purchase Quality</span>
+
+                    <strong id="resultQualityA">
+                        -
+                    </strong>
+
+                </div>
+
+                <div class="result-item price-result">
+
+                    <span>Estimated AskPrice</span>
+
+                    <strong id="resultPriceA">
+                        -
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- RESULT B -->
+
+            <div class="comparison-result-card">
+
+                <div class="result-car-title">
+                    🚗 Car B
+                </div>
+
+                <div
+                    id="resultCarBName"
+                    class="result-car-name"
+                >
+                    Car B
+                </div>
+
+                <div class="result-item">
+
+                    <span>Purchase Quality</span>
+
+                    <strong id="resultQualityB">
+                        -
+                    </strong>
+
+                </div>
+
+                <div class="result-item price-result">
+
+                    <span>Estimated AskPrice</span>
+
+                    <strong id="resultPriceB">
+                        -
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RECOMMENDATION -->
+
+        <div class="recommendation-card">
+
+            <div class="recommendation-icon">
+                🤖
+            </div>
+
+            <div>
+
+                <span class="recommendation-label">
+                    AI RECOMMENDATION
+                </span>
+
+                <p id="recommendationText">
+                    -
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <a href="/buyer" class="secondary-button">
+        ← Back to Buyer Dashboard
+    </a>
+
+</section>
+
+
+<!-- =====================================================
+     SELLER PAGE
+===================================================== -->
+
+{% elif page == "seller" %}
+
+<section class="hero">
+
+    <div class="badge">
+        💰 SELLER MODE • AI VALUATION
+    </div>
+
+    <h1>
+        Discover Your Car's
+        <span>AI Value</span>
+    </h1>
+
+    <p>
+        Enter your vehicle details and our trained
+        machine learning models will estimate its
+        asking price and purchase quality.
+    </p>
+
+</section>
+
+
+<div class="main-container">
+
+    <!-- LEFT PANEL -->
+
+    <section class="info-panel">
+
+        <div class="car-illustration">
+            🚘
+        </div>
+
+        <h2>
+            AI-Powered Vehicle Analysis
+        </h2>
+
+        <p class="info-description">
+            Our system uses trained machine learning
+            models to analyze important vehicle
+            characteristics.
+        </p>
+
+        <div class="feature-list">
+
+            <div class="feature">
+                <div class="feature-icon">✓</div>
+                <span>Estimated AskPrice</span>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">✓</div>
+                <span>Purchase Quality</span>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">✓</div>
+                <span>AI-based vehicle analysis</span>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">✓</div>
+                <span>Fast machine learning prediction</span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- FORM -->
+
+    <section class="form-panel">
+
+        <div class="form-heading">
+
+            <h2>
+                Enter Car Details
+            </h2>
+
+            <p>
+                Provide accurate information for a
+                better prediction.
+            </p>
+
+        </div>
+
+
+        {% if error %}
+
+        <div class="error-message">
+            ⚠ {{ error }}
+        </div>
+
+        {% endif %}
+
+
+        <form
+            action="/predict"
+            method="POST"
+            onsubmit="showLoading()"
+        >
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label>Brand</label>
+
+                    <input
+                        type="text"
+                        name="brand"
+                        placeholder="e.g. Hyundai"
+                        value="{{ brand|default('') }}"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Model</label>
+
+                    <input
+                        type="text"
+                        name="model"
+                        placeholder="e.g. Grand i10"
+                        value="{{ model|default('') }}"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label>Manufacturing Year</label>
+
+                    <input
+                        type="number"
+                        name="year"
+                        min="1980"
+                        max="2024"
+                        placeholder="1980 - 2024"
+                        value="{{ year|default('') }}"
+                        required
+                    >
+
+                    <small>
+                        Enter a year between 1980 and 2024.
+                    </small>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Kilometers Driven</label>
+
+                    <input
+                        type="number"
+                        name="kmDriven"
+                        min="1"
+                        step="1"
+                        placeholder="e.g. 90000"
+                        value="{{ kmDriven|default('') }}"
+                        required
+                    >
+
+                    <small>
+                        Must be greater than 0.
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label>Transmission</label>
+
+                    <select name="transmission" required>
+
+                        <option value="">
+                            Select Transmission
+                        </option>
+
+                        <option value="Manual"
+                            {% if transmission == "Manual" %}
+                            selected
+                            {% endif %}>
+                            Manual
+                        </option>
+
+                        <option value="Automatic"
+                            {% if transmission == "Automatic" %}
+                            selected
+                            {% endif %}>
+                            Automatic
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Owner</label>
+
+                    <select name="owner" required>
+
+                        <option value="">
+                            Select Owner
+                        </option>
+
+                        <option value="First Owner"
+                            {% if owner == "First Owner" %}
+                            selected
+                            {% endif %}>
+                            First Owner
+                        </option>
+
+                        <option value="Second Owner"
+                            {% if owner == "Second Owner" %}
+                            selected
+                            {% endif %}>
+                            Second Owner
+                        </option>
+
+                        <option value="Third Owner"
+                            {% if owner == "Third Owner" %}
+                            selected
+                            {% endif %}>
+                            Third Owner
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group full-width">
+
+                <label>Fuel Type</label>
+
+                <select name="fuelType" required>
+
+                    <option value="">
+                        Select Fuel Type
+                    </option>
+
+                    <option value="Petrol"
+                        {% if fuelType == "Petrol" %}
+                        selected
+                        {% endif %}>
+                        Petrol
+                    </option>
+
+                    <option value="Diesel"
+                        {% if fuelType == "Diesel" %}
+                        selected
+                        {% endif %}>
+                        Diesel
+                    </option>
+
+                    <option value="CNG"
+                        {% if fuelType == "CNG" %}
+                        selected
+                        {% endif %}>
+                        CNG
+                    </option>
+
+                    <option value="LPG"
+                        {% if fuelType == "LPG" %}
+                        selected
+                        {% endif %}>
+                        LPG
+                    </option>
+
+                    <option value="Electric"
+                        {% if fuelType == "Electric" %}
+                        selected
+                        {% endif %}>
+                        Electric
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="predict-button"
+                id="predictButton"
+            >
+
+                <span id="buttonText">
+                    🤖 Predict Car Value
+                </span>
+
+            </button>
+
+
+            <div
+                class="loading-text"
+                id="loadingText"
+            >
+                🔄 Analyzing your car with machine learning...
+            </div>
+
+        </form>
+
+    </section>
+
+</div>
+
+
+<!-- =====================================================
+     SELLER RESULT
+===================================================== -->
+
+{% if prediction %}
+
+<section class="result-section">
+
+    <div class="section-heading">
+
+        <h2>
+            AI Analysis Complete
+        </h2>
+
+        <p>
+            Here's what our machine learning models found.
+        </p>
+
+    </div>
+
+
+    <div class="summary-card">
+
+        <div class="summary-title">
+            🚘 Your Car
+        </div>
+
+        <div class="summary-grid">
+
+            <div class="summary-item">
+                <span class="summary-label">Model</span>
+                <strong>{{ brand }} {{ model }}</strong>
+            </div>
+
+            <div class="summary-item">
+                <span class="summary-label">Year</span>
+                <strong>{{ year }}</strong>
+            </div>
+
+            <div class="summary-item">
+                <span class="summary-label">Kilometers</span>
+                <strong>
+                    {{ "{:,.0f}".format(kmDriven) }} km
+                </strong>
+            </div>
+
+            <div class="summary-item">
+                <span class="summary-label">Transmission</span>
+                <strong>{{ transmission }}</strong>
+            </div>
+
+            <div class="summary-item">
+                <span class="summary-label">Owner</span>
+                <strong>{{ owner }}</strong>
+            </div>
+
+            <div class="summary-item">
+                <span class="summary-label">Fuel</span>
+                <strong>{{ fuelType }}</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <h3 class="analysis-title">
+        AI Analysis
+    </h3>
+
+
+    <div class="result-cards">
+
+        <div class="result-card quality-card {{ quality_class }}">
+
+            <div class="result-label">
+                Purchase Quality
+            </div>
+
+            <div class="quality-value">
+
+                <span class="quality-dot"></span>
+
+                {{ prediction }}
+
+            </div>
+
+            <p class="quality-message">
+                {{ quality_message }}
+            </p>
+
+        </div>
+
+
+        <div class="result-card">
+
+            <div class="result-label">
+                Estimated AskPrice
+            </div>
+
+            <div class="price-value">
+                ₹{{ "{:,.0f}".format(price) }}
+            </div>
+
+            <p class="price-message">
+                Estimated using the trained
+                Random Forest Regressor.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <p class="disclaimer">
+
+        ⚠ This prediction is an AI-based estimate and
+        should be used as a decision-support tool.
+        Actual vehicle value may vary depending on
+        condition, location and market demand.
+
+    </p>
+
+
+    <a href="/seller" class="another-button">
+        ← Analyze Another Car
+    </a>
+
+</section>
+
+{% endif %}
+
+
+<!-- =====================================================
+     TECHNOLOGY
+===================================================== -->
+
+<section class="about-section">
+
+    <div class="section-heading">
+
+        <h2>
+            Powered by Machine Learning
+        </h2>
+
+        <p>
+            Built using technologies used in our AI/ML project.
+        </p>
+
+    </div>
+
+
+    <div class="model-cards">
+
+        <div class="model-card">
+
+            <div class="model-icon">🧠</div>
+
+            <h3>Classification</h3>
+
+            <strong>
+                Balanced Random Forest
+            </strong>
+
+            <p>
+                Predicts whether the vehicle is
+                Good, Average or Poor.
+            </p>
+
+        </div>
+
+
+        <div class="model-card">
+
+            <div class="model-icon">💰</div>
+
+            <h3>Regression</h3>
+
+            <strong>
+                Random Forest Regressor
+            </strong>
+
+            <p>
+                Estimates the vehicle's asking price.
+            </p>
+
+        </div>
+
+
+        <div class="model-card">
+
+            <div class="model-icon">⚙️</div>
+
+            <h3>Technology</h3>
+
+            <strong>
+                Python + Flask
+            </strong>
+
+            <p>
+                Pandas and Scikit-learn power
+                the application.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer class="footer">
+
+    <div>
+        UsedCar AI • Machine Learning Project
+    </div>
+
+    <div class="technologies">
+
+        <strong>Python</strong> •
+        <strong>Flask</strong> •
+        <strong>Pandas</strong> •
+        <strong>Scikit-learn</strong> •
+        <strong>Random Forest</strong>
+
+    </div>
+
+</footer>
+
+
+{% endif %}
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script>
+
+function showLoading() {
+
+    const button =
+        document.getElementById("predictButton");
+
+    const buttonText =
+        document.getElementById("buttonText");
+
+    const loadingText =
+        document.getElementById("loadingText");
+
+    if (button) {
+        button.disabled = true;
+    }
+
+    if (buttonText) {
+        buttonText.innerText = "Processing...";
+    }
+
+    if (loadingText) {
+        loadingText.style.display = "block";
+    }
+}
+
+
+/* =====================================================
+   COMPARE CARS
+===================================================== */
+
+async function compareCars() {
+
+    const button =
+        document.getElementById("compareButton");
+
+    const errorBox =
+        document.getElementById("compareError");
+
+    const results =
+        document.getElementById("compareResults");
+
+
+    errorBox.style.display = "none";
+    results.style.display = "none";
+
+
+    const carA = {
+
+        brand:
+            document.getElementById("brandA").value.trim(),
+
+        model:
+            document.getElementById("modelA").value.trim(),
+
+        year:
+            document.getElementById("yearA").value,
+
+        km:
+            document.getElementById("kmA").value,
+
+        transmission:
+            document.getElementById("transmissionA").value,
+
+        owner:
+            document.getElementById("ownerA").value,
+
+        fuel:
+            document.getElementById("fuelA").value
+    };
+
+
+    const carB = {
+
+        brand:
+            document.getElementById("brandB").value.trim(),
+
+        model:
+            document.getElementById("modelB").value.trim(),
+
+        year:
+            document.getElementById("yearB").value,
+
+        km:
+            document.getElementById("kmB").value,
+
+        transmission:
+            document.getElementById("transmissionB").value,
+
+        owner:
+            document.getElementById("ownerB").value,
+
+        fuel:
+            document.getElementById("fuelB").value
+    };
+
+
+    /* VALIDATION */
+
+    const cars = [carA, carB];
+
+    for (let i = 0; i < cars.length; i++) {
+
+        const car = cars[i];
+
+        if (
+            !car.brand ||
+            !car.model ||
+            !car.year ||
+            !car.km ||
+            !car.transmission ||
+            !car.owner ||
+            !car.fuel
+        ) {
+
+            showCompareError(
+                "Please fill all details for both cars."
+            );
+
+            return;
+        }
+
+
+        const year = Number(car.year);
+        const km = Number(car.km);
+
+
+        if (year < 1980 || year > 2024) {
+
+            showCompareError(
+                "Manufacturing year must be between 1980 and 2024."
+            );
+
+            return;
+        }
+
+
+        if (!Number.isFinite(km) || km <= 0) {
+
+            showCompareError(
+                "Kilometers driven must be greater than 0."
+            );
+
+            return;
+        }
+
+    }
+
+
+    /* LOADING */
+
+    button.disabled = true;
+
+    button.innerHTML =
+        "🔄 AI is comparing the cars...";
+
+
+    try {
+
+        const response = await fetch(
+            "/compare-cars",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+                    carA: carA,
+                    carB: carB
+                })
+            }
+        );
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            showCompareError(
+                data.error ||
+                "Unable to compare the cars."
+            );
+
+            return;
+        }
+
+
+        displayComparisonResults(data);
+
+
+    } catch (error) {
+
+        console.error("Comparison Error:", error);
+
+        showCompareError(
+            "Unable to connect to the prediction system. Please try again."
+        );
+
+    } finally {
+
+        button.disabled = false;
+
+        button.innerHTML =
+            "⚖️ Compare Cars with AI";
+
+    }
+
+}
+
+
+/* =====================================================
+   SHOW ERROR
+===================================================== */
+
+function showCompareError(message) {
+
+    const errorBox =
+        document.getElementById("compareError");
+
+    errorBox.innerText =
+        "⚠ " + message;
+
+    errorBox.style.display =
+        "block";
+
+    errorBox.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+
+}
+
+
+/* =====================================================
+   DISPLAY RESULTS
+===================================================== */
+
+function displayComparisonResults(data) {
+
+    const results =
+        document.getElementById("compareResults");
+
+    const carA =
+        data.carA;
+
+    const carB =
+        data.carB;
+
+
+    document.getElementById(
+    "resultCarAName"
+).innerText =
+    carA.brand + " " + carA.model;
+
+
+document.getElementById(
+    "resultCarBName"
+).innerText =
+    carB.brand + " " + carB.model;
+
+
+    document.getElementById(
+        "resultQualityA"
+    ).innerText =
+        carA.quality;
+
+
+    document.getElementById(
+        "resultQualityB"
+    ).innerText =
+        carB.quality;
+
+
+    document.getElementById(
+        "resultPriceA"
+    ).innerText =
+        formatRupees(carA.price);
+
+
+    document.getElementById(
+        "resultPriceB"
+    ).innerText =
+        formatRupees(carB.price);
+
+
+    document.getElementById(
+        "recommendationText"
+    ).innerText =
+        data.recommendation;
+
+
+    results.style.display =
+        "block";
+
+
+    results.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+}
+
+
+/* =====================================================
+   RUPEE FORMAT
+===================================================== */
+
+function formatRupees(value) {
+
+    return "₹" +
+        Number(value).toLocaleString("en-IN");
+
+}
+
+</script>
+
+</body>
+</html>

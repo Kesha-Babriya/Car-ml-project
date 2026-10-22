@@ -1,0 +1,2311 @@
+/* =====================================================
+   GLOBAL
+===================================================== */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background:
+        radial-gradient(
+            circle at top left,
+            #1d2b44 0%,
+            #0a0f18 45%,
+            #070b12 100%
+        );
+
+    color: #ffffff;
+
+    min-height: 100vh;
+
+    line-height: 1.6;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.header {
+
+    min-height: 100px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 5%;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,0.08);
+
+    background:
+        rgba(7,11,18,0.92);
+}
+
+.logo-section {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+}
+
+.logo-icon {
+
+    width: 54px;
+
+    height: 54px;
+
+    border-radius: 16px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 28px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff4d5a,
+            #ff7440
+        );
+}
+
+.logo-title {
+
+    font-size: 25px;
+
+    font-weight: 700;
+}
+
+.logo-subtitle {
+
+    color: #8ea0bb;
+
+    font-size: 14px;
+}
+
+.back-home {
+
+    color: #c9d4e5;
+
+    text-decoration: none;
+
+    font-size: 16px;
+
+    padding: 10px 18px;
+
+    border:
+        1px solid
+        #344054;
+
+    border-radius: 10px;
+
+    transition: 0.25s;
+}
+
+.back-home:hover {
+
+    color: white;
+
+    border-color: #ff5d5d;
+
+    background: rgba(255,80,80,0.08);
+}
+
+
+/* =====================================================
+   COMMON
+===================================================== */
+
+span {
+    color: inherit;
+}
+
+button,
+input,
+select {
+    font-family: inherit;
+}
+
+
+/* =====================================================
+   HOME PAGE
+===================================================== */
+
+.role-page {
+
+    width: 94%;
+
+    max-width: 1250px;
+
+    margin: 70px auto 100px;
+
+    text-align: center;
+}
+
+.role-badge {
+
+    display: inline-block;
+
+    padding: 9px 20px;
+
+    border:
+        1px solid
+        #3a4659;
+
+    border-radius: 30px;
+
+    color: #ff7650;
+
+    background:
+        rgba(255,255,255,0.03);
+
+    margin-bottom: 28px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    letter-spacing: 0.5px;
+}
+
+.role-page h1 {
+
+    font-size:
+        clamp(42px, 6vw, 68px);
+
+    line-height: 1.1;
+
+    margin-bottom: 25px;
+}
+
+.role-page h1 span {
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff4d5a,
+            #ff8a4c
+        );
+
+    -webkit-background-clip: text;
+
+    -webkit-text-fill-color: transparent;
+}
+
+.role-description {
+
+    max-width: 760px;
+
+    margin: auto;
+
+    color: #91a5c1;
+
+    font-size: 19px;
+}
+
+.choose-title {
+
+    margin-top: 55px;
+
+    font-size: 25px;
+}
+
+.role-cards {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        1fr;
+
+    gap: 28px;
+
+    margin-top: 30px;
+}
+
+.role-card {
+
+    text-decoration: none;
+
+    color: white;
+
+    display: flex;
+
+    align-items: flex-start;
+
+    text-align: left;
+
+    gap: 22px;
+
+    padding: 35px;
+
+    min-height: 240px;
+
+    border:
+        1px solid
+        #2d394b;
+
+    border-radius: 22px;
+
+    background:
+        #111722;
+
+    transition:
+        transform 0.25s,
+        border-color 0.25s,
+        box-shadow 0.25s;
+}
+
+.role-card:hover {
+
+    transform: translateY(-6px);
+
+    border-color: #ff5d5d;
+
+    box-shadow:
+        0 20px 50px
+        rgba(0,0,0,0.35);
+}
+
+.role-icon {
+
+    width: 70px;
+
+    height: 70px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 18px;
+
+    font-size: 35px;
+
+    background:
+        rgba(255,76,94,0.12);
+}
+
+.role-card-content {
+
+    flex: 1;
+}
+
+.role-label {
+
+    color: #7186a4;
+
+    font-size: 12px;
+
+    letter-spacing: 1.5px;
+
+    font-weight: 700;
+}
+
+.role-card h3 {
+
+    font-size: 32px;
+
+    margin: 5px 0 10px;
+}
+
+.role-card p {
+
+    color: #8498b5;
+
+    margin-bottom: 20px;
+}
+
+.role-button {
+
+    color: #ff7650;
+
+    font-weight: 700;
+}
+
+.role-note {
+
+    margin-top: 30px;
+
+    color: #60728e;
+
+    font-size: 14px;
+}
+
+
+/* =====================================================
+   BUYER PAGE
+===================================================== */
+
+.buyer-page {
+
+    width: 94%;
+
+    max-width: 1250px;
+
+    margin: 55px auto 90px;
+
+    text-align: center;
+}
+
+.buyer-hero {
+
+    margin-bottom: 45px;
+}
+
+.buyer-car-icon {
+
+    font-size: 70px;
+
+    margin-bottom: 15px;
+
+    filter:
+        drop-shadow(
+            0 0 18px
+            rgba(255,90,90,0.3)
+        );
+}
+
+.mode-badge {
+
+    display: inline-block;
+
+    padding: 8px 18px;
+
+    border-radius: 25px;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.7px;
+
+    margin-bottom: 20px;
+}
+
+.buyer-badge {
+
+    color: #ff7650;
+
+    border:
+        1px solid
+        rgba(255,100,80,0.3);
+
+    background:
+        rgba(255,100,80,0.07);
+}
+
+.buyer-hero h1 {
+
+    font-size:
+        clamp(38px, 5vw, 58px);
+
+    margin-bottom: 15px;
+}
+
+.buyer-hero h1 span {
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff4d5a,
+            #ff8a4c
+        );
+
+    -webkit-background-clip: text;
+
+    -webkit-text-fill-color: transparent;
+}
+
+.buyer-hero p {
+
+    color: #91a5c1;
+
+    max-width: 750px;
+
+    margin: auto;
+
+    font-size: 18px;
+}
+
+
+/* =====================================================
+   BUYER FEATURE CARDS
+===================================================== */
+
+.buyer-feature-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        1fr;
+
+    gap: 22px;
+
+    margin-bottom: 45px;
+}
+
+.buyer-feature-card {
+
+    min-height: 210px;
+
+    padding: 30px;
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 22px;
+
+    text-align: left;
+
+    text-decoration: none;
+
+    color: white;
+
+    border:
+        1px solid
+        #2d394b;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #111a28,
+            #0d131e
+        );
+
+    transition:
+        transform 0.25s,
+        border-color 0.25s,
+        box-shadow 0.25s;
+}
+
+.buyer-feature-card:hover {
+
+    transform: translateY(-5px);
+
+    border-color: #ff5d5d;
+
+    box-shadow:
+        0 18px 40px
+        rgba(0,0,0,0.35);
+}
+
+.feature-big-icon {
+
+    width: 62px;
+
+    height: 62px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 16px;
+
+    font-size: 30px;
+
+    background:
+        rgba(255,76,94,0.12);
+}
+
+.buyer-feature-content {
+
+    flex: 1;
+}
+
+.feature-number {
+
+    color: #566983;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+}
+
+.buyer-feature-content h2 {
+
+    font-size: 23px;
+
+    margin: 4px 0 8px;
+}
+
+.buyer-feature-content p {
+
+    color: #7f93af;
+
+    font-size: 15px;
+
+    margin-bottom: 15px;
+}
+
+.feature-link {
+
+    color: #ff7650;
+
+    font-size: 14px;
+
+    font-weight: 700;
+}
+
+.disabled-feature {
+
+    cursor: default;
+}
+
+.disabled-feature:hover {
+
+    transform: translateY(-2px);
+
+    border-color: #3a4659;
+
+    box-shadow: none;
+}
+
+.coming-soon {
+
+    display: inline-block;
+
+    padding: 5px 12px;
+
+    border-radius: 20px;
+
+    color: #7186a4;
+
+    background: #151d2a;
+
+    font-size: 12px;
+}
+
+.secondary-button {
+
+    display: inline-block;
+
+    padding: 14px 28px;
+
+    border:
+        1px solid
+        #344054;
+
+    border-radius: 12px;
+
+    color: #dce5f2;
+
+    text-decoration: none;
+
+    transition: 0.25s;
+}
+
+.secondary-button:hover {
+
+    background: #151d2a;
+
+    border-color: #ff5d5d;
+
+    color: white;
+}
+
+
+/* =====================================================
+   COMPARE PAGE
+===================================================== */
+
+.compare-page {
+
+    width: 94%;
+
+    max-width: 1400px;
+
+    margin: 55px auto 90px;
+
+    text-align: center;
+}
+
+.compare-hero {
+
+    margin-bottom: 45px;
+}
+
+.compare-icon {
+
+    font-size: 55px;
+
+    margin-bottom: 12px;
+}
+
+.compare-hero h1 {
+
+    font-size:
+        clamp(38px, 5vw, 56px);
+
+    margin-bottom: 12px;
+}
+
+.compare-hero h1 span {
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff4d5a,
+            #ff8a4c
+        );
+
+    -webkit-background-clip: text;
+
+    -webkit-text-fill-color: transparent;
+}
+
+.compare-hero p {
+
+    color: #91a5c1;
+
+    max-width: 850px;
+
+    margin: auto;
+
+    font-size: 17px;
+}
+
+
+/* =====================================================
+   COMPARE CONTAINER
+===================================================== */
+
+.compare-container {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        80px
+        1fr;
+
+    align-items: stretch;
+
+    gap: 20px;
+
+    text-align: left;
+}
+
+.car-input-card {
+
+    padding: 32px;
+
+    border:
+        1px solid
+        #2d394b;
+
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #111a28,
+            #0d131e
+        );
+
+    box-shadow:
+        0 15px 40px
+        rgba(0,0,0,0.18);
+
+    transition: 0.25s;
+}
+
+.car-input-card:hover {
+
+    border-color: #3e4d63;
+
+    box-shadow:
+        0 20px 50px
+        rgba(0,0,0,0.28);
+}
+
+.car-a-card {
+
+    border-top:
+        3px solid
+        #ff5d5d;
+}
+
+.car-b-card {
+
+    border-top:
+        3px solid
+        #ff7544;
+}
+
+.car-card-top {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    margin-bottom: 28px;
+
+    padding-bottom: 22px;
+
+    border-bottom:
+        1px solid
+        #273244;
+}
+
+.car-card-icon {
+
+    width: 58px;
+
+    height: 58px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 15px;
+
+    background:
+        rgba(255,76,94,0.12);
+
+    font-size: 28px;
+}
+
+.car-label {
+
+    color: #7186a4;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.5px;
+}
+
+.car-card-top h2 {
+
+    font-size: 28px;
+
+    line-height: 1.2;
+}
+
+.car-card-top p {
+
+    color: #637998;
+
+    font-size: 13px;
+}
+
+.compare-form-group {
+
+    margin-bottom: 19px;
+}
+
+.compare-form-group label {
+
+    display: block;
+
+    color: #dce5f2;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    margin-bottom: 7px;
+}
+
+.compare-form-group input,
+.compare-form-group select {
+
+    width: 100%;
+
+    height: 48px;
+
+    padding: 0 14px;
+
+    border:
+        1px solid
+        #344054;
+
+    border-radius: 10px;
+
+    background:
+        #0b111b;
+
+    color: white;
+
+    font-size: 15px;
+
+    outline: none;
+
+    transition: 0.2s;
+}
+
+.compare-form-group input::placeholder {
+
+    color: #52657f;
+}
+
+.compare-form-group input:focus,
+.compare-form-group select:focus {
+
+    border-color: #ff5d5d;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(255,93,93,0.10);
+}
+
+.compare-form-group select {
+
+    cursor: pointer;
+}
+
+.compare-form-group select option {
+
+    background: #111722;
+
+    color: white;
+}
+
+.compare-two-column {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        1fr;
+
+    gap: 15px;
+}
+
+
+/* =====================================================
+   VS
+===================================================== */
+
+.vs-section {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 15px;
+}
+
+.vs-line {
+
+    width: 1px;
+
+    flex: 1;
+
+    background:
+        linear-gradient(
+            to bottom,
+            transparent,
+            #39465b,
+            transparent
+        );
+}
+
+.vs-circle {
+
+    width: 58px;
+
+    height: 58px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff4d5a,
+            #ff7544
+        );
+
+    box-shadow:
+        0 8px 25px
+        rgba(255,76,76,0.25);
+
+    font-size: 15px;
+
+    font-weight: 800;
+}
+
+
+/* =====================================================
+   COMPARE ACTION
+===================================================== */
+
+.compare-action {
+
+    margin:
+        32px
+        auto
+        0;
+
+    max-width: 700px;
+}
+
+.compare-button {
+
+    width: 100%;
+
+    min-height: 62px;
+
+    border: none;
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff4e5b,
+            #ff7544
+        );
+
+    color: white;
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 12px 30px
+        rgba(255,76,76,0.20);
+
+    transition: 0.25s;
+}
+
+.compare-button:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 15px 35px
+        rgba(255,76,76,0.35);
+}
+
+.compare-button:disabled {
+
+    opacity: 0.75;
+
+    cursor: wait;
+
+    transform: none;
+}
+
+.compare-hint {
+
+    margin-top: 10px;
+
+    color: #617591;
+
+    font-size: 13px;
+}
+
+
+/* =====================================================
+   COMPARE ERROR
+===================================================== */
+
+.compare-error {
+
+    display: none;
+
+    max-width: 700px;
+
+    margin: 20px auto;
+
+    padding: 14px 18px;
+
+    border:
+        1px solid
+        rgba(255,90,90,0.5);
+
+    border-radius: 12px;
+
+    background:
+        rgba(255,70,70,0.10);
+
+    color: #ff9999;
+}
+
+
+/* =====================================================
+   COMPARE RESULTS
+===================================================== */
+
+.compare-results {
+
+    display: none;
+
+    margin-top: 65px;
+
+    padding-top: 55px;
+
+    border-top:
+        1px solid
+        #263244;
+}
+
+.compare-result-heading {
+
+    margin-bottom: 30px;
+}
+
+.result-badge {
+
+    display: inline-block;
+
+    padding: 7px 15px;
+
+    border-radius: 20px;
+
+    background:
+        rgba(255,100,80,0.08);
+
+    border:
+        1px solid
+        rgba(255,100,80,0.25);
+
+    color: #ff7650;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+}
+
+.compare-result-heading h2 {
+
+    margin-top: 15px;
+
+    font-size: 36px;
+}
+
+.compare-result-heading h2 span {
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff4d5a,
+            #ff8a4c
+        );
+
+    -webkit-background-clip: text;
+
+    -webkit-text-fill-color: transparent;
+}
+
+.compare-result-heading p {
+
+    color: #7186a4;
+
+    margin-top: 5px;
+}
+
+.comparison-result-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        1fr;
+
+    gap: 25px;
+}
+
+.comparison-result-card {
+
+    padding: 30px;
+
+    text-align: left;
+
+    border:
+        1px solid
+        #2d394b;
+
+    border-radius: 20px;
+
+    background: #111722;
+}
+
+.result-car-title {
+
+    color: #ff7650;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    margin-bottom: 8px;
+}
+
+.result-car-name {
+
+    font-size: 25px;
+
+    font-weight: 700;
+
+    margin-bottom: 25px;
+}
+
+.result-item {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 17px 0;
+
+    border-top:
+        1px solid
+        #263244;
+}
+
+.result-item span {
+
+    color: #7f93af;
+
+    font-size: 14px;
+}
+
+.result-item strong {
+
+    font-size: 19px;
+
+    color: #42d98d;
+}
+
+.price-result strong {
+
+    color: #50e0a2;
+
+    font-size: 23px;
+}
+
+
+/* =====================================================
+   RECOMMENDATION
+===================================================== */
+
+.recommendation-card {
+
+    margin-top: 25px;
+
+    padding: 25px 30px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 20px;
+
+    text-align: left;
+
+    border:
+        1px solid
+        rgba(255,120,70,0.35);
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,76,94,0.10),
+            rgba(255,117,68,0.06)
+        );
+}
+
+.recommendation-icon {
+
+    width: 55px;
+
+    height: 55px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 14px;
+
+    background:
+        rgba(255,100,80,0.12);
+
+    font-size: 26px;
+}
+
+.recommendation-label {
+
+    color: #ff7650;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.2px;
+}
+
+.recommendation-card p {
+
+    color: #dce5f2;
+
+    margin-top: 5px;
+
+    font-size: 16px;
+}
+
+
+/* =====================================================
+   SELLER HERO
+===================================================== */
+
+.hero {
+
+    text-align: center;
+
+    padding:
+        75px
+        20px
+        70px;
+}
+
+.badge {
+
+    display: inline-block;
+
+    padding:
+        10px
+        20px;
+
+    border:
+        1px solid
+        #364154;
+
+    border-radius: 30px;
+
+    color: #ff7650;
+
+    background:
+        rgba(255,255,255,0.03);
+
+    margin-bottom: 30px;
+
+    font-size: 16px;
+}
+
+.hero h1 {
+
+    font-size:
+        clamp(42px, 5vw, 68px);
+
+    line-height: 1.1;
+
+    margin-bottom: 30px;
+
+    font-weight: 800;
+}
+
+.hero h1 span {
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff4d5a,
+            #ff8a4c
+        );
+
+    -webkit-background-clip: text;
+
+    -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+
+    max-width: 850px;
+
+    margin: auto;
+
+    color: #91a5c1;
+
+    font-size: 20px;
+}
+
+
+/* =====================================================
+   SELLER MAIN CONTAINER
+===================================================== */
+
+.main-container {
+
+    width: 94%;
+
+    max-width: 1700px;
+
+    margin: auto;
+
+    display: grid;
+
+    grid-template-columns:
+        0.85fr
+        1.45fr;
+
+    border:
+        1px solid
+        #2b3546;
+
+    border-radius: 30px;
+
+    overflow: hidden;
+
+    background:
+        #111722;
+}
+
+.info-panel {
+
+    padding:
+        70px
+        55px;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(103,42,70,0.25),
+            rgba(35,25,38,0.8)
+        );
+
+    min-height: 600px;
+}
+
+.car-illustration {
+
+    text-align: center;
+
+    font-size: 100px;
+
+    margin-bottom: 40px;
+
+    filter:
+        drop-shadow(
+            0 0 25px
+            rgba(255,91,91,0.35)
+        );
+}
+
+.info-panel h2 {
+
+    font-size: 32px;
+
+    margin-bottom: 18px;
+}
+
+.info-description {
+
+    color: #91a5c1;
+
+    font-size: 18px;
+
+    line-height: 1.8;
+
+    margin-bottom: 35px;
+}
+
+.feature-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 20px;
+}
+
+.feature {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    font-size: 17px;
+}
+
+.feature-icon {
+
+    width: 38px;
+
+    height: 38px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background:
+        rgba(255,76,94,0.14);
+
+    color: #ff6370;
+
+    font-weight: bold;
+}
+
+
+/* =====================================================
+   SELLER FORM
+===================================================== */
+
+.form-panel {
+
+    padding:
+        60px;
+}
+
+.form-heading h2 {
+
+    font-size: 36px;
+
+    margin-bottom: 5px;
+}
+
+.form-heading p {
+
+    color: #91a5c1;
+
+    margin-bottom: 35px;
+
+    font-size: 17px;
+}
+
+.error-message {
+
+    background:
+        rgba(255,70,70,0.10);
+
+    border:
+        1px solid
+        rgba(255,90,90,0.5);
+
+    color: #ff8d8d;
+
+    padding: 14px 18px;
+
+    border-radius: 12px;
+
+    margin-bottom: 25px;
+}
+
+.form-row {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        1fr;
+
+    gap: 25px;
+}
+
+.form-group {
+
+    margin-bottom: 25px;
+}
+
+.full-width {
+
+    width: 100%;
+}
+
+.form-group label {
+
+    display: block;
+
+    font-weight: 600;
+
+    margin-bottom: 9px;
+
+    color: #f2f5fa;
+}
+
+.form-group input,
+.form-group select {
+
+    width: 100%;
+
+    height: 58px;
+
+    padding:
+        0
+        18px;
+
+    border:
+        1px solid
+        #344054;
+
+    border-radius: 13px;
+
+    background:
+        #101722;
+
+    color: white;
+
+    font-size: 16px;
+
+    outline: none;
+
+    transition: 0.25s;
+}
+
+.form-group input::placeholder {
+
+    color: #60728e;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+
+    border-color: #ff5d5d;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(255,93,93,0.12);
+}
+
+.form-group select {
+
+    cursor: pointer;
+}
+
+.form-group select option {
+
+    background: #111722;
+
+    color: white;
+}
+
+.form-group small {
+
+    display: block;
+
+    color: #657996;
+
+    margin-top: 7px;
+
+    font-size: 13px;
+}
+
+
+/* =====================================================
+   PREDICT BUTTON
+===================================================== */
+
+.predict-button {
+
+    width: 100%;
+
+    height: 64px;
+
+    border: none;
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff4e5b,
+            #ff7544
+        );
+
+    color: white;
+
+    font-size: 19px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.25s;
+
+    box-shadow:
+        0 12px 30px
+        rgba(255,76,76,0.20);
+}
+
+.predict-button:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 15px 35px
+        rgba(255,76,76,0.35);
+}
+
+.predict-button:disabled {
+
+    opacity: 0.85;
+
+    cursor: wait;
+
+    transform: none;
+}
+
+.loading-text {
+
+    display: none;
+
+    color: #ff8a65;
+
+    text-align: center;
+
+    margin-top: 15px;
+
+    font-size: 14px;
+}
+
+
+/* =====================================================
+   SELLER RESULT
+===================================================== */
+
+.result-section {
+
+    width: 94%;
+
+    max-width: 1700px;
+
+    margin:
+        100px
+        auto
+        0;
+
+    text-align: center;
+}
+
+.section-heading h2 {
+
+    font-size: 40px;
+
+    margin-bottom: 8px;
+}
+
+.section-heading p {
+
+    color: #8195b2;
+
+    font-size: 18px;
+}
+
+.summary-card {
+
+    margin-top: 45px;
+
+    padding: 35px;
+
+    text-align: left;
+
+    background:
+        #111722;
+
+    border:
+        1px solid
+        #2b3546;
+
+    border-radius: 20px;
+}
+
+.summary-title {
+
+    font-size: 24px;
+
+    font-weight: 700;
+
+    margin-bottom: 28px;
+}
+
+.summary-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 20px;
+}
+
+.summary-item {
+
+    padding: 20px;
+
+    background:
+        #0c121c;
+
+    border-radius: 13px;
+
+    border:
+        1px solid
+        #273244;
+}
+
+.summary-label {
+
+    display: block;
+
+    color: #7085a2;
+
+    font-size: 13px;
+
+    text-transform: uppercase;
+
+    margin-bottom: 6px;
+}
+
+.summary-item strong {
+
+    font-size: 17px;
+}
+
+.analysis-title {
+
+    text-align: left;
+
+    font-size: 26px;
+
+    font-weight: 700;
+
+    margin:
+        40px
+        0
+        20px;
+}
+
+.result-cards {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        1fr;
+
+    gap: 25px;
+}
+
+.result-card {
+
+    min-height: 230px;
+
+    padding: 40px;
+
+    border:
+        1px solid
+        #2c3748;
+
+    border-radius: 20px;
+
+    background:
+        #111722;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+.result-label {
+
+    color: #8da2be;
+
+    font-size: 16px;
+
+    letter-spacing: 0.5px;
+
+    margin-bottom: 18px;
+}
+
+.quality-value {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    font-size: 42px;
+
+    font-weight: 800;
+}
+
+.quality-dot {
+
+    width: 38px;
+
+    height: 38px;
+
+    border-radius: 50%;
+}
+
+.quality-card.good {
+
+    border-color:
+        rgba(63,220,145,0.4);
+}
+
+.quality-card.good .quality-dot {
+
+    background: #42d98d;
+
+    box-shadow:
+        0 0 25px
+        rgba(66,217,141,0.5);
+}
+
+.quality-card.good .quality-value {
+
+    color: #42d98d;
+}
+
+.quality-card.average {
+
+    border-color:
+        rgba(255,194,62,0.4);
+}
+
+.quality-card.average .quality-dot {
+
+    background: #ffc43e;
+
+    box-shadow:
+        0 0 25px
+        rgba(255,196,62,0.5);
+}
+
+.quality-card.average .quality-value {
+
+    color: #ffc43e;
+}
+
+.quality-card.poor {
+
+    border-color:
+        rgba(255,87,87,0.4);
+}
+
+.quality-card.poor .quality-dot {
+
+    background: #ff5c5c;
+
+    box-shadow:
+        0 0 25px
+        rgba(255,92,92,0.5);
+}
+
+.quality-card.poor .quality-value {
+
+    color: #ff6666;
+}
+
+.quality-message {
+
+    max-width: 550px;
+
+    margin-top: 18px;
+
+    color: #8da2be;
+}
+
+.price-value {
+
+    color: #50e0a2;
+
+    font-size: 42px;
+
+    font-weight: 800;
+}
+
+.price-message {
+
+    color: #7186a4;
+
+    margin-top: 15px;
+}
+
+.disclaimer {
+
+    color: #637998;
+
+    margin:
+        30px
+        auto;
+
+    max-width: 800px;
+}
+
+.another-button {
+
+    display: inline-block;
+
+    padding:
+        14px
+        28px;
+
+    border:
+        1px solid
+        #344054;
+
+    border-radius: 12px;
+
+    color: #dce5f2;
+
+    text-decoration: none;
+
+    transition: 0.25s;
+}
+
+.another-button:hover {
+
+    background: #151d2a;
+
+    border-color: #60728e;
+}
+
+
+/* =====================================================
+   TECHNOLOGY
+===================================================== */
+
+.about-section {
+
+    width: 94%;
+
+    max-width: 1400px;
+
+    margin:
+        110px
+        auto
+        80px;
+
+    text-align: center;
+}
+
+.model-cards {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 25px;
+
+    margin-top: 40px;
+}
+
+.model-card {
+
+    padding: 40px 25px;
+
+    border:
+        1px solid
+        #2b3546;
+
+    border-radius: 20px;
+
+    background:
+        #111722;
+}
+
+.model-icon {
+
+    font-size: 35px;
+
+    margin-bottom: 15px;
+}
+
+.model-card h3 {
+
+    font-size: 21px;
+
+    margin-bottom: 12px;
+}
+
+.model-card strong {
+
+    display: block;
+
+    font-size: 18px;
+}
+
+.model-card p {
+
+    color: #7186a4;
+
+    margin-top: 10px;
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.footer {
+
+    border-top:
+        1px solid
+        #222d3c;
+
+    text-align: center;
+
+    padding:
+        40px
+        20px;
+
+    color: #60728e;
+}
+
+.technologies {
+
+    margin-top: 8px;
+}
+
+.technologies strong {
+
+    color: #879ab5;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 1000px) {
+
+    .main-container {
+
+        grid-template-columns: 1fr;
+    }
+
+    .info-panel {
+
+        min-height: auto;
+    }
+
+    .summary-grid {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .compare-container {
+
+        grid-template-columns: 1fr;
+    }
+
+    .vs-section {
+
+        flex-direction: row;
+
+        height: 70px;
+    }
+
+    .vs-line {
+
+        width: auto;
+
+        height: 1px;
+    }
+
+    .buyer-feature-grid {
+
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .header {
+
+        min-height: auto;
+
+        padding: 20px;
+    }
+
+    .back-home {
+
+        font-size: 14px;
+
+        padding: 8px 12px;
+    }
+
+    .role-page {
+
+        margin-top: 45px;
+    }
+
+    .role-cards {
+
+        grid-template-columns: 1fr;
+    }
+
+    .role-card {
+
+        padding: 25px;
+    }
+
+    .buyer-page,
+    .compare-page {
+
+        width: 90%;
+    }
+
+    .buyer-feature-card {
+
+        padding: 25px;
+
+        min-height: auto;
+    }
+
+    .compare-two-column {
+
+        grid-template-columns: 1fr;
+    }
+
+    .car-input-card {
+
+        padding: 25px;
+    }
+
+    .comparison-result-grid {
+
+        grid-template-columns: 1fr;
+    }
+
+    .recommendation-card {
+
+        align-items: flex-start;
+
+        padding: 22px;
+    }
+
+    .form-panel,
+    .info-panel {
+
+        padding: 30px 22px;
+    }
+
+    .form-row {
+
+        grid-template-columns: 1fr;
+
+        gap: 0;
+    }
+
+    .result-cards {
+
+        grid-template-columns: 1fr;
+    }
+
+    .summary-grid {
+
+        grid-template-columns: 1fr;
+    }
+
+    .model-cards {
+
+        grid-template-columns: 1fr;
+    }
+
+    .result-section,
+    .about-section {
+
+        width: 90%;
+    }
+
+    .hero {
+
+        padding:
+            55px
+            15px;
+    }
+
+    .hero h1 {
+
+        font-size: 42px;
+    }
+
+    .hero p {
+
+        font-size: 16px;
+    }
+
+    .quality-value,
+    .price-value {
+
+        font-size: 34px;
+    }
+
+}

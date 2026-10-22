@@ -1,0 +1,816 @@
+from flask import Flask, render_template, request, jsonify
+import pandas as pd
+import joblib
+import math
+
+app = Flask(__name__)
+
+
+# ==========================================
+# Load trained ML models
+# ==========================================
+
+classification_model = joblib.load(
+    "used_car_classification_model.pkl"
+)
+
+regression_model = joblib.load(
+    "used_car_regression_model.pkl"
+)
+
+
+# ==========================================
+# Home Page
+# ==========================================
+
+@app.route("/")
+def home():
+
+    return render_template(
+        "index.html",
+        page="home"
+    )
+
+
+# ==========================================
+# Buyer Mode
+# ==========================================
+
+@app.route("/buyer")
+def buyer():
+
+    return render_template(
+        "index.html",
+        page="buyer"
+    )
+
+
+# ==========================================
+# Compare Page
+# ==========================================
+
+@app.route("/compare")
+def compare():
+
+    return render_template(
+        "index.html",
+        page="compare"
+    )
+
+
+# ==========================================
+# Seller Mode
+# ==========================================
+
+@app.route("/seller")
+def seller():
+
+    return render_template(
+        "index.html",
+        page="seller"
+    )
+
+
+# ==========================================
+# Single Car Prediction
+# ==========================================
+
+@app.route("/predict", methods=["POST"])
+def predict():
+
+    # --------------------------------------
+    # Get form values
+    # --------------------------------------
+
+    brand = request.form.get(
+        "brand", ""
+    ).strip()
+
+    model = request.form.get(
+        "model", ""
+    ).strip()
+
+    year_text = request.form.get(
+        "year", ""
+    ).strip()
+
+    km_text = request.form.get(
+        "kmDriven", ""
+    ).strip()
+
+    transmission = request.form.get(
+        "transmission", ""
+    )
+
+    owner = request.form.get(
+        "owner", ""
+    )
+
+    fuel_type = request.form.get(
+        "fuelType", ""
+    )
+
+
+    # --------------------------------------
+    # Keep entered values
+    # --------------------------------------
+
+    form_data = {
+
+        "brand": brand,
+        "model": model,
+        "year": year_text,
+        "kmDriven": km_text,
+        "transmission": transmission,
+        "owner": owner,
+        "fuelType": fuel_type
+
+    }
+
+
+    try:
+
+        # ----------------------------------
+        # Basic validation
+        # ----------------------------------
+
+        if not brand or not model:
+
+            return render_template(
+                "index.html",
+                page="seller",
+                error="Please enter both brand and model.",
+                **form_data
+            )
+
+
+        if not year_text:
+
+            return render_template(
+                "index.html",
+                page="seller",
+                error="Please enter the manufacturing year.",
+                **form_data
+            )
+
+
+        if not km_text:
+
+            return render_template(
+                "index.html",
+                page="seller",
+                error="Please enter kilometers driven.",
+                **form_data
+            )
+
+
+        # ----------------------------------
+        # Convert numbers
+        # ----------------------------------
+
+        year = int(year_text)
+
+        km_driven = float(km_text)
+
+
+        # ----------------------------------
+        # Year validation
+        # ----------------------------------
+
+        if year < 1980 or year > 2024:
+
+            return render_template(
+                "index.html",
+                page="seller",
+                error=(
+                    "Please enter a manufacturing year "
+                    "between 1980 and 2024."
+                ),
+                **form_data
+            )
+
+
+        # ----------------------------------
+        # KM validation
+        # ----------------------------------
+
+        if (
+            not math.isfinite(km_driven)
+            or km_driven <= 0
+        ):
+
+            return render_template(
+                "index.html",
+                page="seller",
+                error=(
+                    "Kilometers driven must be "
+                    "greater than 0."
+                ),
+                **form_data
+            )
+
+
+        # ----------------------------------
+        # Dropdown validation
+        # ----------------------------------
+
+        if not transmission:
+
+            return render_template(
+                "index.html",
+                page="seller",
+                error="Please select a transmission type.",
+                **form_data
+            )
+
+
+        if not owner:
+
+            return render_template(
+                "index.html",
+                page="seller",
+                error="Please select an owner type.",
+                **form_data
+            )
+
+
+        if not fuel_type:
+
+            return render_template(
+                "index.html",
+                page="seller",
+                error="Please select a fuel type.",
+                **form_data
+            )
+
+
+        # ----------------------------------
+        # Age calculation
+        # ----------------------------------
+
+        age = 2024 - year
+
+
+        # ----------------------------------
+        # Create input DataFrame
+        # ----------------------------------
+
+        input_data = pd.DataFrame({
+
+            "Brand": [brand],
+
+            "model": [model],
+
+            "Transmission": [transmission],
+
+            "Owner": [owner],
+
+            "FuelType": [fuel_type],
+
+            "Year": [year],
+
+            "Age": [age],
+
+            "kmDriven": [km_driven]
+
+        })
+
+
+        # ----------------------------------
+        # Classification
+        # ----------------------------------
+
+        quality = classification_model.predict(
+            input_data
+        )[0]
+
+        quality = str(quality)
+
+
+        # ----------------------------------
+        # Regression
+        # ----------------------------------
+
+        predicted_price = regression_model.predict(
+            input_data
+        )[0]
+
+        predicted_price = max(
+            0,
+            float(predicted_price)
+        )
+
+
+        # ----------------------------------
+        # Quality message
+        # ----------------------------------
+
+        if quality.lower() == "good":
+
+            quality_message = (
+                "This car shows favorable characteristics "
+                "based on the trained machine learning model."
+            )
+
+            quality_class = "good"
+
+
+        elif quality.lower() == "average":
+
+            quality_message = (
+                "This car falls in the moderate range "
+                "according to the trained machine learning model."
+            )
+
+            quality_class = "average"
+
+
+        else:
+
+            quality_message = (
+                "Consider checking the vehicle condition "
+                "and pricing carefully."
+            )
+
+            quality_class = "poor"
+
+
+        # ----------------------------------
+        # Return result
+        # ----------------------------------
+
+        return render_template(
+
+            "index.html",
+
+            page="seller",
+
+            prediction=quality,
+
+            price=round(predicted_price),
+
+            quality_message=quality_message,
+
+            quality_class=quality_class,
+
+            brand=brand,
+
+            model=model,
+
+            year=year,
+
+            kmDriven=km_driven,
+
+            transmission=transmission,
+
+            owner=owner,
+
+            fuelType=fuel_type,
+
+            age=age
+
+        )
+
+
+    except ValueError:
+
+        return render_template(
+
+            "index.html",
+
+            page="seller",
+
+            error=(
+                "Please enter valid numerical values "
+                "for year and kilometers driven."
+            ),
+
+            **form_data
+
+        )
+
+
+    except Exception as e:
+
+        print(
+            "Prediction Error:",
+            e
+        )
+
+        return render_template(
+
+            "index.html",
+
+            page="seller",
+
+            error=(
+                "Something went wrong while processing "
+                "the prediction. Please check your inputs."
+            ),
+
+            **form_data
+
+        )
+
+
+# ==========================================
+# COMPARE TWO CARS
+# ==========================================
+
+@app.route(
+    "/compare-cars",
+    methods=["POST"]
+)
+def compare_cars():
+
+    try:
+
+        # ----------------------------------
+        # Get JSON data from JavaScript
+        # ----------------------------------
+
+        data = request.get_json()
+
+
+        if not data:
+
+            return jsonify({
+
+                "success": False,
+
+                "error": "No car data received."
+
+            })
+
+
+        car_a = data.get(
+            "carA"
+        )
+
+        car_b = data.get(
+            "carB"
+        )
+
+
+        if not car_a or not car_b:
+
+            return jsonify({
+
+                "success": False,
+
+                "error": "Details for both cars are required."
+
+            })
+
+
+        # ----------------------------------
+        # Function for validating one car
+        # ----------------------------------
+
+        def validate_car(car):
+
+            required_fields = [
+
+                "brand",
+                "model",
+                "year",
+                "km",
+                "transmission",
+                "owner",
+                "fuel"
+
+            ]
+
+
+            for field in required_fields:
+
+                if not car.get(field):
+
+                    return (
+                        False,
+                        "Please fill all details for both cars."
+                    )
+
+
+            year = int(
+                car["year"]
+            )
+
+            km = float(
+                car["km"]
+            )
+
+
+            if year < 1980 or year > 2024:
+
+                return (
+
+                    False,
+
+                    "Manufacturing year must be "
+                    "between 1980 and 2024."
+
+                )
+
+
+            if (
+                not math.isfinite(km)
+                or km <= 0
+            ):
+
+                return (
+
+                    False,
+
+                    "Kilometers driven must be "
+                    "greater than 0."
+
+                )
+
+
+            return True, ""
+
+
+        # ----------------------------------
+        # Validate Car A
+        # ----------------------------------
+
+        valid_a, error_a = validate_car(
+            car_a
+        )
+
+
+        if not valid_a:
+
+            return jsonify({
+
+                "success": False,
+
+                "error": error_a
+
+            })
+
+
+        # ----------------------------------
+        # Validate Car B
+        # ----------------------------------
+
+        valid_b, error_b = validate_car(
+            car_b
+        )
+
+
+        if not valid_b:
+
+            return jsonify({
+
+                "success": False,
+
+                "error": error_b
+
+            })
+
+
+        # ----------------------------------
+        # Predict one car
+        # ----------------------------------
+
+        def predict_car(car):
+
+            brand = car["brand"]
+
+            model = car["model"]
+
+            year = int(
+                car["year"]
+            )
+
+            km = float(
+                car["km"]
+            )
+
+            transmission = car[
+                "transmission"
+            ]
+
+            owner = car[
+                "owner"
+            ]
+
+            fuel = car[
+                "fuel"
+            ]
+
+
+            # Same Age calculation
+            # used during model training
+
+            age = 2024 - year
+
+
+            # Create DataFrame
+
+            input_data = pd.DataFrame({
+
+                "Brand": [brand],
+
+                "model": [model],
+
+                "Transmission": [
+                    transmission
+                ],
+
+                "Owner": [
+                    owner
+                ],
+
+                "FuelType": [
+                    fuel
+                ],
+
+                "Year": [year],
+
+                "Age": [age],
+
+                "kmDriven": [km]
+
+            })
+
+
+            # Classification
+
+            quality = classification_model.predict(
+                input_data
+            )[0]
+
+            quality = str(
+                quality
+            )
+
+
+            # Regression
+
+            price = regression_model.predict(
+                input_data
+            )[0]
+
+
+            price = max(
+                0,
+                float(price)
+            )
+
+
+            return {
+
+                "brand": brand,
+
+                "model": model,
+
+                "year": year,
+
+                "km": km,
+
+                "quality": quality,
+
+                "price": round(price)
+
+            }
+
+
+        # ----------------------------------
+        # Predict both cars
+        # ----------------------------------
+
+        result_a = predict_car(
+            car_a
+        )
+
+        result_b = predict_car(
+            car_b
+        )
+
+
+        # ----------------------------------
+        # AI Recommendation
+        # ----------------------------------
+
+        quality_rank = {
+            "poor": 1,
+            "average": 2,
+            "good": 3
+        }
+
+        quality_a = quality_rank.get(
+            result_a["quality"].lower(), 0
+        )
+
+        quality_b = quality_rank.get(
+            result_b["quality"].lower(), 0
+        )
+
+        price_a = result_a["price"]
+        price_b = result_b["price"]
+
+        price_difference = abs(price_a - price_b)
+
+        # Prioritize purchase quality
+        if quality_a > quality_b:
+
+            recommendation = (
+                f"Recommended: Car A "
+                f"({result_a['brand']} {result_a['model']}). "
+                f"It received a better AI purchase-quality "
+                f"classification than Car B."
+            )
+
+        elif quality_b > quality_a:
+
+            recommendation = (
+                f"Recommended: Car B "
+                f"({result_b['brand']} {result_b['model']}). "
+                f"It received a better AI purchase-quality "
+                f"classification than Car A."
+            )
+
+        # Same quality: compare estimated prices carefully
+        elif price_difference < 10000:
+
+            recommendation = (
+                "Both cars have the same AI purchase quality "
+                "and similar estimated values. Compare their "
+                "condition, service history and inspection "
+                "results before deciding."
+            )
+
+        else:
+
+            recommendation = (
+                f"Both cars have the same AI purchase quality. "
+                f"Car A is estimated at ₹{price_a:,.0f}, "
+                f"while Car B is estimated at ₹{price_b:,.0f}. "
+                f"The higher estimated value does not necessarily "
+                f"mean that car is the better purchase. Check "
+                f"condition, maintenance and market price."
+            )
+
+
+        # ----------------------------------
+        # Return JSON
+        # ----------------------------------
+
+        return jsonify({
+
+            "success": True,
+
+            "carA": result_a,
+
+            "carB": result_b,
+
+            "recommendation": recommendation
+
+        })
+
+
+    except ValueError:
+
+        return jsonify({
+
+            "success": False,
+
+            "error": (
+                "Please enter valid numerical values "
+                "for year and kilometers."
+            )
+
+        })
+
+
+    except Exception as e:
+
+        print(
+            "Comparison Error:",
+            e
+        )
+
+        return jsonify({
+
+            "success": False,
+
+            "error": (
+                "Something went wrong while comparing "
+                "the cars. Please try again."
+            )
+
+        })
+
+
+# ==========================================
+# Run Flask Application
+# ==========================================
+
+if __name__ == "__main__":
+
+    app.run(
+        debug=True
+    )
