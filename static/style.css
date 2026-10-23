@@ -2307,5 +2307,444 @@ select {
 
         font-size: 34px;
     }
+}    
 
+    /* ==========================================
+        SMART PRICE ADVISOR
+    ========================================== */
+
+    
+    /* ===== SMART PRICE ADVISOR — PREMIUM CARD ===== */
+
+    .advisor-card {
+        position: relative;
+        max-width: 1000px;
+        margin: 30px auto;
+        padding: 28px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 75, 85, 0.35);
+        border-radius: 22px;
+        background:
+            radial-gradient(
+                circle at top right,
+                rgba(255, 65, 80, 0.12),
+                transparent 45%
+            ),
+            linear-gradient(145deg, #151b27, #0b0f17);
+            box-shadow:
+                0 12px 35px rgba(0, 0, 0, 0.28),
+                0 0 22px rgba(255, 65, 80, 0.07);
+    }
+
+    .advisor-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 5px;
+        height: 100%;
+        background: #ff4d57;
+    }
+
+    .advisor-heading {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 22px;
+        color: #ffffff;
+        font-size: 1.45rem;
+        font-weight: 750;
+    }
+
+    .advisor-details {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .advisor-details p {
+        margin: 0;
+        padding: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.035);
+        color: #cbd5e1;
+        line-height: 1.7;
+    }
+
+    .advisor-details strong {
+        display: block;
+        margin-bottom: 8px;
+        color: #93a4bd;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .advisor-message {
+        margin: 20px 0 0;
+        padding: 18px 20px;
+        border: 1px solid rgba(255, 77, 87, 0.22);
+        border-radius: 15px;
+        background: rgba(255, 77, 87, 0.07);
+        color: #f1f5f9;
+        line-height: 1.8;
+    }
+
+    .advisor-card.good .advisor-message {
+        border-color: rgba(54, 201, 143, 0.3);
+        background: rgba(54, 201, 143, 0.08);
+    }
+
+    .advisor-card.average .advisor-message {
+        border-color: rgba(255, 184, 77, 0.3);
+        background: rgba(255, 184, 77, 0.08);
+    }
+
+    .advisor-card.poor .advisor-message {
+        border-color: rgba(255, 77, 87, 0.3);
+        background: rgba(255, 77, 87, 0.08);
+    }
+
+    @media (max-width: 750px) {
+        .advisor-card {
+        padding: 22px 18px;
+    }
+
+    .advisor-details {
+        grid-template-columns: 1fr;
+    }
+
+    .advisor-heading {
+        font-size: 1.2rem;
+    }
+
+
+    /* FORCE PREMIUM SMART PRICE ADVISOR DESIGN */
+
+    .result-section .advisor-card {
+        position: relative !important;
+        display: block !important;
+        width: calc(100% - 48px) !important;
+        max-width: 1000px !important;
+        margin: 30px auto !important;
+        padding: 28px !important;
+        box-sizing: border-box !important;
+        border: 1px solid rgba(255, 77, 87, 0.5) !important;
+        border-radius: 22px !important;
+        background: linear-gradient(145deg, #171e2b, #0b0f17) !important;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35),
+                0 0 24px rgba(255, 77, 87, 0.10) !important;
+        text-align: left !important;
+    }
+
+    .result-section .advisor-heading {
+        display: flex !important;
+        align-items: center !important;
+        gap: 14px !important;
+        margin: 0 0 22px !important;
+        color: #ffffff !important;
+        font-size: 1.4rem !important;
+        font-weight: 700 !important;
+    }
+
+    .result-section .advisor-heading h3 {
+        margin: 0 !important;
+        color: #ffffff !important;
+        font-size: 1.4rem !important;
+    }
+
+    .result-section .advisor-heading p {
+        margin: 5px 0 0 !important;
+        color: #93a4bd !important;
+        font-size: 0.9rem !important;
+        font-weight: 400 !important;
+    }
+
+    .result-section .advisor-icon {
+        display: grid !important;
+        place-items: center !important;
+        width: 48px !important;
+        height: 48px !important;
+        flex-shrink: 0 !important;
+        border-radius: 14px !important;
+        background: rgba(255, 77, 87, 0.12) !important;
+        border: 1px solid rgba(255, 77, 87, 0.35) !important;
+        font-size: 1.5rem !important;
+    }
+
+    .result-section .advisor-details {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 14px !important;
+    }
+
+    .result-section .advisor-details p {
+        margin: 0 !important;
+        padding: 18px !important;
+        border: 1px solid rgba(255, 255, 255, 0.09) !important;
+        border-radius: 15px !important;
+        background: rgba(255, 255, 255, 0.04) !important;
+        color: #e2e8f0 !important;
+        line-height: 1.7 !important;
+    }
+
+    .result-section .advisor-details strong {
+        display: block !important;
+        margin-bottom: 8px !important;
+        color: #93a4bd !important;
+        font-size: 0.85rem !important;
+    }
+
+    .result-section .advisor-percentage {
+        display: inline-block !important;
+        margin-top: 5px !important;
+        font-size: 1.35rem !important;
+        font-weight: 750 !important;
+    }
+
+    .result-section .advisor-percentage.above {
+        color: #ff626b !important;
+    }
+
+    .result-section .advisor-percentage.below {
+        color: #36c98f !important;
+    }   
+
+    .result-section .advisor-percentage.close {
+        color: #ffbd59 !important;
+    }
+
+    .result-section .advisor-message {
+        margin: 20px 0 0 !important;
+        padding: 18px 20px !important;
+        border: 1px solid rgba(255, 77, 87, 0.3) !important;
+        border-radius: 15px !important;
+        background: rgba(255, 77, 87, 0.08) !important;
+        color: #f1f5f9 !important;
+        line-height: 1.8 !important;
+    }
+
+    .result-section .advisor-card.good .advisor-message {
+        border-color: rgba(54, 201, 143, 0.3) !important;
+        background: rgba(54, 201, 143, 0.08) !important;
+    }
+
+    .result-section .advisor-card.average .advisor-message {
+        border-color: rgba(255, 184, 77, 0.3) !important;
+        background: rgba(255, 184, 77, 0.08) !important;
+    }
+
+    @media (max-width: 750px) {
+        .result-section .advisor-details {
+            grid-template-columns: 1fr !important;
+        }
+
+        .result-section .advisor-card {
+            width: 100% !important;
+            padding: 20px !important;
+        }
+    }
+
+
+}
+
+
+/* Center the Smart Price Advisor heading */
+.result-section .advisor-heading {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    text-align: center !important;
+    margin-bottom: 26px !important;
+}
+
+.result-section .advisor-icon {
+    width: 54px !important;
+    height: 54px !important;
+    font-size: 1.8rem !important;
+    border-radius: 16px !important;
+}
+
+.result-section .advisor-title-group {
+    text-align: center !important;
+}
+
+.result-section .advisor-heading h3 {
+    margin: 0 !important;
+}
+
+.result-section .advisor-heading p {
+    margin: 7px 0 0 !important;
+}
+
+
+/* ===== FINAL SMART PRICE ADVISOR LAYOUT ===== */
+
+.result-section .advisor-card {
+    width: 100% !important;
+    max-width: 1000px !important;
+    box-sizing: border-box !important;
+    margin: 30px auto !important;
+    padding: 30px !important;
+    border: 1px solid rgba(255, 77, 87, 0.45) !important;
+    border-radius: 22px !important;
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(255, 65, 80, 0.10),
+            transparent 45%
+        ),
+        linear-gradient(145deg, #151b27, #0b0f17) !important;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25) !important;
+    overflow: hidden !important;
+}
+
+.result-section .advisor-heading {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    margin: 0 0 26px !important;
+    text-align: center !important;
+}
+
+.result-section .advisor-icon {
+    display: grid !important;
+    place-items: center !important;
+    width: 54px !important;
+    height: 54px !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(255, 77, 87, 0.3) !important;
+    background: rgba(255, 77, 87, 0.12) !important;
+    font-size: 1.8rem !important;
+}
+
+.result-section .advisor-title-group {
+    text-align: center !important;
+}
+
+.result-section .advisor-heading h3 {
+    margin: 0 !important;
+    color: #ffffff !important;
+    font-size: 1.5rem !important;
+}
+
+.result-section .advisor-heading p {
+    margin: 7px 0 0 !important;
+    color: #a7b7cf !important;
+    font-size: 0.95rem !important;
+    font-weight: 400 !important;
+}
+
+.result-section .advisor-details {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 14px !important;
+    width: 100% !important;
+}
+
+.result-section .advisor-stat {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    padding: 22px 14px !important;
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+    border-radius: 15px !important;
+    background: rgba(255, 255, 255, 0.045) !important;
+    text-align: center !important;
+    gap: 9px !important;
+}
+
+.result-section .advisor-stat-label {
+    color: #a7b7cf !important;
+    font-size: 0.86rem !important;
+    line-height: 1.5 !important;
+}
+
+.result-section .advisor-stat-value {
+    color: #ffffff !important;
+    font-size: clamp(1rem, 2vw, 1.35rem) !important;
+    font-weight: 750 !important;
+    line-height: 1.4 !important;
+    overflow-wrap: anywhere !important;
+}
+
+.result-section .advisor-stat-value.advisor-estimate {
+    color: #42dfa5 !important;
+}
+
+.result-section .advisor-stat-value.above {
+    color: #ff626b !important;
+}
+
+.result-section .advisor-stat-value.below {
+    color: #42dfa5 !important;
+}
+
+.result-section .advisor-stat-value.close {
+    color: #ffbd59 !important;
+}
+
+.result-section .advisor-stat-note {
+    color: #cbd5e1 !important;
+    font-size: 0.85rem !important;
+    line-height: 1.5 !important;
+}
+
+.result-section .advisor-message {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    margin: 20px 0 0 !important;
+    padding: 20px !important;
+    border: 1px solid rgba(255, 77, 87, 0.28) !important;
+    border-radius: 15px !important;
+    background: rgba(255, 77, 87, 0.075) !important;
+    color: #f1f5f9 !important;
+    text-align: left !important;
+    line-height: 1.7 !important;
+}
+
+.result-section .advisor-message-icon {
+    color: #ff737b !important;
+    font-size: 1.3rem !important;
+}
+
+.result-section .advisor-message strong {
+    color: #ffffff !important;
+}
+
+.result-section .advisor-message p {
+    margin: 5px 0 0 !important;
+    color: #dce4ef !important;
+}
+
+.result-section .advisor-card.good .advisor-message {
+    border-color: rgba(54, 201, 143, 0.3) !important;
+    background: rgba(54, 201, 143, 0.075) !important;
+}
+
+.result-section .advisor-card.average .advisor-message {
+    border-color: rgba(255, 189, 89, 0.3) !important;
+    background: rgba(255, 189, 89, 0.075) !important;
+}
+
+@media (max-width: 700px) {
+    .result-section .advisor-card {
+        padding: 20px 16px !important;
+    }
+
+    .result-section .advisor-details {
+        grid-template-columns: 1fr !important;
+    }
+
+    .result-section .advisor-stat {
+        padding: 18px 12px !important;
+    }
 }

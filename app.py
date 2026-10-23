@@ -110,6 +110,10 @@ def predict():
         "fuelType", ""
     )
 
+    asking_price_text = request.form.get(
+    "askingPrice", ""
+    ).strip()
+
 
     # --------------------------------------
     # Keep entered values
@@ -123,7 +127,8 @@ def predict():
         "kmDriven": km_text,
         "transmission": transmission,
         "owner": owner,
-        "fuelType": fuel_type
+        "fuelType": fuel_type,
+        "askingPrice": asking_price_text
 
     }
 
@@ -163,6 +168,38 @@ def predict():
                 **form_data
             )
 
+        if not asking_price_text:
+
+            return render_template(
+                "index.html",
+                page="seller",
+                error="Please enter the seller's asking price.",
+                **form_data
+            )
+
+        # ----------------------------------
+        # Validate asking price
+        # ----------------------------------
+
+        try:
+            asking_price = float(asking_price_text)
+
+        except ValueError:
+            return render_template(
+                "index.html",
+                page="seller",
+                error="Please enter a valid asking price.",
+                **form_data
+            )
+
+        if not math.isfinite(asking_price) or asking_price <= 0:
+
+            return render_template(
+                "index.html",
+                page="seller",
+                error="Asking price must be greater than zero.",
+                **form_data
+            )
 
         # ----------------------------------
         # Convert numbers
@@ -300,6 +337,50 @@ def predict():
             float(predicted_price)
         )
 
+        # Smart Price Advisor
+        price_difference = asking_price - predicted_price
+
+        if predicted_price > 0:
+            difference_percent = (
+            price_difference / predicted_price
+        ) * 100
+        else:
+            difference_percent = 0
+
+        
+        if predicted_price <= 0:
+            price_advice = (
+                "A reliable price comparison is unavailable. "
+                "Please verify the vehicle details."
+            )
+            price_advice_class = "average"
+
+        elif difference_percent > 5:
+            price_advice = (
+                f"The asking price is {difference_percent:.2f}% "
+                "above the AI estimate. Consider negotiating "
+                "and checking similar listings before deciding."
+            )
+            price_advice_class = "poor"
+
+        elif difference_percent < -5:
+            price_advice = (
+                f"The asking price is {abs(difference_percent):.2f}% "
+                "below the AI estimate. Check the vehicle condition, "
+                "documents and service history carefully."
+            )
+            price_advice_class = "good"
+
+        else:
+            price_advice = (
+                f"The asking price is within 5% of the AI estimate "
+                f"({abs(difference_percent):.2f}% difference). "
+                "Compare similar listings and inspect the vehicle "
+                "before deciding."
+            )
+            price_advice_class = "average"
+
+
 
         # ----------------------------------
         # Quality message
@@ -367,9 +448,19 @@ def predict():
 
             fuelType=fuel_type,
 
-            age=age
+            age=age,
 
-        )
+            askingPrice=asking_price,
+            
+            price_difference=round(price_difference),
+            
+            difference_percent=round(difference_percent, 2),
+            
+            price_advice=price_advice,
+            
+            price_advice_class=price_advice_class,
+
+    )
 
 
     except ValueError:

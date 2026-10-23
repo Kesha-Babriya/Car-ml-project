@@ -1119,6 +1119,24 @@
 
             </div>
 
+            <div class="form-group full-width">
+                <label for="askingPrice">Seller's Asking Price (₹)</label>
+
+                <input
+                    type="number"
+                    id="askingPrice"
+                    name="askingPrice"
+                    min="1"
+                    step="any"
+                    placeholder="e.g. 450000"
+                    value="{{ askingPrice|default('') }}"
+                    required
+                >
+
+                <small>
+                    Enter the price the seller is asking for the car.
+                </small>
+            </div>
 
             <button
                 type="submit"
@@ -1259,6 +1277,77 @@
         </div>
 
     </div>
+ 
+    
+<div class="advisor-card {{ price_advice_class }}">
+
+    <!-- Centered heading -->
+    <div class="advisor-heading">
+        <span class="advisor-icon">💡</span>
+
+        <div class="advisor-title-group">
+            <h3>Smart Price Advisor</h3>
+            <p>AI-powered asking-price comparison</p>
+        </div>
+    </div>
+
+    <!-- Price comparison details -->
+    <div class="advisor-details">
+
+        <div class="advisor-stat">
+            <span class="advisor-stat-label">Seller's Asking Price</span>
+            <strong class="advisor-stat-value">
+                ₹{{ "{:,.0f}".format(askingPrice) }}
+            </strong>
+        </div>
+
+        <div class="advisor-stat">
+            <span class="advisor-stat-label">AI Estimated Price</span>
+            <strong class="advisor-stat-value advisor-estimate">
+                ₹{{ "{:,.0f}".format(price) }}
+            </strong>
+        </div>
+
+        <div class="advisor-stat">
+            <span class="advisor-stat-label">Difference from Estimate</span>
+
+            <strong class="advisor-stat-value
+                {% if difference_percent > 5 %}
+                    above
+                {% elif difference_percent < -5 %}
+                    below
+                {% else %}
+                    close
+                {% endif %}">
+
+                {% if difference_percent > 0 %}+{% endif %}{{ "{:.2f}".format(difference_percent) }}%
+
+            </strong>
+
+            <span class="advisor-stat-note">
+                {% if price_difference > 0 %}
+                    ₹{{ "{:,.0f}".format(price_difference) }} above estimate
+                {% elif price_difference < 0 %}
+                    ₹{{ "{:,.0f}".format(-price_difference) }} below estimate
+                {% else %}
+                    Equal to estimate
+                {% endif %}
+            </span>
+        </div>
+
+    </div>
+
+    <!-- Recommendation inside the same card -->
+    <div class="advisor-message">
+        <span class="advisor-message-icon">✦</span>
+
+        <div>
+            <strong>Our Recommendation</strong>
+            <p>{{ price_advice }}</p>
+        </div>
+    </div>
+
+</div>
 
 
     <p class="disclaimer">
