@@ -20,6 +20,44 @@ regression_model = joblib.load(
 
 
 # ==========================================
+# Load and cache Brand & Model mapping from CSV
+# ==========================================
+
+def load_brand_models_mapping():
+    try:
+        df = pd.read_csv("used_cars_cleaned_final.csv")
+        mapping = {}
+        for brand_name, group in df.groupby("Brand"):
+            if pd.isna(brand_name):
+                continue
+            brand_clean = str(brand_name).strip()
+            if not brand_clean:
+                continue
+            valid_models = sorted(list({
+                str(m).strip()
+                for m in group["model"].dropna()
+                if str(m).strip()
+            }))
+            if valid_models:
+                mapping[brand_clean] = valid_models
+        return mapping
+    except Exception as e:
+        print("Error loading brand models mapping:", e)
+        return {}
+
+BRAND_MODELS = load_brand_models_mapping()
+ALL_BRANDS = sorted(list(BRAND_MODELS.keys()))
+
+
+@app.context_processor
+def inject_brands_and_models():
+    return {
+        "brands": ALL_BRANDS,
+        "brand_models": BRAND_MODELS
+    }
+
+
+# ==========================================
 # Home Page
 # ==========================================
 
@@ -144,7 +182,16 @@ def predict():
             return render_template(
                 "index.html",
                 page="seller",
-                error="Please enter both brand and model.",
+                error="Please select both brand and model.",
+                **form_data
+            )
+
+        if brand not in BRAND_MODELS or model not in BRAND_MODELS.get(brand, []):
+
+            return render_template(
+                "index.html",
+                page="seller",
+                error="Please select a valid brand and model combination.",
                 **form_data
             )
 
@@ -581,6 +628,16 @@ def compare_cars():
                         False,
                         "Please fill all details for both cars."
                     )
+
+            brand_val = str(car.get("brand", "")).strip()
+            model_val = str(car.get("model", "")).strip()
+
+            if brand_val not in BRAND_MODELS or model_val not in BRAND_MODELS.get(brand_val, []):
+
+                return (
+                    False,
+                    f"Please select a valid brand and model combination for {brand_val or 'car'}."
+                )
 
 
             year = int(

@@ -903,6 +903,20 @@ select {
     color: white;
 }
 
+.form-group select:disabled,
+.compare-form-group select:disabled {
+
+    opacity: 0.45;
+
+    cursor: not-allowed;
+
+    border-color: #242c3d;
+
+    background: #0a0e17;
+
+    color: #60728e;
+}
+
 .compare-two-column {
 
     display: grid;

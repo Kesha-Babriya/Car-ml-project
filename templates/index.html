@@ -345,28 +345,32 @@
 
             <div class="compare-form-group">
 
-                <label>Brand</label>
+                <label for="brandA">Brand</label>
 
-                <input
-                    type="text"
+                <select
                     id="brandA"
-                    placeholder="e.g. Hyundai"
                     required
                 >
+                    <option value="">Select Brand</option>
+                    {% for b in brands %}
+                    <option value="{{ b }}">{{ b }}</option>
+                    {% endfor %}
+                </select>
 
             </div>
 
 
             <div class="compare-form-group">
 
-                <label>Model</label>
+                <label for="modelA">Model</label>
 
-                <input
-                    type="text"
+                <select
                     id="modelA"
-                    placeholder="e.g. Grand i10"
                     required
+                    disabled
                 >
+                    <option value="">Select Brand First</option>
+                </select>
 
             </div>
 
@@ -515,28 +519,32 @@
 
             <div class="compare-form-group">
 
-                <label>Brand</label>
+                <label for="brandB">Brand</label>
 
-                <input
-                    type="text"
+                <select
                     id="brandB"
-                    placeholder="e.g. Maruti"
                     required
                 >
+                    <option value="">Select Brand</option>
+                    {% for b in brands %}
+                    <option value="{{ b }}">{{ b }}</option>
+                    {% endfor %}
+                </select>
 
             </div>
 
 
             <div class="compare-form-group">
 
-                <label>Model</label>
+                <label for="modelB">Model</label>
 
-                <input
-                    type="text"
+                <select
                     id="modelB"
-                    placeholder="e.g. Swift"
                     required
+                    disabled
                 >
+                    <option value="">Select Brand First</option>
+                </select>
 
             </div>
 
@@ -925,30 +933,35 @@
 
                 <div class="form-group">
 
-                    <label>Brand</label>
+                    <label for="sellerBrand">Brand</label>
 
-                    <input
-                        type="text"
+                    <select
+                        id="sellerBrand"
                         name="brand"
-                        placeholder="e.g. Hyundai"
-                        value="{{ brand|default('') }}"
                         required
                     >
+                        <option value="">Select Brand</option>
+                        {% for b in brands %}
+                        <option value="{{ b }}" {% if brand == b %}selected{% endif %}>{{ b }}</option>
+                        {% endfor %}
+                    </select>
 
                 </div>
 
 
                 <div class="form-group">
 
-                    <label>Model</label>
+                    <label for="sellerModel">Model</label>
 
-                    <input
-                        type="text"
+                    <select
+                        id="sellerModel"
                         name="model"
-                        placeholder="e.g. Grand i10"
-                        value="{{ model|default('') }}"
+                        data-selected="{{ model|default('') }}"
                         required
+                        disabled
                     >
+                        <option value="">Select Brand First</option>
+                    </select>
 
                 </div>
 
@@ -1474,10 +1487,76 @@
 
 
 <!-- =====================================================
-     JAVASCRIPT
+     DATA & JAVASCRIPT
 ===================================================== -->
 
+<script id="brandModelsData" type="application/json">
+{{ (brand_models or {}) | tojson | safe }}
+</script>
+
 <script>
+
+/* =====================================================
+   BRAND & MODEL DEPENDENT DROPDOWNS
+===================================================== */
+
+const BRAND_MODELS_DATA = JSON.parse(
+    (document.getElementById("brandModelsData") && document.getElementById("brandModelsData").textContent) || "{}"
+);
+
+function setupBrandModelDropdown(brandSelectId, modelSelectId) {
+    const brandSelect = document.getElementById(brandSelectId);
+    const modelSelect = document.getElementById(modelSelectId);
+
+    if (!brandSelect || !modelSelect) return;
+
+    function populateModels(selectedBrand, preselectedValue) {
+        modelSelect.innerHTML = "";
+
+        if (!selectedBrand || !BRAND_MODELS_DATA[selectedBrand]) {
+            const defaultOpt = document.createElement("option");
+            defaultOpt.value = "";
+            defaultOpt.textContent = "Select Brand First";
+            modelSelect.appendChild(defaultOpt);
+            modelSelect.disabled = true;
+            return;
+        }
+
+        const models = BRAND_MODELS_DATA[selectedBrand];
+        const defaultOpt = document.createElement("option");
+        defaultOpt.value = "";
+        defaultOpt.textContent = "Select Model";
+        modelSelect.appendChild(defaultOpt);
+
+        models.forEach(function (modelName) {
+            const opt = document.createElement("option");
+            opt.value = modelName;
+            opt.textContent = modelName;
+            if (preselectedValue && preselectedValue === modelName) {
+                opt.selected = true;
+            }
+            modelSelect.appendChild(opt);
+        });
+
+        modelSelect.disabled = false;
+    }
+
+    brandSelect.addEventListener("change", function () {
+        populateModels(this.value, null);
+    });
+
+    const initialBrand = brandSelect.value;
+    const initialModel = modelSelect.getAttribute("data-selected");
+    if (initialBrand) {
+        populateModels(initialBrand, initialModel);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    setupBrandModelDropdown("sellerBrand", "sellerModel");
+    setupBrandModelDropdown("brandA", "modelA");
+    setupBrandModelDropdown("brandB", "modelB");
+});
 
 function showLoading() {
 
