@@ -19,24 +19,34 @@
 
 <header class="header">
 
-    <div class="logo-section">
-
-        <div class="logo-icon">🚗</div>
-
-        <div>
-            <div class="logo-title">UsedCar AI</div>
-            <div class="logo-subtitle">Intelligence System</div>
+    <a href="/" class="logo-link">
+        <div class="logo-section">
+            <div class="logo-icon">🚗</div>
+            <div>
+                <div class="logo-title">UsedCar AI</div>
+                <div class="logo-subtitle">Intelligence System</div>
+            </div>
         </div>
-
-    </div>
-
-    {% if page != "home" %}
-
-    <a href="/" class="back-home">
-        ← Home
     </a>
 
-    {% endif %}
+    <nav class="top-nav" aria-label="Main Navigation">
+        <a href="/" class="nav-item {% if page == 'home' %}active{% endif %}">
+            <span class="nav-icon">🏠</span>
+            <span>Home</span>
+        </a>
+        <a href="/buyer" class="nav-item {% if page == 'buyer' %}active{% endif %}">
+            <span class="nav-icon">🔍</span>
+            <span>Buyer Mode</span>
+        </a>
+        <a href="/seller" class="nav-item {% if page == 'seller' %}active{% endif %}">
+            <span class="nav-icon">💰</span>
+            <span>Seller Mode</span>
+        </a>
+        <a href="/compare" class="nav-item {% if page == 'compare' %}active{% endif %}">
+            <span class="nav-icon">⚖️</span>
+            <span>Compare Cars</span>
+        </a>
+    </nav>
 
 </header>
 
@@ -172,7 +182,7 @@
 
     <div class="buyer-feature-grid">
 
-        <!-- AI ANALYSIS -->
+        <!-- AI ANALYSIS & VALUATION -->
 
         <a href="/seller" class="buyer-feature-card">
 
@@ -184,11 +194,11 @@
 
                 <span class="feature-number">01</span>
 
-                <h2>AI Car Analysis</h2>
+                <h2>AI Car Valuation & Advice</h2>
 
                 <p>
-                    Analyze a vehicle using our trained
-                    machine learning models.
+                    Evaluate purchase quality, fair market price,
+                    and compare asking prices with Smart Price Advisor.
                 </p>
 
                 <span class="feature-link">
@@ -200,7 +210,7 @@
         </a>
 
 
-        <!-- COMPARE -->
+        <!-- COMPARE CARS -->
 
         <a href="/compare" class="buyer-feature-card compare-feature">
 
@@ -215,8 +225,8 @@
                 <h2>Compare Cars</h2>
 
                 <p>
-                    Compare two used cars using AI-based
-                    quality and price predictions.
+                    Compare two used cars side-by-side using
+                    AI-based quality and price predictions.
                 </p>
 
                 <span class="feature-link">
@@ -228,7 +238,7 @@
         </a>
 
 
-        <!-- INSPECTION -->
+        <!-- INSPECTION ASSISTANCE -->
 
         <div class="buyer-feature-card disabled-feature">
 
@@ -240,15 +250,15 @@
 
                 <span class="feature-number">03</span>
 
-                <h2>Inspection Assistant</h2>
+                <h2>Inspection Checklist</h2>
 
                 <p>
-                    Check important vehicle factors
-                    before buying a used car.
+                    Step-by-step physical, mechanical, and
+                    documentation verification before purchasing.
                 </p>
 
                 <span class="coming-soon">
-                    Coming Soon
+                    ✦ Coming Soon
                 </span>
 
             </div>
@@ -268,15 +278,15 @@
 
                 <span class="feature-number">04</span>
 
-                <h2>AI Car Assistant</h2>
+                <h2>AI Buying Assistant</h2>
 
                 <p>
-                    Get helpful guidance for your
-                    used-car buying decision.
+                    Personalized buyer advice, negotiation
+                    tips, and budget-to-car recommendations.
                 </p>
 
                 <span class="coming-soon">
-                    Coming Soon
+                    ✦ Coming Soon
                 </span>
 
             </div>
@@ -848,8 +858,45 @@
 
 </section>
 
+<!-- SELLER FEATURES OVERVIEW (COMPACT) -->
+<div class="seller-feature-overview">
 
-<div class="main-container">
+    <!-- CARD 1: ACTIVE TOOL (AI VALUATION & SMART PRICE ADVISOR) -->
+    <a href="#valuationFormSection" class="seller-card-compact active-seller-card" onclick="scrollToValuation(event)">
+        <div class="seller-card-header">
+            <span class="seller-card-icon">🤖</span>
+            <span class="seller-card-status active-badge">● Active Tool</span>
+        </div>
+        <h3>AI Valuation & Price Advisor</h3>
+        <p>Estimate fair market value, vehicle quality, and evaluate your asking price with AI.</p>
+        <span class="seller-card-action">Use Valuation Form ↓</span>
+    </a>
+
+    <!-- CARD 2: FUTURE LISTING ASSISTANCE -->
+    <div class="seller-card-compact disabled-seller-card">
+        <div class="seller-card-header">
+            <span class="seller-card-icon">📋</span>
+            <span class="seller-card-status coming-soon-badge">✦ Coming Soon</span>
+        </div>
+        <h3>Smart Listing Assistant</h3>
+        <p>Generate high-converting car descriptions and highlight key selling points.</p>
+        <span class="seller-card-note">In Development</span>
+    </div>
+
+    <!-- CARD 3: FUTURE PRICING INSIGHTS -->
+    <div class="seller-card-compact disabled-seller-card">
+        <div class="seller-card-header">
+            <span class="seller-card-icon">📈</span>
+            <span class="seller-card-status coming-soon-badge">✦ Coming Soon</span>
+        </div>
+        <h3>Market Resale Guide</h3>
+        <p>Resale demand trends and negotiation strategies to sell faster at the best price.</p>
+        <span class="seller-card-note">In Development</span>
+    </div>
+
+</div>
+
+<div class="main-container" id="valuationFormSection">
 
     <!-- LEFT PANEL -->
 
@@ -1557,6 +1604,14 @@ document.addEventListener("DOMContentLoaded", function () {
     setupBrandModelDropdown("brandA", "modelA");
     setupBrandModelDropdown("brandB", "modelB");
 });
+
+function scrollToValuation(event) {
+    if (event) event.preventDefault();
+    const formSec = document.getElementById("valuationFormSection");
+    if (formSec) {
+        formSec.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+}
 
 function showLoading() {
 

@@ -134,6 +134,51 @@ body {
     background: rgba(255,80,80,0.08);
 }
 
+.logo-link {
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+}
+
+.top-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.nav-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 14px;
+    border-radius: 9px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(16, 23, 34, 0.75);
+    transition: all 0.22s ease;
+}
+
+.nav-item:hover {
+    color: #ffffff;
+    border-color: #ff5d5d;
+    background: rgba(255, 93, 93, 0.09);
+}
+
+.nav-item.active {
+    color: #ffffff;
+    border-color: #ff5d5d;
+    background: linear-gradient(135deg, rgba(255, 77, 90, 0.2), rgba(255, 116, 64, 0.12));
+    box-shadow: 0 0 10px rgba(255, 93, 93, 0.25);
+}
+
+.nav-icon {
+    font-size: 14px;
+}
+
 
 /* =====================================================
    COMMON
@@ -1528,6 +1573,125 @@ select {
 
 
 /* =====================================================
+   SELLER FEATURES OVERVIEW (COMPACT)
+===================================================== */
+
+.seller-feature-overview {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto 35px auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.seller-card-compact {
+    background: #0f1622;
+    border: 1px solid #1f2a3c;
+    border-radius: 14px;
+    padding: 22px 20px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.25s ease;
+}
+
+.active-seller-card {
+    border-color: rgba(255, 93, 93, 0.38);
+    background: linear-gradient(180deg, #131d2e 0%, #0c121b 100%);
+    cursor: pointer;
+}
+
+.active-seller-card:hover {
+    border-color: #ff5d5d;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(255, 93, 93, 0.12);
+}
+
+.disabled-seller-card {
+    opacity: 0.72;
+    background: #0b1018;
+    border-style: dashed;
+    cursor: default;
+}
+
+.seller-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.seller-card-icon {
+    font-size: 24px;
+}
+
+.active-badge {
+    font-size: 11px;
+    font-weight: 600;
+    color: #4ade80;
+    background: rgba(74, 222, 128, 0.12);
+    border: 1px solid rgba(74, 222, 128, 0.28);
+    padding: 3px 9px;
+    border-radius: 20px;
+}
+
+.coming-soon-badge {
+    font-size: 11px;
+    font-weight: 600;
+    color: #f59e0b;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.28);
+    padding: 3px 9px;
+    border-radius: 20px;
+}
+
+.seller-card-compact h3 {
+    font-size: 17px;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0 0 8px 0;
+}
+
+.seller-card-compact p {
+    font-size: 13px;
+    color: #8ea0bb;
+    line-height: 1.5;
+    margin: 0 0 16px 0;
+    flex-grow: 1;
+}
+
+.seller-card-action {
+    font-size: 13px;
+    font-weight: 600;
+    color: #ff5d5d;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: 0.2s;
+}
+
+.active-seller-card:hover .seller-card-action {
+    color: #ff7440;
+    transform: translateY(2px);
+}
+
+.seller-card-note {
+    font-size: 12px;
+    color: #64748b;
+    font-style: italic;
+}
+
+@media (max-width: 900px) {
+    .seller-feature-overview {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
+
+/* =====================================================
    SELLER FORM
 ===================================================== */
 
@@ -2205,7 +2369,44 @@ select {
 
         min-height: auto;
 
-        padding: 20px;
+        padding: 16px 20px;
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 14px;
+    }
+
+    .top-nav {
+
+        display: flex;
+
+        overflow-x: auto;
+
+        -webkit-overflow-scrolling: touch;
+
+        scrollbar-width: none;
+
+        gap: 8px;
+
+        padding-bottom: 2px;
+
+        width: 100%;
+    }
+
+    .top-nav::-webkit-scrollbar {
+
+        display: none;
+    }
+
+    .nav-item {
+
+        flex-shrink: 0;
+
+        font-size: 13px;
+
+        padding: 7px 11px;
     }
 
     .back-home {
