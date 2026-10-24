@@ -34,7 +34,7 @@
             <span class="nav-icon">🏠</span>
             <span>Home</span>
         </a>
-        <a href="/buyer" class="nav-item {% if page == 'buyer' %}active{% endif %}">
+        <a href="/buyer" class="nav-item {% if page == 'buyer' or page == 'inspection' %}active{% endif %}">
             <span class="nav-icon">🔍</span>
             <span>Buyer Mode</span>
         </a>
@@ -240,7 +240,7 @@
 
         <!-- INSPECTION ASSISTANCE -->
 
-        <div class="buyer-feature-card disabled-feature">
+        <a href="/inspection" class="buyer-feature-card">
 
             <div class="feature-big-icon">
                 🛡️
@@ -257,13 +257,13 @@
                     documentation verification before purchasing.
                 </p>
 
-                <span class="coming-soon">
-                    ✦ Coming Soon
+                <span class="feature-link">
+                    Start Inspection →
                 </span>
 
             </div>
 
-        </div>
+        </a>
 
 
         <!-- AI ASSISTANT -->
@@ -302,6 +302,484 @@
 
 </section>
 
+
+<!-- =====================================================
+     INSPECTION PAGE
+===================================================== -->
+
+{% elif page == "inspection" %}
+
+<section class="inspection-page">
+
+    <div class="inspection-hero">
+
+        <div class="inspection-icon">
+            🛡️
+        </div>
+
+        <div class="mode-badge buyer-badge">
+            🔍 BUYER SAFETY ASSISTANT
+        </div>
+
+        <h1>
+            Used-Car <span>Inspection Checklist</span>
+        </h1>
+
+        <p>
+            Review essential mechanical, documentation, and test-drive checkpoints
+            before buying to identify hidden risks and negotiate with confidence.
+        </p>
+
+    </div>
+
+    <!-- QUICK PROGRESS BAR -->
+    <div class="inspection-progress-container">
+        <div class="progress-info">
+            <span class="progress-title">Checklist Progress:</span>
+            <span class="progress-counts" id="progressCounts">0 of 15 completed</span>
+        </div>
+        <div class="progress-track">
+            <div class="progress-bar-fill" id="progressBarFill" style="width: 0%;"></div>
+        </div>
+    </div>
+
+    <div class="inspection-layout">
+
+        <!-- LEFT: CHECKLIST CATEGORIES -->
+        <div class="checklist-column">
+
+            <!-- CATEGORY 1: MECHANICAL -->
+            <div class="checklist-category-card">
+                <div class="category-header">
+                    <div class="category-badge">CATEGORY 01</div>
+                    <h2>🔧 Mechanical & Exterior Checks</h2>
+                    <p>Inspect under the bonnet, exterior bodywork, and chassis condition.</p>
+                </div>
+
+                <div class="check-item" data-id="mech_engine" data-title="Engine & Oil Condition" data-category="Mechanical" data-critical="true">
+                    <div class="check-info">
+                        <div class="check-title-row">
+                            <h3>Engine Condition & Fluid Leaks</h3>
+                            <span class="critical-tag">⚠️ Critical Check</span>
+                        </div>
+                        <p>Check for abnormal exhaust smoke (blue, black, or thick white), engine knocking, oil sludge beneath oil filler cap, or fresh fluid leaks.</p>
+                    </div>
+                    <div class="check-options" role="radiogroup">
+                        <label class="check-option pass">
+                            <input type="radio" name="mech_engine" value="pass" onchange="updateInspection()">
+                            <span class="option-pill">✅ Pass</span>
+                        </label>
+                        <label class="check-option issue">
+                            <input type="radio" name="mech_engine" value="issue" onchange="updateInspection()">
+                            <span class="option-pill">⚠️ Issue</span>
+                        </label>
+                        <label class="check-option unchecked active">
+                            <input type="radio" name="mech_engine" value="unchecked" checked onchange="updateInspection()">
+                            <span class="option-pill">❓ Not Checked</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="check-item" data-id="mech_brakes" data-title="Braking System" data-category="Mechanical">
+                    <div class="check-info">
+                        <h3>Braking System & Fluid</h3>
+                        <p>Check brake pad thickness, ensure rotor discs are smooth without deep ridges, and confirm brake fluid reservoir is between Min and Max.</p>
+                    </div>
+                    <div class="check-options" role="radiogroup">
+                        <label class="check-option pass">
+                            <input type="radio" name="mech_brakes" value="pass" onchange="updateInspection()">
+                            <span class="option-pill">✅ Pass</span>
+                        </label>
+                        <label class="check-option issue">
+                            <input type="radio" name="mech_brakes" value="issue" onchange="updateInspection()">
+                            <span class="option-pill">⚠️ Issue</span>
+                        </label>
+                        <label class="check-option unchecked active">
+                            <input type="radio" name="mech_brakes" value="unchecked" checked onchange="updateInspection()">
+                            <span class="option-pill">❓ Not Checked</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="check-item" data-id="mech_tyres" data-title="Tyres & Tread Depth" data-category="Mechanical">
+                    <div class="check-info">
+                        <h3>Tyres & Tread Depth</h3>
+                        <p>Ensure tyres have even tread (at least 2.5–3 mm remaining), no sidewall cracks or bulges, and verify a usable spare tyre and jack are present.</p>
+                    </div>
+                    <div class="check-options" role="radiogroup">
+                        <label class="check-option pass">
+                            <input type="radio" name="mech_tyres" value="pass" onchange="updateInspection()">
+                            <span class="option-pill">✅ Pass</span>
+                        </label>
+                        <label class="check-option issue">
+                            <input type="radio" name="mech_tyres" value="issue" onchange="updateInspection()">
+                            <span class="option-pill">⚠️ Issue</span>
+                        </label>
+                        <label class="check-option unchecked active">
+                            <input type="radio" name="mech_tyres" value="unchecked" checked onchange="updateInspection()">
+                            <span class="option-pill">❓ Not Checked</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="check-item" data-id="mech_electricals" data-title="Lights & Electricals" data-category="Mechanical">
+                    <div class="check-info">
+                        <h3>Lights & In-Cabin Electronics</h3>
+                        <p>Test headlights (high/low beam), indicators, brake lights, air conditioning cooling, heater, power windows, and wipers.</p>
+                    </div>
+                    <div class="check-options" role="radiogroup">
+                        <label class="check-option pass">
+                            <input type="radio" name="mech_electricals" value="pass" onchange="updateInspection()">
+                            <span class="option-pill">✅ Pass</span>
+                        </label>
+                        <label class="check-option issue">
+                            <input type="radio" name="mech_electricals" value="issue" onchange="updateInspection()">
+                            <span class="option-pill">⚠️ Issue</span>
+                        </label>
+                        <label class="check-option unchecked active">
+                            <input type="radio" name="mech_electricals" value="unchecked" checked onchange="updateInspection()">
+                            <span class="option-pill">❓ Not Checked</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="check-item" data-id="mech_suspension" data-title="Suspension & Underside" data-category="Mechanical">
+                    <div class="check-info">
+                        <h3>Suspension & Structural Rust</h3>
+                        <p>Push down each car corner to ensure immediate rebound without bouncing; inspect wheel arches, exhaust pipe, and underbody for severe corrosion.</p>
+                    </div>
+                    <div class="check-options" role="radiogroup">
+                        <label class="check-option pass">
+                            <input type="radio" name="mech_suspension" value="pass" onchange="updateInspection()">
+                            <span class="option-pill">✅ Pass</span>
+                        </label>
+                        <label class="check-option issue">
+                            <input type="radio" name="mech_suspension" value="issue" onchange="updateInspection()">
+                            <span class="option-pill">⚠️ Issue</span>
+                        </label>
+                        <label class="check-option unchecked active">
+                            <input type="radio" name="mech_suspension" value="unchecked" checked onchange="updateInspection()">
+                            <span class="option-pill">❓ Not Checked</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CATEGORY 2: DOCUMENTS -->
+            <div class="checklist-category-card">
+                <div class="category-header">
+                    <div class="category-badge">CATEGORY 02</div>
+                    <h2>📄 Documentation & Ownership</h2>
+                    <p>Verify legal vehicle papers, service records, and loan clearances.</p>
+                </div>
+
+                <div class="check-item" data-id="doc_rc" data-title="Registration Certificate (RC)" data-category="Documents" data-critical="true">
+                    <div class="check-info">
+                        <div class="check-title-row">
+                            <h3>Original RC & Chassis Match</h3>
+                            <span class="critical-tag">⚠️ Critical Check</span>
+                        </div>
+                        <p>Verify original physical Registration Certificate (RC); confirm vehicle chassis number (VIN) and engine number match the RC and physical stamps exactly.</p>
+                    </div>
+                    <div class="check-options" role="radiogroup">
+                        <label class="check-option pass">
+                            <input type="radio" name="doc_rc" value="pass" onchange="updateInspection()">
+                            <span class="option-pill">✅ Pass</span>
+                        </label>
+                        <label class="check-option issue">
+                            <input type="radio" name="doc_rc" value="issue" onchange="updateInspection()">
+                            <span class="option-pill">⚠️ Issue</span>
+                        </label>
+                        <label class="check-option unchecked active">
+                            <input type="radio" name="doc_rc" value="unchecked" checked onchange="updateInspection()">
+                            <span class="option-pill">❓ Not Checked</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="check-item" data-id="doc_insurance" data-title="Valid Insurance Policy" data-category="Documents">
+                    <div class="check-info">
+                        <h3>Active Insurance Policy</h3>
+                        <p>Confirm the car has active insurance coverage without long lapses; verify No Claim Bonus (NCB) and check policy details match the current owner.</p>
+                    </div>
+                    <div class="check-options" role="radiogroup">
+                        <label class="check-option pass">
+                            <input type="radio" name="doc_insurance" value="pass" onchange="updateInspection()">
+                            <span class="option-pill">✅ Pass</span>
+                        </label>
+                        <label class="check-option issue">
+                            <input type="radio" name="doc_insurance" value="issue" onchange="updateInspection()">
+                            <span class="option-pill">⚠️ Issue</span>
+                        </label>
+                        <label class="check-option unchecked active">
+                            <input type="radio" name="doc_insurance" value="unchecked" checked onchange="updateInspection()">
+                            <span class="option-pill">❓ Not Checked</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="check-item" data-id="doc_service" data-title="Service History & Odometer" data-category="Documents">
+                    <div class="check-info">
+                        <h3>Service History & Odometer Records</h3>
+                        <p>Review authorized service records, invoices, or stamped maintenance booklet; ensure chronological mileage logs align with the odometer reading.</p>
+                    </div>
+                    <div class="check-options" role="radiogroup">
+                        <label class="check-option pass">
+                            <input type="radio" name="doc_service" value="pass" onchange="updateInspection()">
+                            <span class="option-pill">✅ Pass</span>
+                        </label>
+                        <label class="check-option issue">
+                            <input type="radio" name="doc_service" value="issue" onchange="updateInspection()">
+                            <span class="option-pill">⚠️ Issue</span>
+                        </label>
+                        <label class="check-option unchecked active">
+                            <input type="radio" name="doc_service" value="unchecked" checked onchange="updateInspection()">
+                            <span class="option-pill">❓ Not Checked</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="check-item" data-id="doc_noc" data-title="Loan Clearance / Bank NOC" data-category="Documents">
+                    <div class="check-info">
+                        <h3>Loan Clearance (NOC / Form 35)</h3>
+                        <p>If previously bought on loan, ensure bank NOC and signed Form 35 are provided to clear hypothecation before purchase.</p>
+                    </div>
+                    <div class="check-options" role="radiogroup">
+                        <label class="check-option pass">
+                            <input type="radio" name="doc_noc" value="pass" onchange="updateInspection()">
+                            <span class="option-pill">✅ Pass</span>
+                        </label>
+                        <label class="check-option issue">
+                            <input type="radio" name="doc_noc" value="issue" onchange="updateInspection()">
+                            <span class="option-pill">⚠️ Issue</span>
+                        </label>
+                        <label class="check-option unchecked active">
+                            <input type="radio" name="doc_noc" value="unchecked" checked onchange="updateInspection()">
+                            <span class="option-pill">❓ Not Checked</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="check-item" data-id="doc_puc" data-title="Road Tax & Valid PUC" data-category="Documents">
+                    <div class="check-info">
+                        <h3>Pollution Certificate & Road Tax</h3>
+                        <p>Verify current Pollution Under Control (PUC) certificate is valid and road tax receipts are cleared without unpaid traffic challans.</p>
+                    </div>
+                    <div class="check-options" role="radiogroup">
+                        <label class="check-option pass">
+                            <input type="radio" name="doc_puc" value="pass" onchange="updateInspection()">
+                            <span class="option-pill">✅ Pass</span>
+                        </label>
+                        <label class="check-option issue">
+                            <input type="radio" name="doc_puc" value="issue" onchange="updateInspection()">
+                            <span class="option-pill">⚠️ Issue</span>
+                        </label>
+                        <label class="check-option unchecked active">
+                            <input type="radio" name="doc_puc" value="unchecked" checked onchange="updateInspection()">
+                            <span class="option-pill">❓ Not Checked</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CATEGORY 3: TEST DRIVE -->
+            <div class="checklist-category-card">
+                <div class="category-header">
+                    <div class="category-badge">CATEGORY 03</div>
+                    <h2>🚗 Test Drive & Dynamics</h2>
+                    <p>Observe steering, braking, transmission behavior, and warning lights.</p>
+                </div>
+
+                <div class="check-item" data-id="drive_steering" data-title="Steering Alignment" data-category="Test Drive">
+                    <div class="check-info">
+                        <h3>Steering Alignment & Handling</h3>
+                        <p>On a safe, flat road, test if the car tracks straight without pulling left or right; check for steering wheel vibration or play at 50–70 km/h.</p>
+                    </div>
+                    <div class="check-options" role="radiogroup">
+                        <label class="check-option pass">
+                            <input type="radio" name="drive_steering" value="pass" onchange="updateInspection()">
+                            <span class="option-pill">✅ Pass</span>
+                        </label>
+                        <label class="check-option issue">
+                            <input type="radio" name="drive_steering" value="issue" onchange="updateInspection()">
+                            <span class="option-pill">⚠️ Issue</span>
+                        </label>
+                        <label class="check-option unchecked active">
+                            <input type="radio" name="drive_steering" value="unchecked" checked onchange="updateInspection()">
+                            <span class="option-pill">❓ Not Checked</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="check-item" data-id="drive_braking" data-title="Braking Response" data-category="Test Drive">
+                    <div class="check-info">
+                        <h3>Braking Feel & Stability</h3>
+                        <p>Test moderate and firm braking: pedal should feel firm (not spongy), vehicle must stop straight without shuddering or pulling.</p>
+                    </div>
+                    <div class="check-options" role="radiogroup">
+                        <label class="check-option pass">
+                            <input type="radio" name="drive_braking" value="pass" onchange="updateInspection()">
+                            <span class="option-pill">✅ Pass</span>
+                        </label>
+                        <label class="check-option issue">
+                            <input type="radio" name="drive_braking" value="issue" onchange="updateInspection()">
+                            <span class="option-pill">⚠️ Issue</span>
+                        </label>
+                        <label class="check-option unchecked active">
+                            <input type="radio" name="drive_braking" value="unchecked" checked onchange="updateInspection()">
+                            <span class="option-pill">❓ Not Checked</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="check-item" data-id="drive_gearbox" data-title="Transmission & Clutch" data-category="Test Drive">
+                    <div class="check-info">
+                        <h3>Clutch & Gearbox Operation</h3>
+                        <p>Manual: clutch pedal bites smoothly without slipping under acceleration. Automatic: shifts up and down cleanly without harsh jerking or hesitation.</p>
+                    </div>
+                    <div class="check-options" role="radiogroup">
+                        <label class="check-option pass">
+                            <input type="radio" name="drive_gearbox" value="pass" onchange="updateInspection()">
+                            <span class="option-pill">✅ Pass</span>
+                        </label>
+                        <label class="check-option issue">
+                            <input type="radio" name="drive_gearbox" value="issue" onchange="updateInspection()">
+                            <span class="option-pill">⚠️ Issue</span>
+                        </label>
+                        <label class="check-option unchecked active">
+                            <input type="radio" name="drive_gearbox" value="unchecked" checked onchange="updateInspection()">
+                            <span class="option-pill">❓ Not Checked</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="check-item" data-id="drive_noises" data-title="Unusual Noises & Rattles" data-category="Test Drive">
+                    <div class="check-info">
+                        <h3>Unusual Sounds & Vibrations</h3>
+                        <p>Listen for suspension clunks over bumps, metallic rattles, transmission whining, wheel bearing hums, or screeching belts.</p>
+                    </div>
+                    <div class="check-options" role="radiogroup">
+                        <label class="check-option pass">
+                            <input type="radio" name="drive_noises" value="pass" onchange="updateInspection()">
+                            <span class="option-pill">✅ Pass</span>
+                        </label>
+                        <label class="check-option issue">
+                            <input type="radio" name="drive_noises" value="issue" onchange="updateInspection()">
+                            <span class="option-pill">⚠️ Issue</span>
+                        </label>
+                        <label class="check-option unchecked active">
+                            <input type="radio" name="drive_noises" value="unchecked" checked onchange="updateInspection()">
+                            <span class="option-pill">❓ Not Checked</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="check-item" data-id="drive_dash" data-title="Dashboard Warning Lights" data-category="Test Drive">
+                    <div class="check-info">
+                        <h3>Dashboard Warning Lights</h3>
+                        <p>Turn on ignition: all warning lights should illuminate momentarily. Start the engine: Check Engine, Airbag, ABS, and Battery lights MUST turn off.</p>
+                    </div>
+                    <div class="check-options" role="radiogroup">
+                        <label class="check-option pass">
+                            <input type="radio" name="drive_dash" value="pass" onchange="updateInspection()">
+                            <span class="option-pill">✅ Pass</span>
+                        </label>
+                        <label class="check-option issue">
+                            <input type="radio" name="drive_dash" value="issue" onchange="updateInspection()">
+                            <span class="option-pill">⚠️ Issue</span>
+                        </label>
+                        <label class="check-option unchecked active">
+                            <input type="radio" name="drive_dash" value="unchecked" checked onchange="updateInspection()">
+                            <span class="option-pill">❓ Not Checked</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT: INTERACTIVE SUMMARY & RISK INDICATOR -->
+        <div class="summary-column">
+
+            <div class="inspection-summary-card" id="inspectionSummaryCard">
+
+                <div class="summary-card-header">
+                    <span class="summary-icon">📊</span>
+                    <div>
+                        <h2>Inspection Summary</h2>
+                        <p>Checklist-based preliminary screening</p>
+                    </div>
+                </div>
+
+                <!-- METRICS GRID -->
+                <div class="summary-metrics-grid">
+                    <div class="metric-box metric-pass">
+                        <span class="metric-number" id="countPass">0</span>
+                        <span class="metric-label">✅ Passed</span>
+                    </div>
+                    <div class="metric-box metric-issue">
+                        <span class="metric-number" id="countIssue">0</span>
+                        <span class="metric-label">⚠️ Attention</span>
+                    </div>
+                    <div class="metric-box metric-pending">
+                        <span class="metric-number" id="countPending">15</span>
+                        <span class="metric-label">❓ Unchecked</span>
+                    </div>
+                </div>
+
+                <!-- RISK INDICATOR BOX -->
+                <div class="risk-indicator-box risk-incomplete" id="riskIndicatorBox">
+                    <div class="risk-header">
+                        <span class="risk-label">Checklist Risk Level:</span>
+                        <span class="risk-badge" id="riskBadge">Incomplete</span>
+                    </div>
+                    <h3 id="riskTitle">Inspection In Progress</h3>
+                    <p id="riskDescription">Complete at least 6 checklist items to calculate a preliminary screening summary. Incomplete inspections cannot be evaluated as Low Risk.</p>
+                </div>
+
+                <!-- FLAGGED ITEMS FOR ATTENTION -->
+                <div class="attention-box" id="attentionBox">
+                    <div class="attention-box-header">
+                        <span>⚠️ Items Needing Attention</span>
+                        <span class="attention-count-badge" id="attentionCountBadge">0</span>
+                    </div>
+                    <ul class="attention-list" id="attentionList">
+                        <li class="no-issues-msg">✅ No issues flagged yet. Continue your checklist review.</li>
+                    </ul>
+                </div>
+
+                <!-- TRANSPARENCY NOTICE -->
+                <div class="transparency-notice">
+                    <div class="notice-icon">ℹ️</div>
+                    <div class="notice-text">
+                        <strong>Transparency Notice</strong>
+                        <p>This assistant provides a preliminary checklist screening to guide your in-person review. It is <strong>not</strong> a certified mechanical warranty, legal guarantee, or machine-learning prediction. Always consider hiring a certified mechanic for a professional pre-purchase vehicle inspection.</p>
+                    </div>
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="inspection-actions">
+                    <button type="button" class="btn-print" onclick="printInspection()">
+                        🖨️ Print / Save Summary
+                    </button>
+                    <button type="button" class="btn-reset" onclick="resetInspection()">
+                        🔄 Reset Checklist
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="inspection-footer">
+        <a href="/buyer" class="secondary-button">
+            ← Back to Buyer Dashboard
+        </a>
+    </div>
+
+</section>
 
 <!-- =====================================================
      COMPARE PAGE
@@ -1603,7 +2081,177 @@ document.addEventListener("DOMContentLoaded", function () {
     setupBrandModelDropdown("sellerBrand", "sellerModel");
     setupBrandModelDropdown("brandA", "modelA");
     setupBrandModelDropdown("brandB", "modelB");
+    if (document.querySelector(".inspection-page")) {
+        updateInspection();
+    }
 });
+
+/* =====================================================
+   BUYER INSPECTION ASSISTANT LOGIC
+===================================================== */
+
+function updateInspection() {
+    const checkItems = document.querySelectorAll(".check-item");
+    if (!checkItems.length) return;
+
+    let passCount = 0;
+    let issueCount = 0;
+    let uncheckedCount = 0;
+    let hasCriticalIssue = false;
+    const flaggedItems = [];
+
+    checkItems.forEach(item => {
+        const itemId = item.getAttribute("data-id");
+        const itemTitle = item.getAttribute("data-title");
+        const itemCategory = item.getAttribute("data-category");
+        const isCritical = item.getAttribute("data-critical") === "true";
+
+        const selectedRadio = document.querySelector(`input[name="${itemId}"]:checked`);
+        const value = selectedRadio ? selectedRadio.value : "unchecked";
+
+        // Update active class on label for styling
+        const labels = item.querySelectorAll(".check-option");
+        labels.forEach(lbl => {
+            const input = lbl.querySelector("input");
+            if (input && input.checked) {
+                lbl.classList.add("active");
+            } else {
+                lbl.classList.remove("active");
+            }
+        });
+
+        if (value === "pass") {
+            passCount++;
+        } else if (value === "issue") {
+            issueCount++;
+            if (isCritical) {
+                hasCriticalIssue = true;
+            }
+            flaggedItems.push({
+                id: itemId,
+                title: itemTitle,
+                category: itemCategory,
+                isCritical: isCritical
+            });
+        } else {
+            uncheckedCount++;
+        }
+    });
+
+    const total = checkItems.length;
+    const completed = passCount + issueCount;
+    const pct = Math.round((completed / total) * 100);
+
+    // Update progress
+    const progressFill = document.getElementById("progressBarFill");
+    const progressCounts = document.getElementById("progressCounts");
+    if (progressFill) progressFill.style.width = pct + "%";
+    if (progressCounts) progressCounts.textContent = `${completed} of ${total} completed (${pct}%)`;
+
+    // Update counts
+    const countPassEl = document.getElementById("countPass");
+    const countIssueEl = document.getElementById("countIssue");
+    const countPendingEl = document.getElementById("countPending");
+    if (countPassEl) countPassEl.textContent = passCount;
+    if (countIssueEl) countIssueEl.textContent = issueCount;
+    if (countPendingEl) countPendingEl.textContent = uncheckedCount;
+
+    // Update Risk Indicator Box
+    const riskBox = document.getElementById("riskIndicatorBox");
+    const riskBadge = document.getElementById("riskBadge");
+    const riskTitle = document.getElementById("riskTitle");
+    const riskDesc = document.getElementById("riskDescription");
+
+    if (riskBox && riskBadge && riskTitle && riskDesc) {
+        riskBox.className = "risk-indicator-box"; // reset classes
+
+        if (hasCriticalIssue) {
+            riskBox.classList.add("risk-high");
+            riskBadge.textContent = "High Caution";
+            riskTitle.textContent = "🔴 High Caution (Critical Issue Flagged)";
+            riskDesc.textContent = "A confirmed critical issue was detected (Engine condition or Registration/RC mismatch). High caution is advised regardless of checklist completion — investigate this item before proceeding.";
+        } else if (issueCount >= 3) {
+            riskBox.classList.add("risk-high");
+            riskBadge.textContent = "High Caution";
+            riskTitle.textContent = `🔴 High Caution (${issueCount} Issues Detected)`;
+            riskDesc.textContent = `Multiple defects (${issueCount} items) were flagged. The vehicle requires substantial repair or verification work. Obtain professional repair estimates and mechanic verification.`;
+        } else if (completed < 6) {
+            if (issueCount > 0) {
+                riskBox.classList.add("risk-incomplete-issue");
+                riskBadge.textContent = "Incomplete (Issues Found)";
+                riskTitle.textContent = `⚠️ Inspection In Progress (${completed}/15 Checked)`;
+                riskDesc.textContent = `You have already identified ${issueCount} item(s) needing attention. Complete the remaining checks to reach an accurate overall screening evaluation.`;
+            } else {
+                riskBox.classList.add("risk-incomplete");
+                riskBadge.textContent = "Incomplete";
+                riskTitle.textContent = `⚪ Inspection In Progress (${completed}/15 Checked)`;
+                riskDesc.textContent = "Please complete at least 6 checklist items to calculate a preliminary screening summary. Incomplete inspections cannot be evaluated as Low Risk.";
+            }
+        } else if (issueCount >= 1) {
+            riskBox.classList.add("risk-moderate");
+            riskBadge.textContent = "Moderate Attention";
+            riskTitle.textContent = `🟡 Moderate Attention (${issueCount} Items Flagged)`;
+            riskDesc.textContent = `${issueCount} item(s) need attention. These may represent negotiation leverage for price discounts or require specific verification with a mechanic.`;
+        } else if (completed >= 10 && issueCount === 0) {
+            riskBox.classList.add("risk-low");
+            riskBadge.textContent = "Low Risk";
+            riskTitle.textContent = "🟢 Low Risk (Good Preliminary Screening)";
+            riskDesc.textContent = `All ${passCount} reviewed items passed preliminary inspection without flagged defects. The vehicle shows favorable visual and documentation condition.`;
+        } else {
+            // completed 6-9 with 0 issues
+            riskBox.classList.add("risk-ontrack");
+            riskBadge.textContent = "Favorable So Far";
+            riskTitle.textContent = `🟢 Favorable (${completed}/15 Checked)`;
+            riskDesc.textContent = `${passCount} items have passed with no issues detected so far. Continue remaining ${uncheckedCount} checks to confirm low risk status.`;
+        }
+    }
+
+    // Update Flagged Items List
+    const attentionList = document.getElementById("attentionList");
+    const attentionCountBadge = document.getElementById("attentionCountBadge");
+    if (attentionCountBadge) attentionCountBadge.textContent = issueCount;
+
+    if (attentionList) {
+        if (flaggedItems.length === 0) {
+            attentionList.innerHTML = '<li class="no-issues-msg">✅ No issues flagged yet. Continue your checklist review.</li>';
+        } else {
+            let html = "";
+            flaggedItems.forEach(item => {
+                const critBadge = item.isCritical ? '<span class="item-crit-tag">CRITICAL</span>' : '';
+                html += `
+                    <li class="attention-item ${item.isCritical ? 'critical-attention' : ''}">
+                        <div class="attention-item-top">
+                            <span class="attention-category">${item.category}</span>
+                            ${critBadge}
+                        </div>
+                        <strong>${item.title}</strong>
+                    </li>
+                `;
+            });
+            attentionList.innerHTML = html;
+        }
+    }
+}
+
+function resetInspection() {
+    const radios = document.querySelectorAll('.check-item input[type="radio"]');
+    radios.forEach(radio => {
+        if (radio.value === "unchecked") {
+            radio.checked = true;
+        } else {
+            radio.checked = false;
+        }
+    });
+    updateInspection();
+    const progressEl = document.querySelector(".inspection-progress-container");
+    if (progressEl) {
+        progressEl.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+}
+
+function printInspection() {
+    window.print();
+}
 
 function scrollToValuation(event) {
     if (event) event.preventDefault();

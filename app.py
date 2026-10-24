@@ -84,6 +84,19 @@ def buyer():
 
 
 # ==========================================
+# Buyer Inspection Assistant
+# ==========================================
+
+@app.route("/inspection")
+def inspection():
+
+    return render_template(
+        "index.html",
+        page="inspection"
+    )
+
+
+# ==========================================
 # Compare Page
 # ==========================================
 
