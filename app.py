@@ -123,6 +123,30 @@ def seller():
 
 
 # ==========================================
+# Seller Listing Assistant
+# ==========================================
+
+@app.route("/listing")
+def listing():
+
+    return render_template(
+        "index.html",
+        page="listing",
+        brand=request.args.get("brand", "").strip(),
+        model=request.args.get("model", "").strip(),
+        year=request.args.get("year", "").strip(),
+        kmDriven=request.args.get("kmDriven", "").strip(),
+        transmission=request.args.get("transmission", "").strip(),
+        owner=request.args.get("owner", "").strip(),
+        fuelType=request.args.get("fuelType", "").strip(),
+        askingPrice=request.args.get("askingPrice", "").strip(),
+        predicted_price=request.args.get("price", "").strip(),
+        price_advice=request.args.get("price_advice", "").strip(),
+        quality=request.args.get("quality", "").strip(),
+    )
+
+
+# ==========================================
 # Single Car Prediction
 # ==========================================
 

@@ -38,7 +38,7 @@
             <span class="nav-icon">🔍</span>
             <span>Buyer Mode</span>
         </a>
-        <a href="/seller" class="nav-item {% if page == 'seller' %}active{% endif %}">
+        <a href="/seller" class="nav-item {% if page == 'seller' or page == 'listing' %}active{% endif %}">
             <span class="nav-icon">💰</span>
             <span>Seller Mode</span>
         </a>
@@ -1350,16 +1350,16 @@
         <span class="seller-card-action">Use Valuation Form ↓</span>
     </a>
 
-    <!-- CARD 2: FUTURE LISTING ASSISTANCE -->
-    <div class="seller-card-compact disabled-seller-card">
+    <!-- CARD 2: ACTIVE LISTING ASSISTANT -->
+    <a href="/listing" class="seller-card-compact active-seller-card">
         <div class="seller-card-header">
             <span class="seller-card-icon">📋</span>
-            <span class="seller-card-status coming-soon-badge">✦ Coming Soon</span>
+            <span class="seller-card-status active-badge">● Active Tool</span>
         </div>
         <h3>Smart Listing Assistant</h3>
-        <p>Generate high-converting car descriptions and highlight key selling points.</p>
-        <span class="seller-card-note">In Development</span>
-    </div>
+        <p>Generate a professional classified title, factual description, and seller checklist.</p>
+        <span class="seller-card-action">Create Listing →</span>
+    </a>
 
     <!-- CARD 3: FUTURE PRICING INSIGHTS -->
     <div class="seller-card-compact disabled-seller-card">
@@ -1887,6 +1887,12 @@
 
 </div>
 
+    <!-- GENERATE READY-TO-POST LISTING BUTTON -->
+    <div class="valuation-listing-action">
+        <a href="/listing?brand={{ brand|urlencode }}&model={{ model|urlencode }}&year={{ year }}&kmDriven={{ kmDriven }}&transmission={{ transmission|urlencode }}&owner={{ owner|urlencode }}&fuelType={{ fuelType|urlencode }}&askingPrice={{ askingPrice }}&price={{ price }}&price_advice={{ price_advice|urlencode }}&quality={{ prediction|urlencode }}" class="listing-generate-btn">
+            📋 Generate Ready-to-Post Listing from These Details →
+        </a>
+    </div>
 
     <p class="disclaimer">
 
@@ -1905,7 +1911,6 @@
 </section>
 
 {% endif %}
-
 
 <!-- =====================================================
      TECHNOLOGY
@@ -2008,8 +2013,238 @@
 </footer>
 
 
-{% endif %}
+<!-- =====================================================
+     SELLER LISTING ASSISTANT PAGE
+===================================================== -->
 
+{% elif page == "listing" %}
+
+<section class="listing-page">
+
+    <div class="listing-hero">
+        <div class="listing-icon">📋</div>
+        <div class="mode-badge seller-badge">💰 SELLER LISTING ASSISTANT</div>
+        <h1>Generate Your <span>Car Listing</span></h1>
+        <p>Create a clean, factual, and professional classified listing directly from your verified vehicle specifications.</p>
+    </div>
+
+    <div class="listing-layout">
+
+        <!-- LEFT: INPUT FORM -->
+        <div class="listing-form-column">
+            <div class="listing-form-card">
+                <div class="listing-card-header">
+                    <h2>🚘 Car Specifications</h2>
+                    <p>Enter or update details to generate the listing.</p>
+                </div>
+
+                <form id="listingForm" onsubmit="event.preventDefault(); generateListing();">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="listingBrand">Brand</label>
+                            <select id="listingBrand" name="brand" required>
+                                <option value="">Select Brand</option>
+                                {% for b in brands %}
+                                <option value="{{ b }}" {% if brand == b %}selected{% endif %}>{{ b }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="listingModel">Model</label>
+                            <select id="listingModel" name="model" data-selected="{{ model|default('') }}" required disabled>
+                                <option value="">Select Brand First</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="listingYear">Manufacturing Year</label>
+                            <input type="number" id="listingYear" name="year" min="1980" max="2024" placeholder="e.g. 2019" value="{{ year|default('') }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="listingKm">Kilometers Driven</label>
+                            <input type="number" id="listingKm" name="kmDriven" min="1" step="1" placeholder="e.g. 45000" value="{{ kmDriven|default('') }}" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="listingTransmission">Transmission</label>
+                            <select id="listingTransmission" name="transmission" required>
+                                <option value="">Select Transmission</option>
+                                <option value="Manual" {% if transmission == 'Manual' %}selected{% endif %}>Manual</option>
+                                <option value="Automatic" {% if transmission == 'Automatic' %}selected{% endif %}>Automatic</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="listingOwner">Ownership</label>
+                            <select id="listingOwner" name="owner" required>
+                                <option value="">Select Owner</option>
+                                <option value="First Owner" {% if owner == 'First Owner' %}selected{% endif %}>First Owner</option>
+                                <option value="Second Owner" {% if owner == 'Second Owner' %}selected{% endif %}>Second Owner</option>
+                                <option value="Third Owner" {% if owner == 'Third Owner' %}selected{% endif %}>Third Owner</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="listingFuel">Fuel Type</label>
+                            <select id="listingFuel" name="fuelType" required>
+                                <option value="">Select Fuel Type</option>
+                                <option value="Petrol" {% if fuelType == 'Petrol' %}selected{% endif %}>Petrol</option>
+                                <option value="Diesel" {% if fuelType == 'Diesel' %}selected{% endif %}>Diesel</option>
+                                <option value="CNG" {% if fuelType == 'CNG' %}selected{% endif %}>CNG</option>
+                                <option value="LPG" {% if fuelType == 'LPG' %}selected{% endif %}>LPG</option>
+                                <option value="Electric" {% if fuelType == 'Electric' %}selected{% endif %}>Electric</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="listingPrice">Asking Price (₹)</label>
+                            <input type="number" id="listingPrice" name="askingPrice" min="1" step="any" placeholder="e.g. 650000" value="{{ askingPrice|default('') }}" required>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="hiddenPredictedPrice" value="{{ predicted_price|default('') }}">
+                    <input type="hidden" id="hiddenPriceAdvice" value="{{ price_advice|default('') }}">
+                    <input type="hidden" id="hiddenQuality" value="{{ quality|default('') }}">
+
+                    <button type="submit" class="predict-button" id="btnGenerateListing">
+                        <span>✨ Generate Ready-to-Post Listing</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- TRANSPARENCY NOTICE (RULE 6) -->
+            <div class="transparency-notice" style="margin-top: 20px;">
+                <div class="notice-icon">ℹ️</div>
+                <div class="notice-text">
+                    <strong>Rule-Based Listing Assistant:</strong>
+                    <p>This tool formats your entered specifications into a standardized, professional listing using structured text templates. It is <strong>not</strong> a generative AI model (LLM) and does <strong>not</strong> produce new machine-learning predictions or invent unverified vehicle history.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: GENERATED LISTING OUTPUT -->
+        <div class="listing-output-column">
+
+            <div class="listing-output-card" id="listingOutputCard">
+
+                <div class="output-header">
+                    <span class="output-icon">📝</span>
+                    <div>
+                        <h2>Generated Listing Preview</h2>
+                        <p>Factual, neutral, and ready to publish</p>
+                    </div>
+                </div>
+
+                <!-- SECTION 1: TITLES -->
+                <div class="output-section">
+                    <div class="output-section-header">
+                        <label>📌 Suggested Listing Title</label>
+                        <button type="button" class="btn-copy-sm" onclick="copyText('displayTitle', this)">Copy Title</button>
+                    </div>
+                    <div class="output-box title-box" id="displayTitle">Fill in the vehicle specifications to generate a listing title.</div>
+                </div>
+
+                <!-- SECTION 2: DESCRIPTION -->
+                <div class="output-section">
+                    <div class="output-section-header">
+                        <label>📄 Professional Listing Description</label>
+                        <button type="button" class="btn-copy-sm" onclick="copyText('displayDescription', this)">Copy Description</button>
+                    </div>
+                    <pre class="output-box desc-box" id="displayDescription">Fill in the vehicle specifications and click 'Generate Ready-to-Post Listing' to preview your classified description.</pre>
+                </div>
+
+                <!-- SECTION 3: FACTUAL SELLING POINTS -->
+                <div class="output-section">
+                    <label>⭐ Factual Highlights (Based strictly on entered specs)</label>
+                    <ul class="highlights-list" id="displayHighlights">
+                        <li>Factual highlights (usage average, ownership, drivetrain) will appear here.</li>
+                    </ul>
+                </div>
+
+                <!-- SECTION 4: SMART PRICE GUIDANCE (REUSED FROM VALUATION ONLY, NO INVENTED FLOORS) -->
+                <div class="output-section" id="priceGuidanceSection">
+                    <label>💡 Market Price Context (From AI Valuation)</label>
+                    <div class="price-guidance-box" id="priceGuidanceBox">
+                        {% if predicted_price %}
+                        <div class="price-guidance-row">
+                            <span>Your Asking Price:</span>
+                            <strong>₹{{ "{:,.0f}".format(askingPrice|float if askingPrice else 0) }}</strong>
+                        </div>
+                        <div class="price-guidance-row">
+                            <span>AI Estimated Market Value:</span>
+                            <strong style="color: #4ade80;">₹{{ "{:,.0f}".format(predicted_price|float) }}</strong>
+                        </div>
+                        {% if quality %}
+                        <div class="price-guidance-row">
+                            <span>AI Purchase Quality:</span>
+                            <strong>{{ quality }}</strong>
+                        </div>
+                        {% endif %}
+                        {% if price_advice %}
+                        <p class="price-guidance-note"><strong>Advisor Feedback:</strong> {{ price_advice }}</p>
+                        {% endif %}
+                        {% else %}
+                        <p class="price-guidance-empty">
+                            No prior valuation data loaded. You can evaluate market price and negotiation advice using the <a href="/seller" style="color: #ff5d5d;">AI Valuation Tool</a>.
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- SECTION 5: SELLER PAPERWORK & DISCLOSURE CHECKLIST -->
+                <div class="output-section">
+                    <label>🛡️ Seller Preparation & Honest Disclosure Checklist</label>
+                    <div class="seller-checklist-box">
+                        <div class="checklist-group-title">Documents to keep accessible for buyers:</div>
+                        <ul class="seller-doc-checklist">
+                            <li>✓ Original physical Registration Certificate (RC)</li>
+                            <li>✓ Active insurance policy document</li>
+                            <li>✓ Valid Pollution Under Control (PUC) certificate</li>
+                            <li>✓ Form 35 & Bank NOC (if previously financed)</li>
+                            <li>✓ Maintenance invoices / service records (if available)</li>
+                        </ul>
+                        <div class="checklist-group-title" style="margin-top: 10px;">Best practice for transparent sale:</div>
+                        <p class="disclosure-tip">
+                            Disclose known cosmetic scratches, tyre wear, or upcoming servicing needs to serious buyers upfront. Transparent disclosure builds credibility and prevents failed negotiations during test drives.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- ACTION BUTTONS -->
+                <div class="listing-actions">
+                    <button type="button" class="btn-print" onclick="window.print()">
+                        🖨️ Print / Save Listing
+                    </button>
+                    <button type="button" class="btn-copy-all" id="btnCopyAll" onclick="copyFullListing(this)">
+                        📋 Copy Complete Description
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="inspection-footer" style="margin-top: 50px;">
+        <a href="/seller" class="secondary-button">
+            ← Back to Seller Dashboard
+        </a>
+    </div>
+
+</section>
+
+
+
+{% endif %}
 
 <!-- =====================================================
      DATA & JAVASCRIPT
@@ -2083,6 +2318,15 @@ document.addEventListener("DOMContentLoaded", function () {
     setupBrandModelDropdown("brandB", "modelB");
     if (document.querySelector(".inspection-page")) {
         updateInspection();
+    }
+    if (document.querySelector(".listing-page")) {
+        setupBrandModelDropdown("listingBrand", "listingModel");
+        // If inputs are already populated (e.g. from valuation transfer), trigger listing generation
+        const brandVal = document.getElementById("listingBrand").value;
+        const yearVal = document.getElementById("listingYear").value;
+        if (brandVal && yearVal) {
+            generateListing();
+        }
     }
 });
 
@@ -2251,6 +2495,121 @@ function resetInspection() {
 
 function printInspection() {
     window.print();
+}
+
+/* =====================================================
+   SELLER LISTING ASSISTANT LOGIC
+===================================================== */
+
+function generateListing() {
+    const brandEl = document.getElementById("listingBrand");
+    const modelEl = document.getElementById("listingModel");
+    const yearEl = document.getElementById("listingYear");
+    const kmEl = document.getElementById("listingKm");
+    const transEl = document.getElementById("listingTransmission");
+    const ownerEl = document.getElementById("listingOwner");
+    const fuelEl = document.getElementById("listingFuel");
+    const priceEl = document.getElementById("listingPrice");
+
+    if (!brandEl || !modelEl || !yearEl || !kmEl || !transEl || !ownerEl || !fuelEl || !priceEl) return;
+
+    const brand = brandEl.value.trim();
+    const model = modelEl.value.trim();
+    const year = parseInt(yearEl.value);
+    const km = parseFloat(kmEl.value);
+    const transmission = transEl.value;
+    const owner = ownerEl.value;
+    const fuel = fuelEl.value;
+    const askingPrice = parseFloat(priceEl.value);
+
+    if (!brand || !model || !year || !km || !transmission || !owner || !fuel || !askingPrice) {
+        return;
+    }
+
+    const formattedKm = Number(km).toLocaleString("en-IN");
+    const formattedPrice = "₹" + Number(askingPrice).toLocaleString("en-IN");
+
+    // 1. Generate Title
+    const titleText = `${year} ${brand} ${model} (${transmission}, ${fuel}) — ${formattedKm} km — ${owner}`;
+    const displayTitle = document.getElementById("displayTitle");
+    if (displayTitle) displayTitle.textContent = titleText;
+
+    // 2. Factual Highlights (strictly from entered specs, no invented facts)
+    const highlights = [];
+    const age = 2024 - year;
+    if (age > 0) {
+        const kmPerYear = Math.round(km / age);
+        highlights.push(`Calculated Average Usage: ~${kmPerYear.toLocaleString("en-IN")} km/year (based on recorded odometer from ${year} to 2024).`);
+        if (kmPerYear < 10000) {
+            highlights.push(`Low Average Annual Mileage: Less than 10,000 km recorded per year.`);
+        }
+    }
+    highlights.push(`Ownership Record: Listed by ${owner}.`);
+    highlights.push(`Drivetrain: ${transmission} transmission with ${fuel} fuel system.`);
+
+    const displayHighlights = document.getElementById("displayHighlights");
+    if (displayHighlights) {
+        displayHighlights.innerHTML = highlights.map(h => `<li>• ${h}</li>`).join("");
+    }
+
+    // 3. Factual Description (Neutral, zero hallucinations, no claims about condition or history)
+    const descText = 
+`VEHICLE FOR SALE:
+${year} ${brand} ${model}
+
+SPECIFICATIONS:
+• Make & Model: ${brand} ${model}
+• Year of Manufacture: ${year}
+• Kilometers Driven: ${formattedKm} km
+• Transmission: ${transmission}
+• Fuel Type: ${fuel}
+• Ownership: ${owner}
+• Asking Price: ${formattedPrice}
+
+SPECIFICATION OVERVIEW (Supplied by Seller):
+This ${year} ${brand} ${model} has recorded ${formattedKm} km on the odometer. It features a ${transmission} transmission and runs on ${fuel}. Listed by the current ${owner}.
+
+INSPECTION & CONTACT:
+Serious prospective buyers are welcome to schedule an in-person inspection and test drive to verify vehicle condition and paperwork directly.`;
+
+    const displayDescription = document.getElementById("displayDescription");
+    if (displayDescription) displayDescription.textContent = descText;
+
+    // Scroll to preview on mobile
+    if (window.innerWidth < 950) {
+        const previewEl = document.getElementById("listingOutputCard");
+        if (previewEl) previewEl.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+}
+
+function copyText(elementId, btn) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    const text = el.innerText || el.textContent;
+    if (!navigator.clipboard) {
+        alert("Clipboard not supported in this browser context.");
+        return;
+    }
+    navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = "✓ Copied!";
+        setTimeout(() => { btn.innerText = orig; }, 2000);
+    });
+}
+
+function copyFullListing(btn) {
+    const descEl = document.getElementById("displayDescription");
+    if (!descEl) return;
+    const text = descEl.textContent;
+    if (!navigator.clipboard) {
+        alert("Clipboard not supported in this browser context.");
+        return;
+    }
+    navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = "✓ Description Copied!";
+        setTimeout(() => { btn.innerText = orig; }, 2500);
+    });
 }
 
 function scrollToValuation(event) {
