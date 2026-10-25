@@ -602,6 +602,132 @@ def predict():
 
 
 # ==========================================
+# WHAT-IF PRICE SIMULATOR
+# ==========================================
+
+@app.route(
+    "/simulate-price",
+    methods=["POST"]
+)
+def simulate_price():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({
+                "success": False,
+                "error": "No simulation data received."
+            }), 400
+
+        brand = str(data.get("brand", "")).strip()
+        model = str(data.get("model", "")).strip()
+        year_raw = data.get("year")
+        km_raw = data.get("kmDriven")
+        transmission = str(data.get("transmission", "")).strip()
+        owner = str(data.get("owner", "First Owner")).strip()
+        fuel_type = str(data.get("fuelType", "Petrol")).strip()
+        baseline_price_raw = data.get("baselinePrice")
+
+        if not brand or not model:
+            return jsonify({
+                "success": False,
+                "error": "Brand and model are required for simulation."
+            }), 400
+
+        if brand not in BRAND_MODELS or model not in BRAND_MODELS.get(brand, []):
+            return jsonify({
+                "success": False,
+                "error": "Invalid brand and model combination."
+            }), 400
+
+        try:
+            year = int(year_raw)
+        except (ValueError, TypeError):
+            return jsonify({
+                "success": False,
+                "error": "Please provide a valid manufacturing year."
+            }), 400
+
+        if year < 1995 or year > 2024:
+            return jsonify({
+                "success": False,
+                "error": "Manufacturing year must be between 1995 and 2024."
+            }), 400
+
+        try:
+            km_driven = float(km_raw)
+        except (ValueError, TypeError):
+            return jsonify({
+                "success": False,
+                "error": "Please provide valid kilometers driven."
+            }), 400
+
+        if not math.isfinite(km_driven) or km_driven < 1000 or km_driven > 300000:
+            return jsonify({
+                "success": False,
+                "error": "Kilometers driven must be between 1,000 and 300,000 km."
+            }), 400
+
+        if transmission not in ["Manual", "Automatic"]:
+            return jsonify({
+                "success": False,
+                "error": "Transmission must be either Manual or Automatic."
+            }), 400
+
+        try:
+            baseline_price = float(baseline_price_raw)
+        except (ValueError, TypeError):
+            return jsonify({
+                "success": False,
+                "error": "Valid baseline price is required for comparison."
+            }), 400
+
+        if not math.isfinite(baseline_price) or baseline_price <= 0:
+            return jsonify({
+                "success": False,
+                "error": "Baseline price must be greater than zero."
+            }), 400
+
+        # Always recompute Age = 2024 - year
+        age = 2024 - year
+
+        input_data = pd.DataFrame({
+            "Brand": [brand],
+            "model": [model],
+            "Transmission": [transmission],
+            "Owner": [owner],
+            "FuelType": [fuel_type],
+            "Year": [year],
+            "Age": [age],
+            "kmDriven": [km_driven]
+        })
+
+        raw_price = regression_model.predict(input_data)[0]
+        simulated_price = round(max(0, float(raw_price)))
+        baseline_price_round = round(baseline_price)
+        price_diff = simulated_price - baseline_price_round
+        percent_diff = round((price_diff / baseline_price_round) * 100, 2) if baseline_price_round > 0 else 0.0
+
+        return jsonify({
+            "success": True,
+            "simulatedPrice": simulated_price,
+            "baselinePrice": baseline_price_round,
+            "priceDiff": price_diff,
+            "percentDiff": percent_diff,
+            "simulatedYear": year,
+            "simulatedAge": age,
+            "simulatedKm": round(km_driven),
+            "simulatedTransmission": transmission
+        })
+
+    except Exception as e:
+        print("Simulation Error:", e)
+        return jsonify({
+            "success": False,
+            "error": "An error occurred while simulating the price. Please verify your inputs."
+        }), 500
+
+
+# ==========================================
 # COMPARE TWO CARS
 # ==========================================
 

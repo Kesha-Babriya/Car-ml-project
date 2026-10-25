@@ -1882,6 +1882,147 @@
 
 </div>
 
+    <!-- =====================================================
+         FEATURE 4: WHAT-IF PRICE SIMULATOR
+    ===================================================== -->
+    <div class="whatif-simulator-container" id="whatifSimulator"
+         data-baseline-brand="{{ brand }}"
+         data-baseline-model="{{ model }}"
+         data-baseline-year="{{ year }}"
+         data-baseline-km="{{ kmDriven|int }}"
+         data-baseline-transmission="{{ transmission }}"
+         data-baseline-owner="{{ owner }}"
+         data-baseline-fuel="{{ fuelType }}"
+         data-baseline-price="{{ price }}">
+
+        <div class="whatif-header">
+            <div class="whatif-badge">⚡ INTERACTIVE SCENARIOS</div>
+            <h3>What-If Price Simulator</h3>
+            <p>Explore how altering mileage, model year, or transmission shifts this car's estimated market value in real time.</p>
+        </div>
+
+        <!-- Baseline Reference Strip -->
+        <div class="whatif-baseline-strip">
+            <div class="baseline-car-info">
+                <span class="baseline-chip-label">BASELINE CAR</span>
+                <strong>{{ year }} {{ brand }} {{ model }}</strong>
+                <span class="baseline-pill">{{ "{:,.0f}".format(kmDriven) }} km</span>
+                <span class="baseline-pill">{{ transmission }}</span>
+                <span class="baseline-pill">{{ fuelType }}</span>
+            </div>
+            <div class="baseline-price-chip">
+                <span>Baseline Valuation:</span>
+                <strong>₹{{ "{:,.0f}".format(price) }}</strong>
+            </div>
+        </div>
+
+        <!-- Quick Scenario Presets -->
+        <div class="whatif-presets-section">
+            <span class="presets-title">Quick Scenario Presets:</span>
+            <div class="presets-buttons">
+                <button type="button" class="preset-btn" onclick="applyPreset('minus_25k')">-25,000 km</button>
+                <button type="button" class="preset-btn" onclick="applyPreset('plus_30k')">+30,000 km</button>
+                <button type="button" class="preset-btn" onclick="applyPreset('newer_1yr')">1 Year Newer</button>
+                <button type="button" class="preset-btn" onclick="applyPreset('older_1yr')">1 Year Older</button>
+                <button type="button" class="preset-btn" onclick="applyPreset('hold_1yr')">Hold 1 Year (+12k km, 1 yr older)</button>
+                <button type="button" class="preset-btn reset-preset-btn" onclick="applyPreset('reset')">↺ Reset to Baseline</button>
+            </div>
+        </div>
+
+        <!-- Interactive Controls Grid -->
+        <div class="whatif-controls-grid">
+
+            <!-- Control 1: Mileage Slider & Steppers -->
+            <div class="whatif-control-card">
+                <div class="control-header">
+                    <label for="whatifKmSlider">
+                        <span>Kilometers Driven</span>
+                    </label>
+                    <div class="control-live-val" id="whatifKmDisplay">{{ "{:,.0f}".format(kmDriven) }} km</div>
+                </div>
+                <div class="slider-wrapper">
+                    <input type="range" id="whatifKmSlider" min="1000" max="300000" step="5000" value="{{ kmDriven|int }}" oninput="onMileageSliderChange(this.value)">
+                </div>
+                <div class="slider-ticks">
+                    <span>1,000 km</span>
+                    <span>150,000 km</span>
+                    <span>300,000 km</span>
+                </div>
+                <div class="stepper-buttons-row">
+                    <button type="button" class="stepper-sm" onclick="adjustKm(-10000)">-10k km</button>
+                    <button type="button" class="stepper-sm" onclick="adjustKm(-5000)">-5k km</button>
+                    <button type="button" class="stepper-sm" onclick="adjustKm(5000)">+5k km</button>
+                    <button type="button" class="stepper-sm" onclick="adjustKm(10000)">+10k km</button>
+                </div>
+            </div>
+
+            <!-- Control 2: Model Year Stepper -->
+            <div class="whatif-control-card">
+                <div class="control-header">
+                    <label>
+                        <span>Manufacturing Year</span>
+                    </label>
+                    <div class="control-live-val" id="whatifYearDisplay">{{ year }} (Age: {{ 2024 - year|int }})</div>
+                </div>
+                <div class="year-stepper-control">
+                    <button type="button" class="stepper-btn" onclick="adjustYear(-1)">◀ Older</button>
+                    <div class="year-val-pill" id="whatifYearPill">{{ year }}</div>
+                    <button type="button" class="stepper-btn" onclick="adjustYear(1)">Newer ▶</button>
+                </div>
+                <div class="control-note">Range: 1995 to 2024 (Age automatically synchronized)</div>
+            </div>
+
+            <!-- Control 3: Transmission Toggle -->
+            <div class="whatif-control-card">
+                <div class="control-header">
+                    <label>
+                        <span>Transmission</span>
+                    </label>
+                    <div class="control-live-val" id="whatifTransDisplay">{{ transmission }}</div>
+                </div>
+                <div class="segmented-toggle">
+                    <button type="button" class="toggle-opt {% if transmission == 'Manual' %}active{% endif %}" id="optManual" onclick="setTransmission('Manual')">Manual</button>
+                    <button type="button" class="toggle-opt {% if transmission == 'Automatic' %}active{% endif %}" id="optAuto" onclick="setTransmission('Automatic')">Automatic</button>
+                </div>
+                <div class="control-note">Compare pricing between Manual and Automatic gearbox</div>
+            </div>
+
+        </div>
+
+        <!-- Live Impact Comparison Card -->
+        <div class="whatif-impact-card" id="whatifImpactCard">
+            <div class="impact-col">
+                <span class="impact-label">Original Baseline Price</span>
+                <strong class="impact-val baseline">₹{{ "{:,.0f}".format(price) }}</strong>
+                <span class="impact-sub">{{ year }} • {{ "{:,.0f}".format(kmDriven) }} km • {{ transmission }}</span>
+            </div>
+
+            <div class="impact-arrow">➔</div>
+
+            <div class="impact-col">
+                <span class="impact-label">Simulated Price</span>
+                <strong class="impact-val simulated" id="simulatedPriceDisplay">₹{{ "{:,.0f}".format(price) }}</strong>
+                <span class="impact-sub" id="simulatedScenarioSub">{{ year }} • {{ "{:,.0f}".format(kmDriven) }} km • {{ transmission }}</span>
+            </div>
+
+            <div class="impact-col delta-col">
+                <span class="impact-label">Value Difference</span>
+                <div class="delta-badge neutral" id="deltaBadge">
+                    <span id="deltaSign">Equal</span>
+                    <strong id="deltaAbsVal">₹0</strong>
+                    <span id="deltaPctVal">(0.0%)</span>
+                </div>
+                <span class="impact-sub" id="deltaNarrative">Matches baseline specification</span>
+            </div>
+        </div>
+
+        <div class="whatif-status-bar" id="whatifStatus" style="display: none;">
+            <span class="whatif-spinner">🔄</span>
+            <span id="whatifStatusText">Evaluating scenario with Random Forest Regressor...</span>
+        </div>
+
+    </div>
+
     <!-- GENERATE READY-TO-POST LISTING BUTTON (SELLER ONLY) -->
     {% if (mode|default(page)) == "seller" %}
     <div class="valuation-listing-action">
@@ -2325,6 +2466,9 @@ document.addEventListener("DOMContentLoaded", function () {
             generateListing();
         }
     }
+    if (document.getElementById("whatifSimulator")) {
+        initWhatifSimulator();
+    }
 });
 
 /* =====================================================
@@ -2607,6 +2751,199 @@ function copyFullListing(btn) {
         btn.innerText = "✓ Description Copied!";
         setTimeout(() => { btn.innerText = orig; }, 2500);
     });
+}
+
+/* =====================================================
+   FEATURE 4: WHAT-IF PRICE SIMULATOR LOGIC
+===================================================== */
+let whatifSimTimeout = null;
+let curWhatifYear = null;
+let curWhatifKm = null;
+let curWhatifTrans = null;
+
+function initWhatifSimulator() {
+    const simEl = document.getElementById("whatifSimulator");
+    if (!simEl) return;
+
+    curWhatifYear = parseInt(simEl.getAttribute("data-baseline-year"));
+    curWhatifKm = parseInt(simEl.getAttribute("data-baseline-km"));
+    curWhatifTrans = simEl.getAttribute("data-baseline-transmission");
+    updateWhatifUI();
+}
+
+function updateWhatifUI() {
+    const kmSlider = document.getElementById("whatifKmSlider");
+    const kmDisplay = document.getElementById("whatifKmDisplay");
+    const yearDisplay = document.getElementById("whatifYearDisplay");
+    const yearPill = document.getElementById("whatifYearPill");
+    const transDisplay = document.getElementById("whatifTransDisplay");
+    const optManual = document.getElementById("optManual");
+    const optAuto = document.getElementById("optAuto");
+
+    if (kmSlider) kmSlider.value = curWhatifKm;
+    if (kmDisplay) kmDisplay.textContent = Number(curWhatifKm).toLocaleString("en-IN") + " km";
+    if (yearDisplay) yearDisplay.textContent = curWhatifYear + " (Age: " + (2024 - curWhatifYear) + ")";
+    if (yearPill) yearPill.textContent = curWhatifYear;
+    if (transDisplay) transDisplay.textContent = curWhatifTrans;
+
+    if (optManual && optAuto) {
+        if (curWhatifTrans === "Manual") {
+            optManual.classList.add("active");
+            optAuto.classList.remove("active");
+        } else {
+            optAuto.classList.add("active");
+            optManual.classList.remove("active");
+        }
+    }
+}
+
+function onMileageSliderChange(val) {
+    curWhatifKm = parseInt(val);
+    const kmDisplay = document.getElementById("whatifKmDisplay");
+    if (kmDisplay) kmDisplay.textContent = Number(curWhatifKm).toLocaleString("en-IN") + " km";
+    debounceSimulation();
+}
+
+function adjustKm(delta) {
+    let newKm = curWhatifKm + delta;
+    newKm = Math.max(1000, Math.min(300000, newKm));
+    curWhatifKm = newKm;
+    updateWhatifUI();
+    debounceSimulation();
+}
+
+function adjustYear(delta) {
+    let newYear = curWhatifYear + delta;
+    newYear = Math.max(1995, Math.min(2024, newYear));
+    curWhatifYear = newYear;
+    updateWhatifUI();
+    debounceSimulation();
+}
+
+function setTransmission(trans) {
+    curWhatifTrans = trans;
+    updateWhatifUI();
+    debounceSimulation();
+}
+
+function applyPreset(presetName) {
+    const simEl = document.getElementById("whatifSimulator");
+    if (!simEl) return;
+
+    const baseYear = parseInt(simEl.getAttribute("data-baseline-year"));
+    const baseKm = parseInt(simEl.getAttribute("data-baseline-km"));
+    const baseTrans = simEl.getAttribute("data-baseline-transmission");
+
+    if (presetName === "minus_25k") {
+        curWhatifKm = Math.max(1000, curWhatifKm - 25000);
+    } else if (presetName === "plus_30k") {
+        curWhatifKm = Math.min(300000, curWhatifKm + 30000);
+    } else if (presetName === "newer_1yr") {
+        curWhatifYear = Math.min(2024, curWhatifYear + 1);
+    } else if (presetName === "older_1yr") {
+        curWhatifYear = Math.max(1995, curWhatifYear - 1);
+    } else if (presetName === "hold_1yr") {
+        curWhatifYear = Math.max(1995, curWhatifYear - 1);
+        curWhatifKm = Math.min(300000, curWhatifKm + 12000);
+    } else if (presetName === "reset") {
+        curWhatifYear = baseYear;
+        curWhatifKm = baseKm;
+        curWhatifTrans = baseTrans;
+    }
+
+    updateWhatifUI();
+    debounceSimulation(0); // immediate trigger for presets
+}
+
+function debounceSimulation(delay = 180) {
+    clearTimeout(whatifSimTimeout);
+    whatifSimTimeout = setTimeout(executeSimulation, delay);
+}
+
+async function executeSimulation() {
+    const simEl = document.getElementById("whatifSimulator");
+    if (!simEl) return;
+
+    const brand = simEl.getAttribute("data-baseline-brand");
+    const model = simEl.getAttribute("data-baseline-model");
+    const owner = simEl.getAttribute("data-baseline-owner");
+    const fuelType = simEl.getAttribute("data-baseline-fuel");
+    const baselinePrice = parseFloat(simEl.getAttribute("data-baseline-price"));
+
+    const statusEl = document.getElementById("whatifStatus");
+    if (statusEl) statusEl.style.display = "block";
+
+    try {
+        const response = await fetch("/simulate-price", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                brand: brand,
+                model: model,
+                year: curWhatifYear,
+                kmDriven: curWhatifKm,
+                transmission: curWhatifTrans,
+                owner: owner,
+                fuelType: fuelType,
+                baselinePrice: baselinePrice
+            })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            renderSimulationResults(data);
+        } else {
+            console.error("Simulation failed:", data.error);
+        }
+    } catch (err) {
+        console.error("Simulation network error:", err);
+    } finally {
+        if (statusEl) statusEl.style.display = "none";
+    }
+}
+
+function renderSimulationResults(data) {
+    const priceDisplay = document.getElementById("simulatedPriceDisplay");
+    const subDisplay = document.getElementById("simulatedScenarioSub");
+    const deltaBadge = document.getElementById("deltaBadge");
+    const deltaSign = document.getElementById("deltaSign");
+    const deltaAbsVal = document.getElementById("deltaAbsVal");
+    const deltaPctVal = document.getElementById("deltaPctVal");
+    const deltaNarrative = document.getElementById("deltaNarrative");
+
+    if (priceDisplay) {
+        priceDisplay.textContent = "₹" + Number(data.simulatedPrice).toLocaleString("en-IN");
+    }
+    if (subDisplay) {
+        subDisplay.textContent = data.simulatedYear + " • " + Number(data.simulatedKm).toLocaleString("en-IN") + " km • " + data.simulatedTransmission;
+    }
+
+    const diff = data.priceDiff;
+    const pct = data.percentDiff;
+
+    if (deltaBadge && deltaSign && deltaAbsVal && deltaPctVal) {
+        deltaBadge.className = "delta-badge";
+
+        if (diff > 0) {
+            deltaBadge.classList.add("positive");
+            deltaSign.textContent = "▲ +";
+            deltaAbsVal.textContent = "₹" + Number(diff).toLocaleString("en-IN");
+            deltaPctVal.textContent = "(+" + Math.abs(pct).toFixed(1) + "%)";
+            if (deltaNarrative) deltaNarrative.textContent = "Higher estimated value than baseline";
+        } else if (diff < 0) {
+            deltaBadge.classList.add("negative");
+            deltaSign.textContent = "▼ -";
+            deltaAbsVal.textContent = "₹" + Number(Math.abs(diff)).toLocaleString("en-IN");
+            deltaPctVal.textContent = "(-" + Math.abs(pct).toFixed(1) + "%)";
+            if (deltaNarrative) deltaNarrative.textContent = "Lower estimated value than baseline";
+        } else {
+            deltaBadge.classList.add("neutral");
+            deltaSign.textContent = "Equal";
+            deltaAbsVal.textContent = "₹0";
+            deltaPctVal.textContent = "(0.0%)";
+            if (deltaNarrative) deltaNarrative.textContent = "Matches baseline specification";
+        }
+    }
 }
 
 function scrollToValuation(event) {

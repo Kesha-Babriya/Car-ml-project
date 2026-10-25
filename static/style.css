@@ -3934,3 +3934,427 @@ select {
         grid-template-columns: 1fr;
     }
 }
+
+
+/* =====================================================
+   FEATURE 4: WHAT-IF PRICE SIMULATOR STYLES
+===================================================== */
+
+.whatif-simulator-container {
+    background: #0d131d;
+    border: 1px solid #1e2b3e;
+    border-radius: 20px;
+    padding: 32px;
+    margin: 45px auto 30px auto;
+    text-align: left;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    box-sizing: border-box;
+}
+
+.whatif-header {
+    margin-bottom: 20px;
+}
+
+.whatif-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: rgba(255, 93, 93, 0.15);
+    color: #ff5d5d;
+    border: 1px solid rgba(255, 93, 93, 0.35);
+    padding: 4px 10px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+.whatif-header h3 {
+    font-size: 24px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 6px 0;
+}
+
+.whatif-header p {
+    font-size: 14px;
+    color: #8ea0bb;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* BASELINE STRIP */
+.whatif-baseline-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #111824;
+    border: 1px solid #1c293c;
+    border-radius: 12px;
+    padding: 14px 20px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.baseline-car-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.baseline-chip-label {
+    font-size: 10.5px;
+    font-weight: 800;
+    color: #8ea0bb;
+    letter-spacing: 0.6px;
+    background: #162030;
+    padding: 3px 7px;
+    border-radius: 4px;
+}
+
+.baseline-car-info strong {
+    font-size: 15px;
+    color: #ffffff;
+}
+
+.baseline-pill {
+    background: #141c28;
+    border: 1px solid #222f42;
+    color: #94a3b8;
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 6px;
+}
+
+.baseline-price-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #8ea0bb;
+}
+
+.baseline-price-chip strong {
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 800;
+}
+
+/* PRESETS */
+.whatif-presets-section {
+    margin-bottom: 24px;
+}
+
+.presets-title {
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #8ea0bb;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.presets-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.preset-btn {
+    background: #141d2a;
+    border: 1px solid #233145;
+    color: #e2e8f0;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.preset-btn:hover {
+    background: rgba(255, 93, 93, 0.15);
+    border-color: #ff5d5d;
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.preset-btn.reset-preset-btn {
+    border-color: #38bdf8;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.08);
+}
+
+.preset-btn.reset-preset-btn:hover {
+    background: rgba(56, 189, 248, 0.2);
+    border-color: #38bdf8;
+    color: #ffffff;
+}
+
+/* CONTROLS GRID */
+.whatif-controls-grid {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.whatif-control-card {
+    background: #101722;
+    border: 1px solid #1a2536;
+    border-radius: 14px;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.control-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.control-header label span {
+    font-size: 13px;
+    font-weight: 700;
+    color: #cbd5e1;
+}
+
+.control-live-val {
+    font-size: 14.5px;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.slider-wrapper {
+    margin: 8px 0;
+}
+
+.slider-wrapper input[type="range"] {
+    width: 100%;
+    accent-color: #ff5d5d;
+    cursor: pointer;
+    height: 6px;
+    border-radius: 4px;
+}
+
+.slider-ticks {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #64748b;
+    margin-bottom: 8px;
+}
+
+.stepper-buttons-row {
+    display: flex;
+    gap: 6px;
+}
+
+.stepper-sm {
+    flex: 1;
+    padding: 6px 0;
+    font-size: 11px;
+    font-weight: 600;
+    background: #151e2b;
+    border: 1px solid #233145;
+    color: #94a3b8;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.stepper-sm:hover {
+    background: #1e2b3d;
+    color: #ffffff;
+    border-color: #ff5d5d;
+}
+
+/* YEAR STEPPER */
+.year-stepper-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.stepper-btn {
+    flex: 1;
+    padding: 9px 10px;
+    font-size: 12.5px;
+    font-weight: 700;
+    background: #151e2b;
+    border: 1px solid #24344b;
+    color: #cbd5e1;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.stepper-btn:hover {
+    background: rgba(255, 93, 93, 0.15);
+    border-color: #ff5d5d;
+    color: #ffffff;
+}
+
+.year-val-pill {
+    min-width: 65px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 800;
+    color: #ffffff;
+    background: #162030;
+    border: 1px solid #283a52;
+    border-radius: 8px;
+    padding: 6px 12px;
+}
+
+.control-note {
+    font-size: 11.5px;
+    color: #64748b;
+    margin-top: 6px;
+    line-height: 1.4;
+}
+
+/* SEGMENTED TOGGLE */
+.segmented-toggle {
+    display: flex;
+    background: #141c28;
+    border: 1px solid #222f42;
+    border-radius: 10px;
+    padding: 4px;
+    margin: 10px 0;
+    gap: 4px;
+}
+
+.toggle-opt {
+    flex: 1;
+    padding: 8px 0;
+    font-size: 13px;
+    font-weight: 700;
+    background: transparent;
+    border: none;
+    color: #8ea0bb;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.toggle-opt.active {
+    background: linear-gradient(135deg, #ff4d5a, #ff7440);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(255, 77, 90, 0.35);
+}
+
+/* IMPACT CARD */
+.whatif-impact-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #111a28, #0e1522);
+    border: 1px solid #25364d;
+    border-radius: 16px;
+    padding: 22px 28px;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.impact-col {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.impact-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #8ea0bb;
+    letter-spacing: 0.5px;
+}
+
+.impact-val {
+    font-size: 26px;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.impact-val.baseline {
+    color: #cbd5e1;
+}
+
+.impact-val.simulated {
+    color: #ffffff;
+}
+
+.impact-sub {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.impact-arrow {
+    font-size: 24px;
+    color: #475569;
+}
+
+.delta-col {
+    align-items: flex-end;
+}
+
+.delta-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 10px;
+    font-size: 14.5px;
+    font-weight: 700;
+}
+
+.delta-badge.positive {
+    background: rgba(74, 222, 128, 0.15);
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.4);
+}
+
+.delta-badge.negative {
+    background: rgba(248, 113, 113, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(248, 113, 113, 0.4);
+}
+
+.delta-badge.neutral {
+    background: rgba(148, 163, 184, 0.15);
+    color: #cbd5e1;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.whatif-status-bar {
+    margin-top: 14px;
+    font-size: 12.5px;
+    color: #8ea0bb;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+@media (max-width: 950px) {
+    .whatif-controls-grid {
+        grid-template-columns: 1fr;
+    }
+    .whatif-impact-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .delta-col {
+        align-items: flex-start;
+    }
+    .impact-arrow {
+        display: none;
+    }
+}
