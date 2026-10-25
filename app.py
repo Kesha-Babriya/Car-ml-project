@@ -1,9 +1,44 @@
+import os
 from flask import Flask, render_template, request, jsonify
 import pandas as pd
 import joblib
 import math
+from models import db, User, CarListing, Favourite, PredictionHistory, Inquiry
+from flask_migrate import Migrate
 
 app = Flask(__name__)
+
+# ==========================================
+# Database & Environment Configuration
+# ==========================================
+
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+INSTANCE_DIR = os.path.join(BASE_DIR, "instance")
+MIGRATIONS_DIR = os.path.join(BASE_DIR, "migrations")
+DB_PATH = os.path.join(INSTANCE_DIR, "used_cars.db")
+DEFAULT_DB_URI = f"sqlite:///{DB_PATH.replace(os.sep, '/')}"
+
+ENV = os.environ.get("FLASK_ENV", "development").lower()
+raw_secret = os.environ.get("SECRET_KEY")
+
+if ENV == "production":
+    if not raw_secret:
+        raise RuntimeError(
+            "CRITICAL SECURITY ERROR: SECRET_KEY environment variable "
+            "must be explicitly set when running in production mode!"
+        )
+    app.config["SECRET_KEY"] = raw_secret
+else:
+    app.config["SECRET_KEY"] = raw_secret or "dev-insecure-secret-key-change-in-production"
+
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+os.makedirs(INSTANCE_DIR, exist_ok=True)
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
+    "DATABASE_URL", DEFAULT_DB_URI
+)
+
+db.init_app(app)
+migrate = Migrate(app, db, directory=MIGRATIONS_DIR)
 
 
 # ==========================================
