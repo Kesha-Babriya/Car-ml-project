@@ -34,7 +34,7 @@
             <span class="nav-icon">🏠</span>
             <span>Home</span>
         </a>
-        <a href="/buyer" class="nav-item {% if page == 'buyer' or page == 'inspection' or page == 'comparables' %}active{% endif %}">
+        <a href="/buyer" class="nav-item {% if page == 'buyer' or page == 'inspection' %}active{% endif %}">
             <span class="nav-icon">🔍</span>
             <span>Buyer Mode</span>
         </a>
@@ -143,162 +143,6 @@
         🤖 Powered by Balanced Random Forest
         + Random Forest Regressor
     </div>
-
-</section>
-
-
-<!-- =====================================================
-     BUYER PAGE
-===================================================== -->
-
-{% elif page == "buyer" %}
-
-<section class="buyer-page">
-
-    <div class="buyer-hero">
-
-        <div class="buyer-car-icon">
-            🚗
-        </div>
-
-        <div class="mode-badge buyer-badge">
-            🔍 BUYER MODE
-        </div>
-
-        <h1>
-            Find a Car with
-            <span>Confidence</span>
-        </h1>
-
-        <p>
-            Analyze, compare and understand used cars
-            before making your buying decision.
-        </p>
-
-    </div>
-
-
-    <!-- BUYER FEATURE CARDS -->
-
-    <div class="buyer-feature-grid">
-
-        <!-- AI ANALYSIS & VALUATION -->
-
-        <a href="/seller" class="buyer-feature-card">
-
-            <div class="feature-big-icon">
-                🤖
-            </div>
-
-            <div class="buyer-feature-content">
-
-                <span class="feature-number">01</span>
-
-                <h2>AI Car Valuation & Advice</h2>
-
-                <p>
-                    Evaluate purchase quality, fair market price,
-                    and compare asking prices with Smart Price Advisor.
-                </p>
-
-                <span class="feature-link">
-                    Analyze a Car →
-                </span>
-
-            </div>
-
-        </a>
-
-
-        <!-- COMPARE CARS -->
-
-        <a href="/compare" class="buyer-feature-card compare-feature">
-
-            <div class="feature-big-icon">
-                ⚖️
-            </div>
-
-            <div class="buyer-feature-content">
-
-                <span class="feature-number">02</span>
-
-                <h2>Compare Cars</h2>
-
-                <p>
-                    Compare two used cars side-by-side using
-                    AI-based quality and price predictions.
-                </p>
-
-                <span class="feature-link">
-                    Compare Cars →
-                </span>
-
-            </div>
-
-        </a>
-
-
-        <!-- INSPECTION ASSISTANCE -->
-
-        <a href="/inspection" class="buyer-feature-card">
-
-            <div class="feature-big-icon">
-                🛡️
-            </div>
-
-            <div class="buyer-feature-content">
-
-                <span class="feature-number">03</span>
-
-                <h2>Inspection Checklist</h2>
-
-                <p>
-                    Step-by-step physical, mechanical, and
-                    documentation verification before purchasing.
-                </p>
-
-                <span class="feature-link">
-                    Start Inspection →
-                </span>
-
-            </div>
-
-        </a>
-
-
-        <!-- SIMILAR CARS & MARKET COMPARABLES -->
-
-        <a href="/comparables" class="buyer-feature-card">
-
-            <div class="feature-big-icon">
-                📊
-            </div>
-
-            <div class="buyer-feature-content">
-
-                <span class="feature-number">04</span>
-
-                <h2>Similar Cars & Comparables</h2>
-
-                <p>
-                    Search 13,600+ market listings to discover similar vehicles,
-                    compare historical asking prices, and benchmark against ML valuation.
-                </p>
-
-                <span class="feature-link">
-                    Find Similar Cars →
-                </span>
-
-            </div>
-
-        </a>
-
-    </div>
-
-
-    <a href="/" class="secondary-button">
-        ← Back to Home
-    </a>
 
 </section>
 
@@ -782,293 +626,6 @@
 </section>
 
 <!-- =====================================================
-     SIMILAR CARS & MARKET COMPARABLES PAGE
-===================================================== -->
-
-{% elif page == "comparables" %}
-
-<section class="comparables-page">
-
-    <div class="comparables-hero">
-        <div class="comparables-icon">📊</div>
-        <div class="mode-badge buyer-badge">🔍 BUYER MARKET INTELLIGENCE</div>
-        <h1>Similar Cars & <span>Market Comparables</span></h1>
-        <p>
-            Benchmark your target vehicle against 13,600+ real historical used-car listings.
-            Discover similar vehicles, compare historical seller asking prices, and review AI fair valuations.
-        </p>
-    </div>
-
-    <!-- TARGET CAR SPECIFICATION FORM -->
-    <div class="comparables-form-card">
-        <div class="comparables-form-header">
-            <h2>🚘 Target Vehicle Specifications</h2>
-            <p>Select your target car details to search for closest historical matches in the dataset.</p>
-        </div>
-
-        {% if error %}
-        <div class="error-banner" style="margin-bottom: 20px;">
-            ⚠️ {{ error }}
-        </div>
-        {% endif %}
-
-        <form action="/comparables" method="GET" class="comparables-form">
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="compBrand">Brand</label>
-                    <select id="compBrand" name="brand" required>
-                        <option value="">Select Brand</option>
-                        {% for b in brands %}
-                        <option value="{{ b }}" {% if brand == b %}selected{% endif %}>{{ b }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="compModel">Model</label>
-                    <select id="compModel" name="model" data-selected="{{ model|default('') }}" required disabled>
-                        <option value="">Select Brand First</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="compYear">Manufacturing Year</label>
-                    <input type="number" id="compYear" name="year" min="1980" max="2024" placeholder="e.g. 2018" value="{{ year|default('') }}" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="compKm">Kilometers Driven</label>
-                    <input type="number" id="compKm" name="kmDriven" min="1" placeholder="e.g. 45000" value="{{ kmDriven|default('') }}" required>
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="compTransmission">Transmission</label>
-                    <select id="compTransmission" name="transmission" required>
-                        <option value="">Select Transmission</option>
-                        <option value="Manual" {% if transmission == "Manual" %}selected{% endif %}>Manual</option>
-                        <option value="Automatic" {% if transmission == "Automatic" %}selected{% endif %}>Automatic</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="compOwner">Ownership</label>
-                    <select id="compOwner" name="owner" required>
-                        <option value="">Select Owner</option>
-                        <option value="First Owner" {% if owner == "First Owner" %}selected{% endif %}>First Owner</option>
-                        <option value="Second Owner" {% if owner == "Second Owner" %}selected{% endif %}>Second Owner</option>
-                        <option value="Third Owner" {% if owner == "Third Owner" %}selected{% endif %}>Third Owner</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="compFuel">Fuel Type</label>
-                    <select id="compFuel" name="fuelType" required>
-                        <option value="">Select Fuel</option>
-                        <option value="Petrol" {% if fuelType == "Petrol" %}selected{% endif %}>Petrol</option>
-                        <option value="Diesel" {% if fuelType == "Diesel" %}selected{% endif %}>Diesel</option>
-                        <option value="CNG" {% if fuelType == "CNG" %}selected{% endif %}>CNG</option>
-                        <option value="LPG" {% if fuelType == "LPG" %}selected{% endif %}>LPG</option>
-                        <option value="Electric" {% if fuelType == "Electric" %}selected{% endif %}>Electric</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="compPrice">Target Asking Price (₹) <span style="font-size: 11px; color: #8ea0bb; font-weight: normal;">(Optional)</span></label>
-                    <input type="number" id="compPrice" name="askingPrice" min="0" placeholder="e.g. 650000" value="{{ askingPrice|default('') }}">
-                </div>
-            </div>
-
-            <div class="form-actions-row">
-                <button type="submit" class="comparables-submit-btn" id="btnFindComparables">
-                    🔍 Find Similar Cars & Market Comparables
-                </button>
-            </div>
-        </form>
-    </div>
-
-    {% if has_results %}
-    <!-- RESULTS SECTION -->
-    <div class="comparables-results-container" id="comparablesResults">
-
-        <!-- 1. TARGET SUMMARY & HISTORICAL BENCHMARK ROW -->
-        <div class="benchmark-overview-grid">
-            <!-- TARGET CAR CARD -->
-            <div class="target-summary-card">
-                <div class="target-summary-badge">TARGET VEHICLE</div>
-                <h3>{{ year }} {{ brand }} {{ model }}</h3>
-                <div class="target-specs-list">
-                    <span>🛣️ {{ "{:,}".format(kmDriven|int) }} km</span>
-                    <span>⚙️ {{ transmission }}</span>
-                    <span>⛽ {{ fuelType }}</span>
-                    <span>👤 {{ owner }}</span>
-                </div>
-                <div class="target-prices-box">
-                    {% if askingPrice %}
-                    <div class="target-price-row">
-                        <span class="label">Target Asking Price:</span>
-                        <span class="val">₹{{ "{:,}".format(askingPrice|int) }}</span>
-                    </div>
-                    {% endif %}
-                    <div class="target-price-row">
-                        <span class="label">AI Fair Valuation:</span>
-                        <span class="val highlight">₹{{ "{:,}".format(target_valuation) }}</span>
-                    </div>
-                    <div class="target-price-row">
-                        <span class="label">AI Quality Tier:</span>
-                        <span class="quality-pill quality-{{ target_quality|lower }}">{{ target_quality }}</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- HISTORICAL STATS CARDS -->
-            <div class="historical-stats-card">
-                <div class="historical-stats-header">
-                    <h4>📊 Historical Dataset Asking Price Benchmark</h4>
-                    <p class="historical-note">Calculated strictly from the {{ stats.count }} relevant comparable listings displayed below.</p>
-                </div>
-
-                <div class="stats-metric-row">
-                    <div class="stat-metric-item">
-                        <span class="stat-metric-label">Dataset Median Asking Price</span>
-                        <span class="stat-metric-value">₹{{ "{:,}".format(stats.median_price) }}</span>
-                    </div>
-                    <div class="stat-metric-item">
-                        <span class="stat-metric-label">Observed Asking Price Range</span>
-                        <span class="stat-metric-value-sm">₹{{ "{:,}".format(stats.min_price) }} – ₹{{ "{:,}".format(stats.max_price) }}</span>
-                    </div>
-                </div>
-
-                {% if target_market_position %}
-                <div class="market-position-banner">
-                    💡 {{ target_market_position }}
-                </div>
-                {% endif %}
-
-                <p class="historical-disclaimer">
-                    ⚠️ <strong>Historical Observation Notice:</strong> These figures reflect historical seller asking prices recorded in the project's cleaned dataset at the time of data collection. They are historical observation records and <strong>not</strong> live or real-time market quotations.
-                </p>
-            </div>
-        </div>
-
-        <!-- 2. HONEST GROUPING / TIER BANNER -->
-        {% if tier == "partial_brand_supplement" %}
-        <div class="tier-notice-banner">
-            ℹ️ <strong>Broader Match Notice:</strong> Found {{ exact_count }} exact <strong>{{ brand }} {{ model }}</strong> listing(s) in the historical dataset. The remaining results are supplemented with the closest <strong>{{ brand }}</strong> alternatives from the same generation.
-        </div>
-        {% elif tier == "brand_only" or tier == "broader_segment" %}
-        <div class="tier-notice-banner warning">
-            ⚠️ <strong>Segment Match Notice:</strong> No exact listings for <strong>{{ brand }} {{ model }}</strong> were found in the dataset. Showing closest same-brand / market segment comparables.
-        </div>
-        {% endif %}
-
-        <!-- 3. TOP 5 COMPARABLES LIST -->
-        <div class="comparables-list-header">
-            <h3>Top {{ comparables|length }} Comparable Market Listings</h3>
-            <p>Ranked by normalized multi-attribute similarity against your target specifications.</p>
-        </div>
-
-        <div class="comparables-grid">
-            {% for comp in comparables %}
-            <div class="comparable-card {% if not comp.is_exact_model %}broader-match-card{% endif %}">
-                <div class="comp-card-top">
-                    <div class="comp-rank-title">
-                        <span class="comp-rank">#{{ loop.index }}</span>
-                        <h4>{{ comp.Year }} {{ comp.Brand }} {{ comp.model }}</h4>
-                    </div>
-
-                    <div class="similarity-pill-badge {% if comp.similarity_score >= 85 %}score-high{% elif comp.similarity_score >= 70 %}score-mid{% else %}score-fair{% endif %}">
-                        <span class="score-num">{{ comp.similarity_score }}%</span>
-                        <span class="score-label">
-                            {% if comp.similarity_score >= 85 %}Close Match{% elif comp.similarity_score >= 70 %}Moderate Match{% elif comp.similarity_score >= 50 %}{% if comp.km_diff_abs >= 50000 %}Fair (Usage Divergence){% else %}Fair Match{% endif %}{% else %}Broader Match{% endif %}
-                        </span>
-                    </div>
-                </div>
-
-                {% if not comp.is_exact_model %}
-                <span class="broader-tag">Broader {{ comp.Brand }} Alternative</span>
-                {% endif %}
-
-                <!-- MILEAGE GAP & CLOSENESS ROW -->
-                <div class="comp-mileage-badge-row">
-                    <span class="mileage-gap-pill {% if comp.km_diff_abs >= 50000 %}gap-large{% elif comp.km_diff_abs >= 25000 %}gap-mid{% else %}gap-close{% endif %}">
-                        🛣️ {{ comp.km_comparison_text }}
-                    </span>
-                    <span class="mileage-closeness-pct">Mileage Closeness: <strong>{{ comp.km_closeness }}%</strong></span>
-                </div>
-
-                <!-- SPECS GRID -->
-                <div class="comp-specs-chips">
-                    <span>🛣️ {{ "{:,}".format(comp.kmDriven|int) }} km</span>
-                    <span>⚙️ {{ comp.Transmission }}</span>
-                    <span>⛽ {{ comp.FuelType }}</span>
-                    <span>👤 {{ comp.Owner|title }}</span>
-                </div>
-
-                <!-- DIFFERENCES BREAKDOWN -->
-                <div class="comp-diff-box">
-                    <span class="diff-title">Specification Comparison:</span>
-                    <p class="diff-text">{{ comp.differences_summary }}</p>
-                </div>
-
-                <!-- DUAL PRICING DISPLAY -->
-                <div class="comp-pricing-grid">
-                    <div class="price-chip dataset-price">
-                        <span class="price-kind">🏷️ Historical Listing Ask:</span>
-                        <span class="price-num">₹{{ "{:,}".format(comp.AskPrice) }}</span>
-                    </div>
-                    <div class="price-chip model-price">
-                        <span class="price-kind">🤖 AI Model Fair Value:</span>
-                        <span class="price-num">₹{{ "{:,}".format(comp.ml_price) }}</span>
-                    </div>
-                </div>
-
-                <div class="comp-quality-row">
-                    <span class="comp-q-label">AI Purchase Quality:</span>
-                    <span class="quality-pill quality-{{ comp.ml_quality|lower }}">{{ comp.ml_quality }}</span>
-                </div>
-
-                <!-- ACTION: COMPARE HEAD-TO-HEAD BRIDGE -->
-                <div class="comp-card-action">
-                    <a href="/compare?brandA={{ brand|urlencode }}&modelA={{ model|urlencode }}&yearA={{ year }}&kmA={{ kmDriven }}&transmissionA={{ transmission|urlencode }}&ownerA={{ owner|urlencode }}&fuelA={{ fuelType|urlencode }}&brandB={{ comp.Brand|urlencode }}&modelB={{ comp.model|urlencode }}&yearB={{ comp.Year }}&kmB={{ comp.kmDriven|int }}&transmissionB={{ comp.Transmission|urlencode }}&ownerB={% if 'first' in comp.Owner|lower %}First+Owner{% elif 'second' in comp.Owner|lower %}Second+Owner{% else %}Third+Owner{% endif %}&fuelB={% if 'diesel' in comp.FuelType|lower %}Diesel{% elif 'petrol' in comp.FuelType|lower %}Petrol{% else %}CNG{% endif %}" class="btn-compare-bridge">
-                        ⚔️ Compare Head-to-Head with Target →
-                    </a>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-
-        <!-- 4. TRANSPARENCY & METHODOLOGY EXPLANATION -->
-        <div class="methodology-card">
-            <h4>ℹ️ About the Similarity Scoring Model & Data Methodology</h4>
-            <p>
-                <strong>Normalized Bounded Formula:</strong> Each candidate vehicle is evaluated against your target car across normalized attribute distances. Feature weights: <em>Model Match (20-22%), Manufacturing Year (18-20%), Kilometers Base (22-24%), Transmission (12-14%), Fuel Type (12-14%), Ownership Tier (6%), and Asking Price Proximity (10% applied only if positive asking price is entered)</em>. Scores range from 0.0% to 100.0%.
-            </p>
-            <p>
-                <strong>Mileage Disparity Guardrail:</strong> When a candidate's mileage differs by more than 35,000 km from the target car, a calibrated excess usage deduction is applied (up to 20-25%). This ensures that severe odometer differences (e.g. 50,000 km to 100,000+ km gaps) cannot be hidden behind matching categorical fields.
-            </p>
-            <p>
-                <strong>Limitations Notice:</strong> This score exclusively measures specification and odometer closeness recorded in the dataset. It does <strong>not</strong> evaluate unrecorded real-world condition factors (mechanical health, flood/accident history, tyres, rust, or interior wear). Always conduct a hands-on physical inspection and test drive before purchasing.
-            </p>
-        </div>
-
-    </div>
-    {% endif %}
-
-    <div class="inspection-footer" style="margin-top: 50px;">
-        <a href="/buyer" class="secondary-button">
-            ← Back to Buyer Dashboard
-        </a>
-    </div>
-
-</section>
-
-<!-- =====================================================
      COMPARE PAGE
 ===================================================== -->
 
@@ -1128,7 +685,7 @@
                 >
                     <option value="">Select Brand</option>
                     {% for b in brands %}
-                    <option value="{{ b }}" {% if brandA == b %}selected{% endif %}>{{ b }}</option>
+                    <option value="{{ b }}">{{ b }}</option>
                     {% endfor %}
                 </select>
 
@@ -1141,7 +698,6 @@
 
                 <select
                     id="modelA"
-                    data-selected="{{ modelA|default('') }}"
                     required
                     disabled
                 >
@@ -1163,7 +719,6 @@
                         min="1980"
                         max="2024"
                         placeholder="2020"
-                        value="{{ yearA|default('') }}"
                         required
                     >
 
@@ -1179,7 +734,6 @@
                         id="kmA"
                         min="1"
                         placeholder="90000"
-                        value="{{ kmA|default('') }}"
                         required
                     >
 
@@ -1198,11 +752,11 @@
                         Select Transmission
                     </option>
 
-                    <option value="Manual" {% if transmissionA == "Manual" %}selected{% endif %}>
+                    <option value="Manual">
                         Manual
                     </option>
 
-                    <option value="Automatic" {% if transmissionA == "Automatic" %}selected{% endif %}>
+                    <option value="Automatic">
                         Automatic
                     </option>
 
@@ -1221,15 +775,15 @@
                         Select Owner
                     </option>
 
-                    <option value="First Owner" {% if ownerA == "First Owner" %}selected{% endif %}>
+                    <option value="First Owner">
                         First Owner
                     </option>
 
-                    <option value="Second Owner" {% if ownerA == "Second Owner" %}selected{% endif %}>
+                    <option value="Second Owner">
                         Second Owner
                     </option>
 
-                    <option value="Third Owner" {% if ownerA == "Third Owner" %}selected{% endif %}>
+                    <option value="Third Owner">
                         Third Owner
                     </option>
 
@@ -1248,11 +802,11 @@
                         Select Fuel Type
                     </option>
 
-                    <option value="Petrol" {% if fuelA == "Petrol" %}selected{% endif %}>Petrol</option>
-                    <option value="Diesel" {% if fuelA == "Diesel" %}selected{% endif %}>Diesel</option>
-                    <option value="CNG" {% if fuelA == "CNG" %}selected{% endif %}>CNG</option>
-                    <option value="LPG" {% if fuelA == "LPG" %}selected{% endif %}>LPG</option>
-                    <option value="Electric" {% if fuelA == "Electric" %}selected{% endif %}>Electric</option>
+                    <option value="Petrol">Petrol</option>
+                    <option value="Diesel">Diesel</option>
+                    <option value="CNG">CNG</option>
+                    <option value="LPG">LPG</option>
+                    <option value="Electric">Electric</option>
 
                 </select>
 
@@ -1305,7 +859,7 @@
                 >
                     <option value="">Select Brand</option>
                     {% for b in brands %}
-                    <option value="{{ b }}" {% if brandB == b %}selected{% endif %}>{{ b }}</option>
+                    <option value="{{ b }}">{{ b }}</option>
                     {% endfor %}
                 </select>
 
@@ -1318,7 +872,6 @@
 
                 <select
                     id="modelB"
-                    data-selected="{{ modelB|default('') }}"
                     required
                     disabled
                 >
@@ -1340,7 +893,6 @@
                         min="1980"
                         max="2024"
                         placeholder="2021"
-                        value="{{ yearB|default('') }}"
                         required
                     >
 
@@ -1356,7 +908,6 @@
                         id="kmB"
                         min="1"
                         placeholder="70000"
-                        value="{{ kmB|default('') }}"
                         required
                     >
 
@@ -1375,11 +926,11 @@
                         Select Transmission
                     </option>
 
-                    <option value="Manual" {% if transmissionB == "Manual" %}selected{% endif %}>
+                    <option value="Manual">
                         Manual
                     </option>
 
-                    <option value="Automatic" {% if transmissionB == "Automatic" %}selected{% endif %}>
+                    <option value="Automatic">
                         Automatic
                     </option>
 
@@ -1398,15 +949,15 @@
                         Select Owner
                     </option>
 
-                    <option value="First Owner" {% if ownerB == "First Owner" %}selected{% endif %}>
+                    <option value="First Owner">
                         First Owner
                     </option>
 
-                    <option value="Second Owner" {% if ownerB == "Second Owner" %}selected{% endif %}>
+                    <option value="Second Owner">
                         Second Owner
                     </option>
 
-                    <option value="Third Owner" {% if ownerB == "Third Owner" %}selected{% endif %}>
+                    <option value="Third Owner">
                         Third Owner
                     </option>
 
@@ -1425,11 +976,11 @@
                         Select Fuel Type
                     </option>
 
-                    <option value="Petrol" {% if fuelB == "Petrol" %}selected{% endif %}>Petrol</option>
-                    <option value="Diesel" {% if fuelB == "Diesel" %}selected{% endif %}>Diesel</option>
-                    <option value="CNG" {% if fuelB == "CNG" %}selected{% endif %}>CNG</option>
-                    <option value="LPG" {% if fuelB == "LPG" %}selected{% endif %}>LPG</option>
-                    <option value="Electric" {% if fuelB == "Electric" %}selected{% endif %}>Electric</option>
+                    <option value="Petrol">Petrol</option>
+                    <option value="Diesel">Diesel</option>
+                    <option value="CNG">CNG</option>
+                    <option value="LPG">LPG</option>
+                    <option value="Electric">Electric</option>
 
                 </select>
 
@@ -1605,10 +1156,158 @@
 
 
 <!-- =====================================================
-     SELLER PAGE
+     BUYER & SELLER VALUATION PAGES
 ===================================================== -->
 
-{% elif page == "seller" %}
+{% elif page == "buyer" or page == "seller" %}
+
+{% if page == "buyer" %}
+
+<section class="buyer-page">
+
+    <div class="buyer-hero">
+
+        <div class="buyer-car-icon">
+            🚗
+        </div>
+
+        <div class="mode-badge buyer-badge">
+            🔍 BUYER MODE
+        </div>
+
+        <h1>
+            Find a Car with
+            <span>Confidence</span>
+        </h1>
+
+        <p>
+            Analyze, compare and understand used cars
+            before making your buying decision.
+        </p>
+
+    </div>
+
+
+    <!-- BUYER FEATURE CARDS -->
+
+    <div class="buyer-feature-grid">
+
+        <!-- AI ANALYSIS & VALUATION -->
+
+        <a href="#valuationFormSection" class="buyer-feature-card" onclick="scrollToValuation(event)">
+
+            <div class="feature-big-icon">
+                🤖
+            </div>
+
+            <div class="buyer-feature-content">
+
+                <span class="feature-number">01</span>
+
+                <h2>AI Car Valuation & Advice</h2>
+
+                <p>
+                    Evaluate purchase quality, fair market price,
+                    and compare asking prices with Smart Price Advisor.
+                </p>
+
+                <span class="feature-link">
+                    Use Valuation Form ↓
+                </span>
+
+            </div>
+
+        </a>
+
+
+        <!-- COMPARE CARS -->
+
+        <a href="/compare" class="buyer-feature-card compare-feature">
+
+            <div class="feature-big-icon">
+                ⚖️
+            </div>
+
+            <div class="buyer-feature-content">
+
+                <span class="feature-number">02</span>
+
+                <h2>Compare Cars</h2>
+
+                <p>
+                    Compare two used cars side-by-side using
+                    AI-based quality and price predictions.
+                </p>
+
+                <span class="feature-link">
+                    Compare Cars →
+                </span>
+
+            </div>
+
+        </a>
+
+
+        <!-- INSPECTION ASSISTANCE -->
+
+        <a href="/inspection" class="buyer-feature-card">
+
+            <div class="feature-big-icon">
+                🛡️
+            </div>
+
+            <div class="buyer-feature-content">
+
+                <span class="feature-number">03</span>
+
+                <h2>Inspection Checklist</h2>
+
+                <p>
+                    Step-by-step physical, mechanical, and
+                    documentation verification before purchasing.
+                </p>
+
+                <span class="feature-link">
+                    Start Inspection →
+                </span>
+
+            </div>
+
+        </a>
+
+
+        <!-- AI ASSISTANT -->
+
+        <div class="buyer-feature-card disabled-feature">
+
+            <div class="feature-big-icon">
+                💬
+            </div>
+
+            <div class="buyer-feature-content">
+
+                <span class="feature-number">04</span>
+
+                <h2>AI Buying Assistant</h2>
+
+                <p>
+                    Personalized buyer advice, negotiation
+                    tips, and budget-to-car recommendations.
+                </p>
+
+                <span class="coming-soon">
+                    ✦ Coming Soon
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% else %}
 
 <section class="hero">
 
@@ -1666,6 +1365,8 @@
     </div>
 
 </div>
+
+{% endif %}
 
 <div class="main-container" id="valuationFormSection">
 
@@ -1746,6 +1447,7 @@
             method="POST"
             onsubmit="showLoading()"
         >
+            <input type="hidden" name="mode" value="{{ mode|default(page) }}">
 
             <div class="form-row">
 
@@ -2180,15 +1882,14 @@
 
 </div>
 
-    <!-- GENERATE READY-TO-POST LISTING & COMPARABLES BUTTONS -->
+    <!-- GENERATE READY-TO-POST LISTING BUTTON (SELLER ONLY) -->
+    {% if (mode|default(page)) == "seller" %}
     <div class="valuation-listing-action">
         <a href="/listing?brand={{ brand|urlencode }}&model={{ model|urlencode }}&year={{ year }}&kmDriven={{ kmDriven }}&transmission={{ transmission|urlencode }}&owner={{ owner|urlencode }}&fuelType={{ fuelType|urlencode }}&askingPrice={{ askingPrice }}&price={{ price }}&price_advice={{ price_advice|urlencode }}&quality={{ prediction|urlencode }}" class="listing-generate-btn">
             📋 Generate Ready-to-Post Listing from These Details →
         </a>
-        <a href="/comparables?brand={{ brand|urlencode }}&model={{ model|urlencode }}&year={{ year }}&kmDriven={{ kmDriven }}&transmission={{ transmission|urlencode }}&owner={{ owner|urlencode }}&fuelType={{ fuelType|urlencode }}&askingPrice={{ askingPrice }}" class="listing-generate-btn comparables-shortcut-btn" style="margin-left: 10px;">
-            📊 Find Similar Market Listings in Dataset →
-        </a>
     </div>
+    {% endif %}
 
     <p class="disclaimer">
 
@@ -2200,7 +1901,7 @@
     </p>
 
 
-    <a href="/seller" class="another-button">
+    <a href="/{{ mode|default(page) }}#valuationFormSection" class="another-button">
         ← Analyze Another Car
     </a>
 
@@ -2612,9 +2313,6 @@ document.addEventListener("DOMContentLoaded", function () {
     setupBrandModelDropdown("sellerBrand", "sellerModel");
     setupBrandModelDropdown("brandA", "modelA");
     setupBrandModelDropdown("brandB", "modelB");
-    if (document.getElementById("compBrand") && document.getElementById("compModel")) {
-        setupBrandModelDropdown("compBrand", "compModel");
-    }
     if (document.querySelector(".inspection-page")) {
         updateInspection();
     }

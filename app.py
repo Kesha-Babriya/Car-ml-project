@@ -20,10 +20,10 @@ regression_model = joblib.load(
 
 
 # ==========================================
-# Load and cache Dataset & Brand/Model mapping
+# Load and cache Brand & Model mapping from CSV
 # ==========================================
 
-def load_dataset_and_mapping():
+def load_brand_models_mapping():
     try:
         df = pd.read_csv("used_cars_cleaned_final.csv")
         mapping = {}
@@ -40,238 +40,13 @@ def load_dataset_and_mapping():
             }))
             if valid_models:
                 mapping[brand_clean] = valid_models
-        return df, mapping
+        return mapping
     except Exception as e:
-        print("Error loading dataset and brand models mapping:", e)
-        return pd.DataFrame(), {}
+        print("Error loading brand models mapping:", e)
+        return {}
 
-CARS_DATASET, BRAND_MODELS = load_dataset_and_mapping()
+BRAND_MODELS = load_brand_models_mapping()
 ALL_BRANDS = sorted(list(BRAND_MODELS.keys()))
-
-
-# ==========================================
-# SIMILAR CARS & COMPARABLES ALGORITHM
-# ==========================================
-
-def compute_similarity(target, candidate):
-    """
-    Normalized, bounded similarity score (0.0% to 100.0%).
-    Weights:
-      With asking price: Model (20%), Year (18%), Mileage Base (22%), Transmission (12%), Fuel (12%), Owner (6%), Price (10%).
-      Without asking price: Model (22%), Year (20%), Mileage Base (24%), Transmission (14%), Fuel (14%), Owner (6%).
-    Excess mileage penalty:
-      If |km_target - km_cand| > 35,000 km, applies a calibrated deduction (up to 20-25%)
-      so large mileage disparities (e.g. 97,000 km gap) cannot be masked by matching categorical fields.
-    """
-    has_target_price = target.get("asking_price") is not None and target["asking_price"] > 0
-
-    if has_target_price:
-        weights = {
-            "model": 0.20,
-            "year": 0.18,
-            "km": 0.22,
-            "transmission": 0.12,
-            "fuel": 0.12,
-            "owner": 0.06,
-            "price": 0.10
-        }
-        max_penalty = 20.0
-    else:
-        weights = {
-            "model": 0.22,
-            "year": 0.20,
-            "km": 0.24,
-            "transmission": 0.14,
-            "fuel": 0.14,
-            "owner": 0.06,
-            "price": 0.00
-        }
-        max_penalty = 25.0
-
-    # 1. Model match component
-    if str(candidate["Brand"]).strip().lower() == str(target["brand"]).strip().lower() and \
-       str(candidate["model"]).strip().lower() == str(target["model"]).strip().lower():
-        s_model = 1.0
-    elif str(candidate["Brand"]).strip().lower() == str(target["brand"]).strip().lower():
-        s_model = 0.40  # Same brand broader fallback
-    else:
-        s_model = 0.00  # Market segment fallback
-
-    # 2. Year component (10 years difference = 0 score)
-    year_diff = abs(int(candidate["Year"]) - int(target["year"]))
-    s_year = max(0.0, 1.0 - min(1.0, year_diff / 10.0))
-
-    # 3. KM component (100,000 km difference = 0 score)
-    km_diff = abs(float(candidate["kmDriven"]) - float(target["km"]))
-    s_km = max(0.0, 1.0 - min(1.0, km_diff / 100000.0))
-
-    # 4. Transmission component
-    trans_c = str(candidate["Transmission"]).strip().lower()
-    trans_t = str(target["transmission"]).strip().lower()
-    s_trans = 1.0 if trans_c == trans_t else 0.0
-
-    # 5. Fuel Type component
-    fuel_c = str(candidate["FuelType"]).strip().lower()
-    fuel_t = str(target["fuel"]).strip().lower()
-    s_fuel = 1.0 if fuel_c == fuel_t else 0.0
-
-    # 6. Owner component
-    owner_c = str(candidate["Owner"]).strip().lower()
-    owner_t = str(target["owner"]).strip().lower()
-    is_owner_match = (
-        ("first" in owner_c and "first" in owner_t) or
-        ("second" in owner_c and "second" in owner_t) or
-        ("third" in owner_c and "third" in owner_t)
-    )
-    s_owner = 1.0 if is_owner_match else 0.0
-
-    # 7. Price component (only applied if valid positive asking price provided)
-    if has_target_price:
-        price_diff_ratio = abs(float(candidate["AskPrice"]) - float(target["asking_price"])) / float(target["asking_price"])
-        s_price = max(0.0, 1.0 - min(1.0, price_diff_ratio))
-    else:
-        s_price = 0.0
-
-    base_score = (
-        weights["model"] * s_model +
-        weights["year"] * s_year +
-        weights["km"] * s_km +
-        weights["transmission"] * s_trans +
-        weights["fuel"] * s_fuel +
-        weights["owner"] * s_owner +
-        weights["price"] * s_price
-    ) * 100.0
-
-    # Excess mileage penalty if gap exceeds 35,000 km
-    if km_diff > 35000:
-        excess = km_diff - 35000
-        penalty = min(max_penalty, (excess / 65000.0) * max_penalty)
-    else:
-        penalty = 0.0
-
-    final_score = max(0.0, min(100.0, round(base_score - penalty, 1)))
-    km_closeness_pct = round(s_km * 100.0, 1)
-
-    # Human-readable mileage comparison text
-    kd = int(candidate["kmDriven"] - target["km"])
-    if abs(kd) < 2500:
-        km_comp_text = f"Similar mileage (~{abs(kd):,} km diff)"
-    elif kd < 0:
-        km_comp_text = f"{abs(kd):,} km less driven than target"
-    else:
-        km_comp_text = f"{kd:,} km more driven than target"
-
-    return final_score, km_closeness_pct, km_diff, km_comp_text
-
-def find_similar_cars(target, top_n=5):
-    """
-    Searches CARS_DATASET for top_n comparable vehicles using transparent multi-tier fallback.
-    """
-    if CARS_DATASET.empty:
-        return {"matches": [], "tier": "empty", "exact_count": 0, "stats": {"median_price": 0, "min_price": 0, "max_price": 0, "count": 0}}
-
-    # Tier 1: Exact Brand & Model
-    exact_mask = (CARS_DATASET["Brand"].str.lower() == target["brand"].lower()) & (CARS_DATASET["model"].str.lower() == target["model"].lower())
-    exact_df = CARS_DATASET[exact_mask].copy()
-
-    tier = "exact"
-    exact_count = len(exact_df)
-
-    if exact_count >= top_n:
-        candidates = exact_df
-    else:
-        # Tier 2: Same Brand fallback
-        brand_mask = (CARS_DATASET["Brand"].str.lower() == target["brand"].lower())
-        brand_df = CARS_DATASET[brand_mask].copy()
-        if len(brand_df) >= top_n:
-            candidates = brand_df
-            tier = "partial_brand_supplement" if exact_count > 0 else "brand_only"
-        else:
-            candidates = CARS_DATASET.copy()
-            tier = "broader_segment"
-
-    scores = []
-    km_closeness_list = []
-    km_diff_list = []
-    km_text_list = []
-    differences_list = []
-
-    for idx, row in candidates.iterrows():
-        sc, km_close, km_diff_val, km_text = compute_similarity(target, row)
-        scores.append(sc)
-        km_closeness_list.append(km_close)
-        km_diff_list.append(km_diff_val)
-        km_text_list.append(km_text)
-
-        diffs = []
-        is_exact_model = (row["model"].lower() == target["model"].lower())
-        if not is_exact_model:
-            diffs.append(f"Model: {row['model']}")
-
-        yd = row["Year"] - target["year"]
-        if yd == 0:
-            diffs.append("Same Year")
-        elif yd > 0:
-            diffs.append(f"+{yd} yr newer")
-        else:
-            diffs.append(f"{abs(yd)} yr older")
-
-        diffs.append(km_text)
-
-        if row["Transmission"].lower() != target["transmission"].lower():
-            diffs.append(f"{row['Transmission']}")
-        else:
-            diffs.append(f"Matching {row['Transmission']}")
-
-        if row["FuelType"].lower() != target["fuel"].lower():
-            diffs.append(f"{row['FuelType']}")
-
-        differences_list.append(" • ".join(diffs[:3]))
-
-    candidates["similarity_score"] = scores
-    candidates["km_closeness"] = km_closeness_list
-    candidates["km_diff_abs"] = km_diff_list
-    candidates["km_comparison_text"] = km_text_list
-    candidates["differences_summary"] = differences_list
-    candidates["is_exact_model"] = (candidates["model"].str.lower() == target["model"].lower())
-
-    sorted_candidates = candidates.sort_values(by=["is_exact_model", "similarity_score"], ascending=[False, False])
-    top_matches = sorted_candidates.head(top_n).copy()
-
-    # Predict ML Price & Quality for top matches
-    model_inputs = pd.DataFrame({
-        "Brand": top_matches["Brand"],
-        "model": top_matches["model"],
-        "Transmission": top_matches["Transmission"],
-        "Owner": top_matches["Owner"],
-        "FuelType": top_matches["FuelType"],
-        "Year": top_matches["Year"],
-        "Age": top_matches["Age"],
-        "kmDriven": top_matches["kmDriven"]
-    })
-
-    top_matches["ml_price"] = [round(max(0, float(p))) for p in regression_model.predict(model_inputs)]
-    top_matches["ml_quality"] = classification_model.predict(model_inputs)
-
-    # Historical price statistics strictly from relevant displayed comparables
-    hist_prices = top_matches["AskPrice"].tolist()
-    if hist_prices:
-        import numpy as np
-        hist_stats = {
-            "median_price": round(float(np.median(hist_prices))),
-            "min_price": int(min(hist_prices)),
-            "max_price": int(max(hist_prices)),
-            "count": len(hist_prices)
-        }
-    else:
-        hist_stats = {"median_price": 0, "min_price": 0, "max_price": 0, "count": 0}
-
-    return {
-        "matches": top_matches.to_dict(orient="records"),
-        "tier": tier,
-        "exact_count": exact_count,
-        "stats": hist_stats
-    }
 
 
 @app.context_processor
@@ -304,7 +79,8 @@ def buyer():
 
     return render_template(
         "index.html",
-        page="buyer"
+        page="buyer",
+        mode="buyer"
     )
 
 
@@ -327,196 +103,11 @@ def inspection():
 
 @app.route("/compare")
 def compare():
-    brand_a = request.args.get("brandA", "").strip()
-    model_a = request.args.get("modelA", "").strip()
-    year_a = request.args.get("yearA", "").strip()
-    km_a = request.args.get("kmA", "").strip()
-    trans_a = request.args.get("transmissionA", "").strip()
-    owner_a = request.args.get("ownerA", "").strip()
-    fuel_a = request.args.get("fuelA", "").strip()
-
-    brand_b = request.args.get("brandB", "").strip()
-    model_b = request.args.get("modelB", "").strip()
-    year_b = request.args.get("yearB", "").strip()
-    km_b = request.args.get("kmB", "").strip()
-    trans_b = request.args.get("transmissionB", "").strip()
-    owner_b = request.args.get("ownerB", "").strip()
-    fuel_b = request.args.get("fuelB", "").strip()
-
-    # Safely validate brand & model if provided
-    if brand_a and brand_a not in BRAND_MODELS:
-        brand_a, model_a = "", ""
-    elif model_a and model_a not in BRAND_MODELS.get(brand_a, []):
-        model_a = ""
-
-    if brand_b and brand_b not in BRAND_MODELS:
-        brand_b, model_b = "", ""
-    elif model_b and model_b not in BRAND_MODELS.get(brand_b, []):
-        model_b = ""
 
     return render_template(
         "index.html",
-        page="compare",
-        brandA=brand_a,
-        modelA=model_a,
-        yearA=year_a,
-        kmA=km_a,
-        transmissionA=trans_a,
-        ownerA=owner_a,
-        fuelA=fuel_a,
-        brandB=brand_b,
-        modelB=model_b,
-        yearB=year_b,
-        kmB=km_b,
-        transmissionB=trans_b,
-        ownerB=owner_b,
-        fuelB=fuel_b
+        page="compare"
     )
-
-
-# ==========================================
-# Similar Cars & Market Comparables
-# ==========================================
-
-@app.route("/comparables")
-def comparables():
-    brand = request.args.get("brand", "").strip()
-    model = request.args.get("model", "").strip()
-    year_text = request.args.get("year", "").strip()
-    km_text = request.args.get("kmDriven", "").strip()
-    transmission = request.args.get("transmission", "").strip()
-    owner = request.args.get("owner", "").strip()
-    fuel_type = request.args.get("fuelType", "").strip()
-    asking_price_text = request.args.get("askingPrice", "").strip()
-
-    has_search = bool(brand or model or year_text or km_text)
-
-    form_data = {
-        "brand": brand,
-        "model": model,
-        "year": year_text,
-        "kmDriven": km_text,
-        "transmission": transmission,
-        "owner": owner,
-        "fuelType": fuel_type,
-        "askingPrice": asking_price_text
-    }
-
-    if not has_search:
-        return render_template(
-            "index.html",
-            page="comparables",
-            has_results=False,
-            **form_data
-        )
-
-    # Validate target inputs
-    error = None
-    if not brand or not model:
-        error = "Please select both brand and model."
-    elif brand not in BRAND_MODELS or model not in BRAND_MODELS.get(brand, []):
-        error = "Please select a valid brand and model combination."
-    elif not year_text:
-        error = "Please enter the manufacturing year."
-    elif not km_text:
-        error = "Please enter kilometers driven."
-    elif not transmission:
-        error = "Please select a transmission type."
-    elif not owner:
-        error = "Please select an owner type."
-    elif not fuel_type:
-        error = "Please select a fuel type."
-
-    if error:
-        return render_template(
-            "index.html",
-            page="comparables",
-            has_results=False,
-            error=error,
-            **form_data
-        )
-
-    try:
-        year = int(year_text)
-        km = float(km_text)
-        if year < 1980 or year > 2024:
-            return render_template("index.html", page="comparables", has_results=False, error="Manufacturing year must be between 1980 and 2024.", **form_data)
-        if not math.isfinite(km) or km <= 0:
-            return render_template("index.html", page="comparables", has_results=False, error="Kilometers driven must be greater than 0.", **form_data)
-
-        asking_price = None
-        if asking_price_text:
-            try:
-                ap = float(asking_price_text)
-                if math.isfinite(ap) and ap > 0:
-                    asking_price = ap
-            except ValueError:
-                pass
-
-        # Target car valuation & quality
-        age = 2024 - year
-        target_df = pd.DataFrame({
-            "Brand": [brand],
-            "model": [model],
-            "Transmission": [transmission],
-            "Owner": [owner],
-            "FuelType": [fuel_type],
-            "Year": [year],
-            "Age": [age],
-            "kmDriven": [km]
-        })
-        target_pred_price = round(max(0, float(regression_model.predict(target_df)[0])))
-        target_quality = str(classification_model.predict(target_df)[0])
-
-        target_specs = {
-            "brand": brand,
-            "model": model,
-            "year": year,
-            "km": km,
-            "transmission": transmission,
-            "owner": owner,
-            "fuel": fuel_type,
-            "asking_price": asking_price
-        }
-
-        comparables_data = find_similar_cars(target_specs, top_n=5)
-
-        # Market position text if asking price is supplied
-        target_market_position = None
-        if asking_price and comparables_data["stats"]["median_price"]:
-            median = comparables_data["stats"]["median_price"]
-            diff = asking_price - median
-            pct = abs(diff / median) * 100
-            if abs(diff) < 15000:
-                target_market_position = "Target asking price aligns closely with the historical dataset median for comparable cars."
-            elif diff < 0:
-                target_market_position = f"Target asking price is ₹{abs(round(diff)):,} ({pct:.1f}%) below the historical dataset median."
-            else:
-                target_market_position = f"Target asking price is ₹{round(diff):,} ({pct:.1f}%) above the historical dataset median."
-
-        return render_template(
-            "index.html",
-            page="comparables",
-            has_results=True,
-            target_valuation=target_pred_price,
-            target_quality=target_quality,
-            target_market_position=target_market_position,
-            comparables=comparables_data["matches"],
-            tier=comparables_data["tier"],
-            exact_count=comparables_data["exact_count"],
-            stats=comparables_data["stats"],
-            **form_data
-        )
-
-    except Exception as e:
-        print("Comparables processing error:", e)
-        return render_template(
-            "index.html",
-            page="comparables",
-            has_results=False,
-            error="An error occurred while finding similar cars. Please check your inputs.",
-            **form_data
-        )
 
 
 # ==========================================
@@ -528,7 +119,8 @@ def seller():
 
     return render_template(
         "index.html",
-        page="seller"
+        page="seller",
+        mode="seller"
     )
 
 
@@ -566,6 +158,13 @@ def predict():
     # --------------------------------------
     # Get form values
     # --------------------------------------
+
+    mode = request.form.get(
+        "mode", "seller"
+    ).strip().lower()
+
+    if mode != "buyer":
+        mode = "seller"
 
     brand = request.form.get(
         "brand", ""
@@ -606,6 +205,7 @@ def predict():
 
     form_data = {
 
+        "mode": mode,
         "brand": brand,
         "model": model,
         "year": year_text,
@@ -628,7 +228,7 @@ def predict():
 
             return render_template(
                 "index.html",
-                page="seller",
+                page=mode,
                 error="Please select both brand and model.",
                 **form_data
             )
@@ -637,7 +237,7 @@ def predict():
 
             return render_template(
                 "index.html",
-                page="seller",
+                page=mode,
                 error="Please select a valid brand and model combination.",
                 **form_data
             )
@@ -647,7 +247,7 @@ def predict():
 
             return render_template(
                 "index.html",
-                page="seller",
+                page=mode,
                 error="Please enter the manufacturing year.",
                 **form_data
             )
@@ -657,7 +257,7 @@ def predict():
 
             return render_template(
                 "index.html",
-                page="seller",
+                page=mode,
                 error="Please enter kilometers driven.",
                 **form_data
             )
@@ -666,7 +266,7 @@ def predict():
 
             return render_template(
                 "index.html",
-                page="seller",
+                page=mode,
                 error="Please enter the seller's asking price.",
                 **form_data
             )
@@ -681,7 +281,7 @@ def predict():
         except ValueError:
             return render_template(
                 "index.html",
-                page="seller",
+                page=mode,
                 error="Please enter a valid asking price.",
                 **form_data
             )
@@ -690,7 +290,7 @@ def predict():
 
             return render_template(
                 "index.html",
-                page="seller",
+                page=mode,
                 error="Asking price must be greater than zero.",
                 **form_data
             )
@@ -712,7 +312,7 @@ def predict():
 
             return render_template(
                 "index.html",
-                page="seller",
+                page=mode,
                 error=(
                     "Please enter a manufacturing year "
                     "between 1980 and 2024."
@@ -732,7 +332,7 @@ def predict():
 
             return render_template(
                 "index.html",
-                page="seller",
+                page=mode,
                 error=(
                     "Kilometers driven must be "
                     "greater than 0."
@@ -749,7 +349,7 @@ def predict():
 
             return render_template(
                 "index.html",
-                page="seller",
+                page=mode,
                 error="Please select a transmission type.",
                 **form_data
             )
@@ -759,7 +359,7 @@ def predict():
 
             return render_template(
                 "index.html",
-                page="seller",
+                page=mode,
                 error="Please select an owner type.",
                 **form_data
             )
@@ -769,7 +369,7 @@ def predict():
 
             return render_template(
                 "index.html",
-                page="seller",
+                page=mode,
                 error="Please select a fuel type.",
                 **form_data
             )
@@ -918,7 +518,8 @@ def predict():
 
             "index.html",
 
-            page="seller",
+            page=mode,
+                mode=mode,
 
             prediction=quality,
 
@@ -963,7 +564,8 @@ def predict():
 
             "index.html",
 
-            page="seller",
+            page=mode,
+                mode=mode,
 
             error=(
                 "Please enter valid numerical values "
@@ -986,7 +588,8 @@ def predict():
 
             "index.html",
 
-            page="seller",
+            page=mode,
+                mode=mode,
 
             error=(
                 "Something went wrong while processing "
