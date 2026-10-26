@@ -34,21 +34,88 @@
             <span class="nav-icon">🏠</span>
             <span>Home</span>
         </a>
+
+        {% if not current_user or current_user.is_buyer %}
         <a href="/buyer" class="nav-item {% if page == 'buyer' or page == 'inspection' %}active{% endif %}">
             <span class="nav-icon">🔍</span>
             <span>Buyer Mode</span>
         </a>
+        {% endif %}
+
+        {% if not current_user or current_user.is_seller %}
         <a href="/seller" class="nav-item {% if page == 'seller' or page == 'listing' %}active{% endif %}">
             <span class="nav-icon">💰</span>
             <span>Seller Mode</span>
         </a>
-        <a href="/compare" class="nav-item {% if page == 'compare' %}active{% endif %}">
-            <span class="nav-icon">⚖️</span>
-            <span>Compare Cars</span>
+        {% endif %}
+
+        <a href="{{ url_for('marketplace') }}" class="nav-item {% if page in ['marketplace', 'marketplace_detail'] %}active{% endif %}">
+            <span class="nav-icon">🚘</span>
+            <span>Marketplace</span>
         </a>
+
+        {% if current_user and current_user.is_seller %}
+        <a href="{{ url_for('my_listings') }}" class="nav-item {% if page in ['my_listings', 'marketplace_form'] %}active{% endif %}">
+            <span class="nav-icon">📋</span>
+            <span>My Listings</span>
+        </a>
+        {% endif %}
+        {% if current_user %}
+        <a href="{{ url_for('marketplace_favourites') }}" class="nav-item {% if page == 'favourites' %}active{% endif %}">
+            <span class="nav-icon">❤️</span>
+            <span>Favourites</span>
+        </a>
+        <a href="{{ url_for('marketplace_enquiries') }}" class="nav-item {% if page == 'enquiries' %}active{% endif %}">
+            <span class="nav-icon">📬</span>
+            <span>Enquiries</span>
+        </a>
+        {% endif %}
+
+        <div class="nav-auth-separator"></div>
+
+        {% if current_user %}
+            <div class="nav-user-badge">
+                <span class="user-avatar-icon">👤</span>
+                <span class="user-display-name">{{ current_user.full_name.split()[0] }}</span>
+                <span class="role-pill role-pill-{{ current_user.role }}">{{ current_user.role|capitalize }}</span>
+            </div>
+            <form action="{{ url_for('logout') }}" method="POST" class="nav-logout-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="nav-logout-btn" title="Sign out of your account">
+                    <span>Sign Out</span>
+                </button>
+            </form>
+        {% else %}
+            <a href="{{ url_for('login') }}" class="nav-item nav-auth-item {% if page == 'login' %}active{% endif %}">
+                <span>Sign In</span>
+            </a>
+            <a href="{{ url_for('register') }}" class="nav-item nav-auth-item nav-register-btn {% if page == 'register' %}active{% endif %}">
+                <span>Register</span>
+            </a>
+        {% endif %}
     </nav>
 
 </header>
+
+<!-- =====================================================
+     FLASH MESSAGES
+===================================================== -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="flash-container">
+            {% for category, message in messages %}
+                <div class="flash-alert flash-{{ category }}">
+                    <span class="flash-icon">
+                        {% if category == 'success' %}✓
+                        {% elif category == 'error' %}⚠️
+                        {% else %}ℹ️{% endif %}
+                    </span>
+                    <span class="flash-text">{{ message }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
 
 
 <!-- =====================================================
@@ -81,7 +148,6 @@
     <div class="role-cards">
 
         <!-- BUYER -->
-
         <a href="/buyer" class="role-card buyer-card">
 
             <div class="role-icon">
@@ -108,9 +174,7 @@
 
         </a>
 
-
         <!-- SELLER -->
-
         <a href="/seller" class="role-card seller-card">
 
             <div class="role-icon">
@@ -131,6 +195,33 @@
 
                 <span class="role-button">
                     Enter Seller Mode →
+                </span>
+
+            </div>
+
+        </a>
+
+        <!-- MARKETPLACE -->
+        <a href="/marketplace" class="role-card marketplace-home-card">
+
+            <div class="role-icon">
+                🚘
+            </div>
+
+            <div class="role-card-content">
+
+                <span class="role-label">EXPLORE</span>
+
+                <h3>Marketplace</h3>
+
+                <p>
+                    Browse live verified cars for sale,
+                    filter by price or fuel, and view
+                    seller listings with AI valuation.
+                </p>
+
+                <span class="role-button">
+                    Browse Marketplace →
                 </span>
 
             </div>
@@ -1188,120 +1279,42 @@
     </div>
 
 
-    <!-- BUYER FEATURE CARDS -->
+    <!-- BUYER FEATURE CARDS (COMPACT - MATCHES SELLER MODE) -->
 
     <div class="buyer-feature-grid">
 
-        <!-- AI ANALYSIS & VALUATION -->
-
+        <!-- CARD 1: AI CAR VALUATION & ADVICE -->
         <a href="#valuationFormSection" class="buyer-feature-card" onclick="scrollToValuation(event)">
-
-            <div class="feature-big-icon">
-                🤖
+            <div class="seller-card-header">
+                <span class="seller-card-icon">🤖</span>
+                <span class="seller-card-status active-badge">● Active Tool</span>
             </div>
-
-            <div class="buyer-feature-content">
-
-                <span class="feature-number">01</span>
-
-                <h2>AI Car Valuation & Advice</h2>
-
-                <p>
-                    Evaluate purchase quality, fair market price,
-                    and compare asking prices with Smart Price Advisor.
-                </p>
-
-                <span class="feature-link">
-                    Use Valuation Form ↓
-                </span>
-
-            </div>
-
+            <h3>AI Car Valuation & Advice</h3>
+            <p>Evaluate purchase quality, fair market price, and compare asking prices with Smart Price Advisor.</p>
+            <span class="seller-card-action">Use Valuation Form ↓</span>
         </a>
 
-
-        <!-- COMPARE CARS -->
-
+        <!-- CARD 2: COMPARE CARS -->
         <a href="/compare" class="buyer-feature-card compare-feature">
-
-            <div class="feature-big-icon">
-                ⚖️
+            <div class="seller-card-header">
+                <span class="seller-card-icon">⚖️</span>
+                <span class="seller-card-status active-badge">● Active Tool</span>
             </div>
-
-            <div class="buyer-feature-content">
-
-                <span class="feature-number">02</span>
-
-                <h2>Compare Cars</h2>
-
-                <p>
-                    Compare two used cars side-by-side using
-                    AI-based quality and price predictions.
-                </p>
-
-                <span class="feature-link">
-                    Compare Cars →
-                </span>
-
-            </div>
-
+            <h3>Compare Cars</h3>
+            <p>Compare two used cars side-by-side using AI-based quality and price predictions.</p>
+            <span class="seller-card-action">Compare Cars →</span>
         </a>
 
-
-        <!-- INSPECTION ASSISTANCE -->
-
+        <!-- CARD 3: INSPECTION CHECKLIST -->
         <a href="/inspection" class="buyer-feature-card">
-
-            <div class="feature-big-icon">
-                🛡️
+            <div class="seller-card-header">
+                <span class="seller-card-icon">🛡️</span>
+                <span class="seller-card-status active-badge">● Active Tool</span>
             </div>
-
-            <div class="buyer-feature-content">
-
-                <span class="feature-number">03</span>
-
-                <h2>Inspection Checklist</h2>
-
-                <p>
-                    Step-by-step physical, mechanical, and
-                    documentation verification before purchasing.
-                </p>
-
-                <span class="feature-link">
-                    Start Inspection →
-                </span>
-
-            </div>
-
+            <h3>Inspection Checklist</h3>
+            <p>Step-by-step physical, mechanical, and documentation verification before purchasing.</p>
+            <span class="seller-card-action">Start Inspection →</span>
         </a>
-
-
-        <!-- AI ASSISTANT -->
-
-        <div class="buyer-feature-card disabled-feature">
-
-            <div class="feature-big-icon">
-                💬
-            </div>
-
-            <div class="buyer-feature-content">
-
-                <span class="feature-number">04</span>
-
-                <h2>AI Buying Assistant</h2>
-
-                <p>
-                    Personalized buyer advice, negotiation
-                    tips, and budget-to-car recommendations.
-                </p>
-
-                <span class="coming-soon">
-                    ✦ Coming Soon
-                </span>
-
-            </div>
-
-        </div>
 
     </div>
 
@@ -1353,16 +1366,16 @@
         <span class="seller-card-action">Create Listing →</span>
     </a>
 
-    <!-- CARD 3: FUTURE PRICING INSIGHTS -->
-    <div class="seller-card-compact disabled-seller-card">
+    <!-- CARD 3: LIVE CAR MARKETPLACE -->
+    <a href="/marketplace" class="seller-card-compact active-seller-card">
         <div class="seller-card-header">
-            <span class="seller-card-icon">📈</span>
-            <span class="seller-card-status coming-soon-badge">✦ Coming Soon</span>
+            <span class="seller-card-icon">🚘</span>
+            <span class="seller-card-status active-badge">● Active Tool</span>
         </div>
-        <h3>Market Resale Guide</h3>
-        <p>Resale demand trends and negotiation strategies to sell faster at the best price.</p>
-        <span class="seller-card-note">In Development</span>
-    </div>
+        <h3>Live Car Marketplace</h3>
+        <p>Browse active listings, publish your car for sale, and connect directly with buyers.</p>
+        <span class="seller-card-action">Open Marketplace →</span>
+    </a>
 
 </div>
 
@@ -2364,6 +2377,9 @@
                     <button type="button" class="btn-copy-all" id="btnCopyAll" onclick="copyFullListing(this)">
                         📋 Copy Complete Description
                     </button>
+                    <a href="{{ url_for('marketplace_create') }}?brand={{ brand|urlencode }}&model={{ model|urlencode }}&year={{ year }}&kmDriven={{ kmDriven }}&transmission={{ transmission|urlencode }}&owner={{ owner|urlencode }}&fuelType={{ fuelType|urlencode }}&askingPrice={{ askingPrice }}&price={{ predicted_price }}" class="btn-publish-live">
+                        🚀 Publish to Live Marketplace →
+                    </a>
                 </div>
 
             </div>
@@ -2380,6 +2396,1409 @@
 
 </section>
 
+
+<!-- =====================================================
+     LOGIN PAGE
+===================================================== -->
+
+{% elif page == "login" %}
+
+<section class="auth-page">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-badge">🔐 SECURE AUTHENTICATION</div>
+            <h2>Sign In to <span>UsedCar AI</span></h2>
+            <p>Access your personalized Buyer or Seller workspace</p>
+        </div>
+
+        <form action="{{ url_for('login') }}" method="POST" class="auth-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            {% if next %}
+                <input type="hidden" name="next" value="{{ next }}">
+            {% endif %}
+
+            <div class="form-group">
+                <label for="login_email">Email Address <span class="required">*</span></label>
+                <input type="email" id="login_email" name="email"
+                       value="{{ (form_data and form_data.email) or '' }}"
+                       placeholder="you@example.com" required autocomplete="email">
+            </div>
+
+            <div class="form-group">
+                <label for="login_password">Password <span class="required">*</span></label>
+                <input type="password" id="login_password" name="password"
+                       placeholder="Enter your password" required autocomplete="current-password">
+            </div>
+
+            <div class="auth-helper-row">
+                <a href="{{ url_for('forgot_password') }}" class="auth-forgot-link">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="auth-submit-btn">
+                <span>Sign In</span>
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Don't have an account yet? <a href="{{ url_for('register') }}">Create an account</a></p>
+        </div>
+    </div>
+</section>
+
+
+<!-- =====================================================
+     REGISTER PAGE
+===================================================== -->
+
+{% elif page == "register" %}
+
+<section class="auth-page">
+    <div class="auth-card auth-card-wide">
+        <div class="auth-header">
+            <div class="auth-badge">✨ JOIN USED CAR AI</div>
+            <h2>Create Your <span>Account</span></h2>
+            <p>Select your account type: Buyer or Seller</p>
+        </div>
+
+        <form action="{{ url_for('register') }}" method="POST" class="auth-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <!-- Role Selection -->
+            <div class="form-group">
+                <label>Select Account Type <span class="required">*</span></label>
+                <div class="role-selector-cards">
+                    <label class="role-select-card {% if not form_data or form_data.role == 'buyer' or not form_data.role %}selected{% endif %}">
+                        <input type="radio" name="role" value="buyer"
+                               {% if not form_data or form_data.role == 'buyer' or not form_data.role %}checked{% endif %}
+                               onchange="updateRoleCardSelection(this)">
+                        <div class="role-select-content">
+                            <span class="role-select-icon">🔍</span>
+                            <strong>Buyer Account</strong>
+                            <p>Analyze valuations, check inspection safety, and compare cars to buy.</p>
+                        </div>
+                    </label>
+
+                    <label class="role-select-card {% if form_data and form_data.role == 'seller' %}selected{% endif %}">
+                        <input type="radio" name="role" value="seller"
+                               {% if form_data and form_data.role == 'seller' %}checked{% endif %}
+                               onchange="updateRoleCardSelection(this)">
+                        <div class="role-select-content">
+                            <span class="role-select-icon">🏷️</span>
+                            <strong>Seller Account</strong>
+                            <p>Value your vehicle, simulate pricing scenarios, and generate listings.</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-row-auth">
+                <div class="form-group">
+                    <label for="reg_full_name">Full Name <span class="required">*</span></label>
+                    <input type="text" id="reg_full_name" name="full_name"
+                           value="{{ (form_data and form_data.full_name) or '' }}"
+                           placeholder="Rajesh Sharma" required autocomplete="name">
+                </div>
+
+                <div class="form-group">
+                    <label for="reg_email">Email Address <span class="required">*</span></label>
+                    <input type="email" id="reg_email" name="email"
+                           value="{{ (form_data and form_data.email) or '' }}"
+                           placeholder="you@example.com" required autocomplete="email">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="reg_phone">Phone Number <small style="color: #64748b;">(Optional)</small></label>
+                <input type="tel" id="reg_phone" name="phone"
+                       value="{{ (form_data and form_data.phone) or '' }}"
+                       placeholder="+91 98765 43210" autocomplete="tel">
+            </div>
+
+            <div class="form-row-auth">
+                <div class="form-group">
+                    <label for="reg_password">Password <span class="required">*</span> <small style="color: #64748b;">(Min. 8 characters)</small></label>
+                    <input type="password" id="reg_password" name="password"
+                           placeholder="Create password" required minlength="8" autocomplete="new-password">
+                </div>
+
+                <div class="form-group">
+                    <label for="reg_confirm_password">Confirm Password <span class="required">*</span></label>
+                    <input type="password" id="reg_confirm_password" name="confirm_password"
+                           placeholder="Confirm password" required minlength="8" autocomplete="new-password">
+                </div>
+            </div>
+
+            <button type="submit" class="auth-submit-btn">
+                <span>Create Account</span>
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Already have an account? <a href="{{ url_for('login') }}">Sign In</a></p>
+        </div>
+    </div>
+</section>
+
+
+<!-- =====================================================
+     FORGOT PASSWORD PAGE
+===================================================== -->
+
+{% elif page == "forgot_password" %}
+
+<section class="auth-page">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-badge">🔑 ACCOUNT RECOVERY</div>
+            <h2>Reset Your <span>Password</span></h2>
+            <p>Enter your registered email address and we'll send you a secure link to reset your password.</p>
+        </div>
+
+        <form action="{{ url_for('forgot_password') }}" method="POST" class="auth-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="form-group">
+                <label for="reset_email">Email Address <span class="required">*</span></label>
+                <input type="email" id="reset_email" name="email"
+                       value="{{ (form_data and form_data.email) or '' }}"
+                       placeholder="you@example.com" required autocomplete="email">
+            </div>
+
+            <button type="submit" class="auth-submit-btn">
+                <span>Send Reset Link</span>
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Remember your password? <a href="{{ url_for('login') }}">Back to Sign In</a></p>
+        </div>
+    </div>
+</section>
+
+
+<!-- =====================================================
+     RESET PASSWORD PAGE
+===================================================== -->
+
+{% elif page == "reset_password" %}
+
+<section class="auth-page">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-badge">🔒 NEW PASSWORD</div>
+            <h2>Set a New <span>Password</span></h2>
+            <p>Please enter your new password below. It must be at least 8 characters long.</p>
+        </div>
+
+        <form action="{{ url_for('reset_password', token=token) }}" method="POST" class="auth-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="form-group">
+                <label for="new_password">New Password <span class="required">*</span> <small style="color: #64748b;">(Min. 8 characters)</small></label>
+                <input type="password" id="new_password" name="password"
+                       placeholder="Enter new password" required minlength="8" autocomplete="new-password">
+            </div>
+
+            <div class="form-group">
+                <label for="new_confirm_password">Confirm New Password <span class="required">*</span></label>
+                <input type="password" id="new_confirm_password" name="confirm_password"
+                       placeholder="Re-enter new password" required minlength="8" autocomplete="new-password">
+            </div>
+
+            <button type="submit" class="auth-submit-btn">
+                <span>Reset Password</span>
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Remember your password? <a href="{{ url_for('login') }}">Back to Sign In</a></p>
+        </div>
+    </div>
+</section>
+
+
+<!-- =====================================================
+     MARKETPLACE BROWSE & SEARCH
+===================================================== -->
+
+{% elif page == "marketplace" %}
+
+<section class="marketplace-page">
+
+    <div class="marketplace-hero">
+        <div class="mode-badge marketplace-badge">🚘 LIVE CAR MARKETPLACE</div>
+        <h1>Explore Verified <span>Used Cars</span></h1>
+        <p>Browse real vehicles listed directly by sellers. Compare specifications, evaluate asking prices with AI intelligence, and find your next car.</p>
+        {% if not current_user or current_user.is_seller %}
+        <div class="marketplace-hero-actions">
+            <a href="{{ url_for('marketplace_create') }}" class="btn-marketplace-primary">
+                <span>+ Post a Car for Sale</span>
+            </a>
+            {% if current_user and current_user.is_seller %}
+            <a href="{{ url_for('my_listings') }}" class="btn-marketplace-secondary">
+                <span>Manage My Listings ({{ current_user.listings|length }})</span>
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- SEARCH & FILTER BAR -->
+    <div class="marketplace-filter-card">
+        <form action="{{ url_for('marketplace') }}" method="GET" class="marketplace-filter-form">
+            <!-- Keyword Search -->
+            <div class="filter-search-row">
+                <div class="filter-search-input-wrap">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" name="q" value="{{ filters.q or '' }}" placeholder="Search by brand, model, or keywords (e.g. Honda City, Swift, SUV)..." class="filter-search-input">
+                </div>
+                <button type="submit" class="btn-filter-submit">
+                    <span>Search Cars</span>
+                </button>
+            </div>
+
+            <!-- Detailed Filters Grid -->
+            <div class="filter-grid">
+                <!-- Brand -->
+                <div class="filter-group">
+                    <label>Brand</label>
+                    <select name="brand">
+                        <option value="">All Brands</option>
+                        {% for b in available_brands %}
+                        <option value="{{ b }}" {% if filters.brand == b %}selected{% endif %}>{{ b }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Price Range -->
+                <div class="filter-group">
+                    <label>Min Price (₹)</label>
+                    <input type="number" name="min_price" value="{{ filters.min_price or '' }}" placeholder="Min Price" step="10000" min="0">
+                </div>
+                <div class="filter-group">
+                    <label>Max Price (₹)</label>
+                    <input type="number" name="max_price" value="{{ filters.max_price or '' }}" placeholder="Max Price" step="10000" min="0">
+                </div>
+
+                <!-- Year Range -->
+                <div class="filter-group">
+                    <label>Min Year</label>
+                    <input type="number" name="min_year" value="{{ filters.min_year or '' }}" placeholder="1990" min="1980" max="2026">
+                </div>
+                <div class="filter-group">
+                    <label>Max Year</label>
+                    <input type="number" name="max_year" value="{{ filters.max_year or '' }}" placeholder="2024" min="1980" max="2026">
+                </div>
+
+                <!-- Fuel Type -->
+                <div class="filter-group">
+                    <label>Fuel Type</label>
+                    <select name="fuel_type">
+                        <option value="">All Fuels</option>
+                        {% for f in fuel_types %}
+                        <option value="{{ f }}" {% if filters.fuel_type == f %}selected{% endif %}>{{ f }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Transmission -->
+                <div class="filter-group">
+                    <label>Transmission</label>
+                    <select name="transmission">
+                        <option value="">All Transmissions</option>
+                        {% for t in transmissions %}
+                        <option value="{{ t }}" {% if filters.transmission == t %}selected{% endif %}>{{ t }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Sort By -->
+                <div class="filter-group">
+                    <label>Sort By</label>
+                    <select name="sort">
+                        <option value="newest" {% if filters.sort == 'newest' %}selected{% endif %}>Newest Listed</option>
+                        <option value="price_asc" {% if filters.sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                        <option value="price_desc" {% if filters.sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                        <option value="year_desc" {% if filters.sort == 'year_desc' %}selected{% endif %}>Year: Newest First</option>
+                        <option value="year_asc" {% if filters.sort == 'year_asc' %}selected{% endif %}>Year: Oldest First</option>
+                        <option value="km_asc" {% if filters.sort == 'km_asc' %}selected{% endif %}>Mileage: Lowest First</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Filter Actions -->
+            <div class="filter-actions-bar">
+                <button type="submit" class="btn-filter-apply">Apply Filters</button>
+                <a href="{{ url_for('marketplace') }}" class="btn-filter-reset">Reset Filters</a>
+                <span class="filter-results-badge">{{ total_count }} {{ 'vehicle' if total_count == 1 else 'vehicles' }} matching</span>
+            </div>
+        </form>
+    </div>
+
+    <!-- LISTINGS GRID -->
+    <div class="marketplace-results-container">
+        {% if listings and listings|length > 0 %}
+        <div class="marketplace-grid">
+            {% for item in listings %}
+            <div class="car-card">
+                <div class="car-card-header">
+                    <div class="car-card-tag">{{ item.brand }}</div>
+                    <div class="car-card-header-actions">
+                        <span class="status-pill status-{{ item.status }}">{{ item.status|capitalize }}</span>
+                        {% if current_user %}
+                        <form action="{{ url_for('marketplace_favourite_toggle', listing_id=item.id) }}" method="POST" class="fav-icon-form">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="next" value="{{ request.full_path }}">
+                            <button type="submit" class="btn-card-fav {% if item.id in user_favourite_ids %}is-favourited{% endif %}" title="{% if item.id in user_favourite_ids %}Remove from Favourites{% else %}Save to Favourites{% endif %}">
+                                {% if item.id in user_favourite_ids %}❤️{% else %}🤍{% endif %}
+                            </button>
+                        </form>
+                        {% else %}
+                        <a href="{{ url_for('login', next=url_for('marketplace')) }}" class="btn-card-fav" title="Sign in to save this vehicle">🤍</a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="car-card-body">
+                    <h3 class="car-card-title">
+                        <a href="{{ url_for('marketplace_detail', listing_id=item.id) }}">{{ item.title }}</a>
+                    </h3>
+
+                    <div class="car-card-price">{{ item.formatted_price }}</div>
+
+                    {% if item.ai_predicted_price %}
+                    <div class="car-card-ai-badge">
+                        <span class="ai-icon">🤖</span> AI Fair Value: ₹ {{ "{:,.0f}".format(item.ai_predicted_price) }}
+                    </div>
+                    {% endif %}
+
+                    <!-- Specs Chips -->
+                    <div class="car-specs-chips">
+                        <span class="spec-chip">📅 {{ item.year }}</span>
+                        <span class="spec-chip">🛣️ {{ item.formatted_km }}</span>
+                        <span class="spec-chip">⛽ {{ item.fuel_type }}</span>
+                        <span class="spec-chip">⚙️ {{ item.transmission }}</span>
+                        <span class="spec-chip">👤 {{ item.owner }}</span>
+                    </div>
+
+                    {% if item.description %}
+                    <p class="car-card-desc">{{ item.description[:110] }}{% if item.description|length > 110 %}...{% endif %}</p>
+                    {% endif %}
+                </div>
+
+                <div class="car-card-footer">
+                    <div class="car-seller-info">
+                        <span class="seller-icon">👤</span>
+                        <span class="seller-name">{{ item.seller.full_name }}</span>
+                    </div>
+                    <a href="{{ url_for('marketplace_detail', listing_id=item.id) }}" class="btn-card-view">
+                        View Details →
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <!-- EMPTY STATE -->
+        <div class="marketplace-empty">
+            <div class="empty-icon">🔍</div>
+            <h3>No Vehicles Match Your Search</h3>
+            <p>Try adjusting your price range, clearing filters, or searching for a different brand or model.</p>
+            <div class="empty-actions">
+                <a href="{{ url_for('marketplace') }}" class="btn-marketplace-primary">View All Cars</a>
+                <a href="{{ url_for('marketplace_create') }}" class="btn-marketplace-secondary">+ List a Car for Sale</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     MARKETPLACE LISTING DETAIL VIEW
+===================================================== -->
+
+{% elif page == "marketplace_detail" %}
+
+<section class="listing-detail-page">
+
+    <div class="detail-breadcrumb">
+        <a href="/">Home</a> <span>/</span>
+        <a href="{{ url_for('marketplace') }}">Marketplace</a> <span>/</span>
+        <span class="current-crumb">{{ listing.title }}</span>
+    </div>
+
+    <div class="detail-header-card">
+        <div class="detail-header-main">
+            <div class="detail-badge-row">
+                <span class="status-pill status-{{ listing.status }}">{{ listing.status|upper }}</span>
+                <span class="detail-date">Listed on {{ listing.created_at.strftime('%d %B %Y') }}</span>
+            </div>
+            <h1 class="detail-title">{{ listing.title }}</h1>
+            <div class="detail-price-row">
+                <div class="detail-price">{{ listing.formatted_price }}</div>
+                {% if current_user %}
+                <form action="{{ url_for('marketplace_favourite_toggle', listing_id=listing.id) }}" method="POST" class="detail-fav-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <button type="submit" class="btn-detail-fav {% if is_favourited %}is-favourited{% endif %}" title="Toggle bookmark">
+                        {% if is_favourited %}
+                        <span>❤️ Saved in Favourites</span>
+                        {% else %}
+                        <span>🤍 Save to Favourites</span>
+                        {% endif %}
+                    </button>
+                </form>
+                {% else %}
+                <a href="{{ url_for('login', next=request.path) }}" class="btn-detail-fav" title="Sign in to save">
+                    <span>🤍 Save to Favourites</span>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if current_user and current_user.id == listing.seller_id %}
+        <!-- Owner Quick Actions -->
+        <div class="detail-owner-panel">
+            <span class="owner-panel-title">⚙️ Seller Controls</span>
+            <div class="owner-panel-buttons">
+                <a href="{{ url_for('marketplace_edit', listing_id=listing.id) }}" class="btn-owner-edit">
+                    ✏️ Edit Listing
+                </a>
+
+                <form action="{{ url_for('marketplace_status', listing_id=listing.id) }}" method="POST" style="display:inline;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    {% if listing.is_active %}
+                    <input type="hidden" name="status" value="sold">
+                    <button type="submit" class="btn-owner-toggle">Mark as Sold</button>
+                    {% else %}
+                    <input type="hidden" name="status" value="active">
+                    <button type="submit" class="btn-owner-toggle">Reactivate</button>
+                    {% endif %}
+                </form>
+
+                <form action="{{ url_for('marketplace_delete', listing_id=listing.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to permanently delete this listing?');">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn-owner-delete">🗑️ Delete</button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- MAIN TWO-COLUMN DETAILS GRID -->
+    <div class="detail-content-grid">
+        <!-- LEFT COLUMN: SPECS & DESCRIPTION -->
+        <div class="detail-left-col">
+
+            <!-- 6-TILE SPECS GRID -->
+            <div class="detail-card">
+                <h3 class="detail-section-title">🚘 Vehicle Specifications</h3>
+                <div class="specs-grid-tiles">
+                    <div class="spec-tile">
+                        <span class="spec-tile-icon">🏷️</span>
+                        <div class="spec-tile-info">
+                            <span class="spec-tile-label">Brand & Model</span>
+                            <strong class="spec-tile-value">{{ listing.brand }} {{ listing.model }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="spec-tile">
+                        <span class="spec-tile-icon">📅</span>
+                        <div class="spec-tile-info">
+                            <span class="spec-tile-label">Year of Manufacture</span>
+                            <strong class="spec-tile-value">{{ listing.year }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="spec-tile">
+                        <span class="spec-tile-icon">🛣️</span>
+                        <div class="spec-tile-info">
+                            <span class="spec-tile-label">Kilometers Driven</span>
+                            <strong class="spec-tile-value">{{ listing.formatted_km }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="spec-tile">
+                        <span class="spec-tile-icon">⛽</span>
+                        <div class="spec-tile-info">
+                            <span class="spec-tile-label">Fuel Type</span>
+                            <strong class="spec-tile-value">{{ listing.fuel_type }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="spec-tile">
+                        <span class="spec-tile-icon">⚙️</span>
+                        <div class="spec-tile-info">
+                            <span class="spec-tile-label">Transmission</span>
+                            <strong class="spec-tile-value">{{ listing.transmission }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="spec-tile">
+                        <span class="spec-tile-icon">👤</span>
+                        <div class="spec-tile-info">
+                            <span class="spec-tile-label">Ownership</span>
+                            <strong class="spec-tile-value">{{ listing.owner }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SELLER DESCRIPTION -->
+            <div class="detail-card">
+                <h3 class="detail-section-title">📄 Seller's Description</h3>
+                {% if listing.description %}
+                <div class="detail-description-text">{{ listing.description }}</div>
+                {% else %}
+                <p class="detail-no-desc">No detailed description was provided by the seller. Please review the vehicle specifications or contact the seller directly.</p>
+                {% endif %}
+            </div>
+
+            <!-- AI PRICE INTELLIGENCE BOX -->
+            {% if listing.ai_predicted_price %}
+            <div class="detail-card ai-intelligence-card">
+                <div class="ai-intel-header">
+                    <span class="ai-intel-icon">🤖</span>
+                    <div>
+                        <h3>AI Price Intelligence</h3>
+                        <p>Independent machine learning valuation for this car</p>
+                    </div>
+                </div>
+
+                <div class="ai-intel-metrics">
+                    <div class="ai-metric-item">
+                        <span>Asking Price</span>
+                        <strong>{{ listing.formatted_price }}</strong>
+                    </div>
+                    <div class="ai-metric-item">
+                        <span>AI Fair Valuation</span>
+                        <strong>₹ {{ "{:,.0f}".format(listing.ai_predicted_price) }}</strong>
+                    </div>
+                    <div class="ai-metric-item">
+                        <span>Price Assessment</span>
+                        {% set diff = listing.asking_price - listing.ai_predicted_price %}
+                        {% if diff < -20000 %}
+                        <strong style="color: #4ade80;">Great Value (₹ {{ "{:,.0f}".format(-diff) }} below AI)</strong>
+                        {% elif diff > 20000 %}
+                        <strong style="color: #fb923c;">Premium Pricing (₹ {{ "{:,.0f}".format(diff) }} above AI)</strong>
+                        {% else %}
+                        <strong style="color: #38bdf8;">Fair Market Price (Within 5%)</strong>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+
+        <!-- RIGHT COLUMN: SELLER CONTACT & SMART TOOLS -->
+        <div class="detail-right-col">
+
+            <!-- SELLER CONTACT CARD -->
+            <div class="detail-card seller-contact-card">
+                <h3 class="detail-section-title">👤 Seller Information</h3>
+                <div class="seller-profile">
+                    <div class="seller-avatar">👤</div>
+                    <div class="seller-details">
+                        <strong class="seller-full-name">{{ listing.seller.full_name }}</strong>
+                        <span class="seller-sub">Verified Member since {{ listing.seller.created_at.strftime('%b %Y') }}</span>
+                    </div>
+                </div>
+
+                <div class="seller-contact-list">
+                    <div class="contact-item">
+                        <span class="contact-icon">✉️</span>
+                        <div>
+                            <label>Email Address</label>
+                            <strong>{{ listing.seller.email }}</strong>
+                        </div>
+                    </div>
+                    {% if listing.seller.phone %}
+                    <div class="contact-item">
+                        <span class="contact-icon">📞</span>
+                        <div>
+                            <label>Phone Number</label>
+                            <strong>{{ listing.seller.phone }}</strong>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="safety-notice">
+                    🛡️ <strong>Buyer Tip:</strong> Always verify documents, service history, and physical vehicle condition before making payments.
+                </div>
+            </div>
+
+            <!-- BUYER-SELLER ENQUIRY BOX -->
+            <div class="detail-card enquiry-box-card">
+                <h3 class="detail-section-title">💬 Message Seller</h3>
+
+                {% if current_user and current_user.id == listing.seller_id %}
+                <div class="enquiry-owner-notice">
+                    <span class="notice-icon">🚘</span>
+                    <div>
+                        <strong>This is your vehicle listing</strong>
+                        <p>Interested buyers will send messages and offers here. Track them anytime on your <a href="{{ url_for('marketplace_enquiries') }}">Enquiries Dashboard</a>.</p>
+                    </div>
+                </div>
+                {% elif current_user %}
+                    {% if user_enquiry %}
+                    <div class="prior-enquiry-banner">
+                        <span>ℹ️ You sent an enquiry on {{ user_enquiry.created_at.strftime('%d %b %Y') }} (Status: <strong class="inquiry-status-pill status-{{ user_enquiry.status }}">{{ user_enquiry.status|upper }}</strong>). You may send an additional message below.</span>
+                    </div>
+                    {% endif %}
+
+                    {% if listing.is_active %}
+                    <form action="{{ url_for('marketplace_enquire', listing_id=listing.id) }}" method="POST" class="enquiry-form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                        <div class="form-group">
+                            <label for="enquiryMessage">Your Message <span class="required">*</span></label>
+                            <textarea id="enquiryMessage" name="message" rows="4" required placeholder="Hi {{ listing.seller.full_name.split()[0] }}, I am interested in your {{ listing.brand }} {{ listing.model }}. Is this vehicle still available for inspection and a test drive?"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="offerPrice">Offer Price in ₹ (Optional)</label>
+                            <input type="number" id="offerPrice" name="offer_price" placeholder="e.g. {{ '{:.0f}'.format(listing.asking_price * 0.95) }}" step="1000" min="1000">
+                            <small class="field-hint">Leave blank if inquiring without making a specific price offer.</small>
+                        </div>
+
+                        <button type="submit" class="btn-enquiry-submit">
+                            <span>Send Enquiry to Seller →</span>
+                        </button>
+                    </form>
+                    {% else %}
+                    <div class="enquiry-inactive-notice">
+                        <span>⚠️ This vehicle is marked as {{ listing.status|upper }} and is no longer accepting buyer enquiries.</span>
+                    </div>
+                    {% endif %}
+                {% else %}
+                <div class="enquiry-guest-prompt">
+                    <p>Have questions about maintenance, paperwork, or test drive availability?</p>
+                    <a href="{{ url_for('login', next=request.path) }}" class="btn-enquiry-login">
+                        <span>Sign In to Send Enquiry →</span>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- SMART ACTION TOOLS -->
+            <div class="detail-card smart-tools-card">
+                <h3 class="detail-section-title">⚡ Intelligence Tools</h3>
+                <div class="smart-tools-links">
+                    <a href="{{ url_for('inspection') }}" class="tool-link-item">
+                        <span class="tool-icon">🔍</span>
+                        <div>
+                            <strong>Buyer Inspection Checklist</strong>
+                            <p>Verify 15 crucial safety checkpoints</p>
+                        </div>
+                    </a>
+
+                    <a href="{{ url_for('compare') }}?brandA={{ listing.brand|urlencode }}&modelA={{ listing.model|urlencode }}&yearA={{ listing.year }}&kmA={{ listing.km_driven }}&fuelA={{ listing.fuel_type|urlencode }}&transA={{ listing.transmission|urlencode }}&ownerA={{ listing.owner|urlencode }}" class="tool-link-item">
+                        <span class="tool-icon">⚖️</span>
+                        <div>
+                            <strong>Compare with Another Car</strong>
+                            <p>Benchmark quality and pricing side-by-side</p>
+                        </div>
+                    </a>
+
+                    <a href="{{ url_for('marketplace') }}" class="tool-link-item">
+                        <span class="tool-icon">←</span>
+                        <div>
+                            <strong>Back to All Listings</strong>
+                            <p>Explore more cars on marketplace</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     MARKETPLACE CREATE & EDIT FORM
+===================================================== -->
+
+{% elif page == "marketplace_form" %}
+
+<section class="marketplace-form-page">
+    <div class="form-card-wide">
+        <div class="form-card-header">
+            <div class="auth-badge">{% if action == 'edit' %}✏️ EDIT CAR LISTING{% else %}🚘 PUBLISH VEHICLE LISTING{% endif %}</div>
+            <h2>{% if action == 'edit' %}Update <span>Vehicle Listing</span>{% else %}Publish a Car to <span>Marketplace</span>{% endif %}</h2>
+            <p>Enter accurate vehicle details to help buyers evaluate your vehicle transparently.</p>
+        </div>
+
+        <form action="{% if action == 'edit' %}{{ url_for('marketplace_edit', listing_id=listing.id) }}{% else %}{{ url_for('marketplace_create') }}{% endif %}" method="POST" class="auth-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            {% if form_data.ai_predicted_price %}
+            <input type="hidden" name="ai_predicted_price" value="{{ form_data.ai_predicted_price }}">
+            {% endif %}
+
+            <!-- ROW 1: Brand & Model -->
+            <div class="form-row-auth">
+                <div class="form-group">
+                    <label for="car_brand">Vehicle Brand <span class="required">*</span></label>
+                    <input type="text" id="car_brand" name="brand" value="{{ form_data.brand or '' }}" placeholder="e.g. Maruti Suzuki, Hyundai, Honda" required list="common_brands">
+                    <datalist id="common_brands">
+                        <option value="Maruti Suzuki">
+                        <option value="Hyundai">
+                        <option value="Honda">
+                        <option value="Tata">
+                        <option value="Mahindra">
+                        <option value="Toyota">
+                        <option value="Kia">
+                        <option value="Ford">
+                        <option value="Volkswagen">
+                        <option value="Renault">
+                        <option value="BMW">
+                        <option value="Mercedes-Benz">
+                    </datalist>
+                </div>
+
+                <div class="form-group">
+                    <label for="car_model">Vehicle Model <span class="required">*</span></label>
+                    <input type="text" id="car_model" name="model" value="{{ form_data.model or '' }}" placeholder="e.g. Swift, Creta, City, Nexon" required>
+                </div>
+            </div>
+
+            <!-- ROW 2: Year & Mileage -->
+            <div class="form-row-auth">
+                <div class="form-group">
+                    <label for="car_year">Manufacturing Year <span class="required">*</span></label>
+                    <input type="number" id="car_year" name="year" value="{{ form_data.year or '' }}" placeholder="e.g. 2019" min="1980" max="2026" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="car_km">Kilometers Driven <span class="required">*</span></label>
+                    <input type="number" id="car_km" name="km_driven" value="{{ form_data.km_driven or '' }}" placeholder="e.g. 45000" min="1" max="1000000" required>
+                </div>
+            </div>
+
+            <!-- ROW 3: Fuel Type, Transmission, Owner -->
+            <div class="form-row-three">
+                <div class="form-group">
+                    <label for="car_fuel">Fuel Type <span class="required">*</span></label>
+                    <select id="car_fuel" name="fuel_type" required>
+                        <option value="">Select Fuel</option>
+                        {% for f in fuel_types %}
+                        <option value="{{ f }}" {% if form_data.fuel_type == f %}selected{% endif %}>{{ f }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="car_trans">Transmission <span class="required">*</span></label>
+                    <select id="car_trans" name="transmission" required>
+                        <option value="">Select Transmission</option>
+                        {% for t in transmissions %}
+                        <option value="{{ t }}" {% if form_data.transmission == t %}selected{% endif %}>{{ t }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="car_owner">Ownership <span class="required">*</span></label>
+                    <select id="car_owner" name="owner" required>
+                        <option value="">Select Ownership</option>
+                        {% for o in owners %}
+                        <option value="{{ o }}" {% if form_data.owner == o %}selected{% endif %}>{{ o }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- ROW 4: Asking Price & Optional Status -->
+            <div class="form-row-auth">
+                <div class="form-group">
+                    <label for="car_price">Asking Price (₹) <span class="required">*</span></label>
+                    <input type="number" id="car_price" name="asking_price" value="{{ form_data.asking_price or '' }}" placeholder="e.g. 550000" min="10000" max="500000000" required>
+                </div>
+
+                {% if action == 'edit' %}
+                <div class="form-group">
+                    <label for="car_status">Listing Status</label>
+                    <select id="car_status" name="status">
+                        <option value="active" {% if form_data.status == 'active' %}selected{% endif %}>Active (Visible on Marketplace)</option>
+                        <option value="sold" {% if form_data.status == 'sold' %}selected{% endif %}>Sold</option>
+                    </select>
+                </div>
+                {% else %}
+                <div class="form-group">
+                    <label for="car_title">Listing Title <small style="color: #64748b;">(Leave blank to auto-generate)</small></label>
+                    <input type="text" id="car_title" name="title" value="{{ form_data.title or '' }}" placeholder="e.g. 2019 Maruti Suzuki Swift VXI Petrol" maxlength="150">
+                </div>
+                {% endif %}
+            </div>
+
+            {% if action == 'edit' %}
+            <div class="form-group">
+                <label for="car_title">Listing Title <span class="required">*</span></label>
+                <input type="text" id="car_title" name="title" value="{{ form_data.title or '' }}" placeholder="e.g. 2019 Maruti Suzuki Swift VXI Petrol" maxlength="150" required>
+            </div>
+            {% endif %}
+
+            <!-- ROW 5: Description -->
+            <div class="form-group">
+                <label for="car_desc">Vehicle Description & Seller Notes</label>
+                <textarea id="car_desc" name="description" rows="5" placeholder="Detail any service records, condition, tire health, insurance status, or unique features...">{{ form_data.description or '' }}</textarea>
+            </div>
+
+            <div class="form-actions-row">
+                <button type="submit" class="auth-submit-btn">
+                    <span>{% if action == 'edit' %}Save Changes{% else %}Publish Listing Now →{% endif %}</span>
+                </button>
+                <a href="{% if action == 'edit' %}{{ url_for('marketplace_detail', listing_id=listing.id) }}{% else %}{{ url_for('marketplace') }}{% endif %}" class="btn-cancel-link">Cancel</a>
+            </div>
+        </form>
+    </div>
+</section>
+
+
+<!-- =====================================================
+     MY LISTINGS (SELLER MANAGEMENT)
+===================================================== -->
+
+{% elif page == "my_listings" %}
+
+<section class="my-listings-page">
+
+    <div class="my-listings-header">
+        <div>
+            <div class="mode-badge seller-badge">📋 SELLER DASHBOARD</div>
+            <h1>My Published <span>Vehicles</span></h1>
+            <p>Manage your car listings, update asking prices, or mark vehicles as sold.</p>
+        </div>
+        <div>
+            <a href="{{ url_for('marketplace_create') }}" class="btn-marketplace-primary">
+                + Publish New Car
+            </a>
+        </div>
+    </div>
+
+    <!-- STATS SUMMARY -->
+    <div class="my-listings-stats">
+        <div class="stat-box">
+            <span class="stat-number">{{ total_count }}</span>
+            <span class="stat-label">Total Listings</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-number" style="color: #4ade80;">{{ active_count }}</span>
+            <span class="stat-label">Active on Market</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-number" style="color: #94a3b8;">{{ sold_count }}</span>
+            <span class="stat-label">Sold</span>
+        </div>
+    </div>
+
+    <!-- LISTINGS CONTAINER -->
+    <div class="my-listings-list">
+        {% if listings and listings|length > 0 %}
+        <div class="my-listings-grid">
+            {% for item in listings %}
+            <div class="my-listing-card">
+                <div class="my-listing-info">
+                    <div class="my-listing-badges">
+                        <span class="status-pill status-{{ item.status }}">{{ item.status|upper }}</span>
+                        <span class="my-listing-date">Created: {{ item.created_at.strftime('%d %b %Y') }}</span>
+                    </div>
+
+                    <h3 class="my-listing-title">
+                        <a href="{{ url_for('marketplace_detail', listing_id=item.id) }}">{{ item.title }}</a>
+                    </h3>
+
+                    <div class="my-listing-price">{{ item.formatted_price }}</div>
+
+                    <div class="my-listing-specs">
+                        <span>📅 {{ item.year }}</span>
+                        <span>🛣️ {{ item.formatted_km }}</span>
+                        <span>⛽ {{ item.fuel_type }}</span>
+                        <span>⚙️ {{ item.transmission }}</span>
+                    </div>
+                </div>
+
+                <div class="my-listing-actions">
+                    <a href="{{ url_for('marketplace_detail', listing_id=item.id) }}" class="btn-sm btn-view">View</a>
+                    <a href="{{ url_for('marketplace_edit', listing_id=item.id) }}" class="btn-sm btn-edit">Edit</a>
+
+                    <form action="{{ url_for('marketplace_status', listing_id=item.id) }}" method="POST" style="display:inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        {% if item.is_active %}
+                        <input type="hidden" name="status" value="sold">
+                        <button type="submit" class="btn-sm btn-toggle" title="Mark this vehicle as sold">Mark Sold</button>
+                        {% else %}
+                        <input type="hidden" name="status" value="active">
+                        <button type="submit" class="btn-sm btn-toggle" title="Reactivate this vehicle">Reactivate</button>
+                        {% endif %}
+                    </form>
+
+                    <form action="{{ url_for('marketplace_delete', listing_id=item.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to permanently delete this listing?');">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn-sm btn-delete">Delete</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <!-- EMPTY MY LISTINGS -->
+        <div class="marketplace-empty">
+            <div class="empty-icon">🚘</div>
+            <h3>You Have Not Published Any Cars Yet</h3>
+            <p>Ready to sell your car? Create a verified listing in minutes and connect with interested buyers.</p>
+            <div class="empty-actions">
+                <a href="{{ url_for('marketplace_create') }}" class="btn-marketplace-primary">+ Publish Your First Car</a>
+                <a href="{{ url_for('marketplace') }}" class="btn-marketplace-secondary">Browse Marketplace</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     MY FAVOURITES VIEW
+===================================================== -->
+{% elif page == "favourites" %}
+
+<section class="favourites-page">
+
+    <div class="favourites-header">
+        <div>
+            <div class="mode-badge marketplace-badge">❤️ SAVED CARS</div>
+            <h1>My Bookmarked <span>Favourites</span></h1>
+            <p>Keep track of vehicles you are interested in, monitor their price and availability, and contact sellers directly.</p>
+        </div>
+        <div>
+            <a href="{{ url_for('marketplace') }}" class="btn-marketplace-secondary">
+                ← Browse Marketplace
+            </a>
+        </div>
+    </div>
+
+    <!-- STATS SUMMARY -->
+    <div class="favourites-stats">
+        <div class="stat-box">
+            <span class="stat-number">{{ total_count }}</span>
+            <span class="stat-label">Total Saved</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-number" style="color: #4ade80;">{{ active_count }}</span>
+            <span class="stat-label">Active Listings</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-number" style="color: #94a3b8;">{{ total_count - active_count }}</span>
+            <span class="stat-label">Sold / Inactive</span>
+        </div>
+    </div>
+
+    <!-- FAVOURITES LIST -->
+    <div class="favourites-container">
+        {% if favourites and favourites|length > 0 %}
+        <div class="marketplace-grid">
+            {% for fav in favourites %}
+            {% set item = fav.listing %}
+            {% if item %}
+            <div class="car-card">
+                <div class="car-card-header">
+                    <div class="car-card-tag">{{ item.brand }}</div>
+                    <div class="car-card-header-actions">
+                        <span class="status-pill status-{{ item.status }}">{{ item.status|capitalize }}</span>
+                        <form action="{{ url_for('marketplace_favourite_delete', favourite_id=fav.id) }}" method="POST" class="fav-icon-form">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn-card-fav is-favourited" title="Remove from favourites">❤️</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="car-card-body">
+                    <h3 class="car-card-title">
+                        <a href="{{ url_for('marketplace_detail', listing_id=item.id) }}">{{ item.title }}</a>
+                    </h3>
+
+                    <div class="car-card-price">{{ item.formatted_price }}</div>
+
+                    {% if item.ai_predicted_price %}
+                    <div class="car-card-ai-badge">
+                        <span class="ai-icon">🤖</span> AI Fair Value: ₹ {{ "{:,.0f}".format(item.ai_predicted_price) }}
+                    </div>
+                    {% endif %}
+
+                    <div class="car-specs-chips">
+                        <span class="spec-chip">📅 {{ item.year }}</span>
+                        <span class="spec-chip">🛣️ {{ item.formatted_km }}</span>
+                        <span class="spec-chip">⛽ {{ item.fuel_type }}</span>
+                        <span class="spec-chip">⚙️ {{ item.transmission }}</span>
+                    </div>
+
+                    {% if item.description %}
+                    <p class="car-card-desc">{{ item.description[:100] }}{% if item.description|length > 100 %}...{% endif %}</p>
+                    {% endif %}
+                </div>
+
+                <div class="car-card-footer">
+                    <div class="car-seller-info">
+                        <span class="seller-icon">👤</span>
+                        <span class="seller-name">{{ item.seller.full_name }}</span>
+                    </div>
+                    <div class="card-footer-actions">
+                        <a href="{{ url_for('marketplace_detail', listing_id=item.id) }}" class="btn-card-view">
+                            View Details →
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <!-- EMPTY STATE -->
+        <div class="marketplace-empty">
+            <div class="empty-icon">🤍</div>
+            <h3>No Saved Vehicles Yet</h3>
+            <p>Browse through cars in our marketplace and click the heart icon on any listing to save it here for easy comparison.</p>
+            <div class="empty-actions">
+                <a href="{{ url_for('marketplace') }}" class="btn-marketplace-primary">Explore Marketplace</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     MY ENQUIRIES VIEW
+===================================================== -->
+{% elif page == "enquiries" %}
+
+<section class="enquiries-page">
+
+    <div class="enquiries-header">
+        <div>
+            <div class="mode-badge marketplace-badge">📬 BUYER & SELLER MESSAGES</div>
+            <h1>My Enquiries & <span>Communications</span></h1>
+            <p>Review messages received from interested buyers and follow up on enquiries you sent to other sellers.</p>
+        </div>
+        <div>
+            <a href="{{ url_for('marketplace') }}" class="btn-marketplace-secondary">
+                ← Browse Marketplace
+            </a>
+        </div>
+    </div>
+
+    <!-- STATS SUMMARY -->
+    <div class="enquiries-stats">
+        <div class="stat-box">
+            <span class="stat-number">{{ total_received }}</span>
+            <span class="stat-label">Received as Seller</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-number" style="color: #ff5d5d;">{{ unread_count }}</span>
+            <span class="stat-label">Unread Messages</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-number" style="color: #38bdf8;">{{ total_sent }}</span>
+            <span class="stat-label">Sent as Buyer</span>
+        </div>
+    </div>
+
+    <!-- TABS / SECTIONS -->
+    <div class="enquiries-sections">
+
+        <!-- SECTION 1: RECEIVED ENQUIRIES (SELLER INBOX) -->
+        <div class="enquiry-group-box">
+            <div class="enquiry-group-header">
+                <h2>📥 Enquiries Received on Your Cars ({{ total_received }})</h2>
+                <span class="group-subtitle">Prospective buyers inquiring about your listings</span>
+            </div>
+
+            {% if received_inquiries and received_inquiries|length > 0 %}
+            <div class="enquiries-list">
+                {% for inq in received_inquiries %}
+                <div class="enquiry-card {% if inq.status == 'unread' %}is-unread{% endif %}">
+                    <div class="enquiry-card-top">
+                        <div class="enquiry-car-title">
+                            <span class="car-icon">🚘</span>
+                            <a href="{{ url_for('marketplace_detail', listing_id=inq.listing_id) }}">{{ inq.listing.title }}</a>
+                        </div>
+                        <div class="enquiry-meta-row">
+                            <span class="inquiry-status-pill status-{{ inq.status }}">{{ inq.status|upper }}</span>
+                            <span class="enquiry-date">{{ inq.created_at.strftime('%d %b %Y, %I:%M %p') }}</span>
+                        </div>
+                    </div>
+
+                    <div class="enquiry-buyer-info">
+                        <span class="buyer-tag">👤 Buyer:</span>
+                        <strong>{{ inq.buyer.full_name }}</strong>
+                        <span class="buyer-email">({{ inq.buyer.email }})</span>
+                        {% if inq.buyer.phone %}
+                        <span class="buyer-phone">📞 {{ inq.buyer.phone }}</span>
+                        {% endif %}
+                    </div>
+
+                    {% if inq.offer_price %}
+                    <div class="enquiry-offer-badge">
+                        <span>💰 Buyer's Price Offer:</span>
+                        <strong>{{ inq.formatted_offer_price }}</strong>
+                        <small>(Asking: {{ inq.listing.formatted_price }})</small>
+                    </div>
+                    {% endif %}
+
+                    <div class="enquiry-message-bubble">
+                        <div class="message-label">Buyer Message:</div>
+                        <p>{{ inq.message }}</p>
+                    </div>
+
+                    <!-- SELLER STATUS ACTIONS -->
+                    <div class="enquiry-card-actions">
+                        <span class="actions-label">Update Status:</span>
+                        <form action="{{ url_for('marketplace_inquiry_status', inquiry_id=inq.id) }}" method="POST" class="status-action-form">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            {% if inq.status == 'unread' %}
+                            <input type="hidden" name="status" value="read">
+                            <button type="submit" class="btn-sm btn-status-read">Mark as Read</button>
+                            {% elif inq.status == 'read' %}
+                            <input type="hidden" name="status" value="replied">
+                            <button type="submit" class="btn-sm btn-status-replied">Mark Replied</button>
+                            {% endif %}
+                            {% if inq.status != 'closed' %}
+                            <button type="submit" name="status" value="closed" class="btn-sm btn-status-close">Close Enquiry</button>
+                            {% else %}
+                            <button type="submit" name="status" value="read" class="btn-sm btn-status-read">Reopen</button>
+                            {% endif %}
+                        </form>
+
+                        <a href="{{ url_for('marketplace_enquiry_thread', inquiry_id=inq.id) }}" class="btn-sm btn-open-thread">
+                            💬 Open Conversation
+                            {% set unread_thread = inq.unread_count_for(g.user.id) %}
+                            {% if unread_thread > 0 %}
+                            <span class="thread-badge-pill">{{ unread_thread }} new</span>
+                            {% endif %}
+                        </a>
+                        <a href="mailto:{{ inq.buyer.email }}?subject={{ 'Regarding your enquiry about ' + inq.listing.title|urlencode }}" class="btn-sm btn-reply-email">
+                            ✉️ Reply via Email
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="enquiry-empty-box">
+                <span class="empty-emoji">📥</span>
+                <p>No buyer enquiries received yet. When prospective buyers contact you about your active listings, their messages will appear here.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- SECTION 2: SENT ENQUIRIES (BUYER OUTBOX) -->
+        <div class="enquiry-group-box" style="margin-top: 40px;">
+            <div class="enquiry-group-header">
+                <h2>📤 Enquiries You Sent to Sellers ({{ total_sent }})</h2>
+                <span class="group-subtitle">Your messages and offers sent to other car owners</span>
+            </div>
+
+            {% if sent_inquiries and sent_inquiries|length > 0 %}
+            <div class="enquiries-list">
+                {% for inq in sent_inquiries %}
+                <div class="enquiry-card sent-card">
+                    <div class="enquiry-card-top">
+                        <div class="enquiry-car-title">
+                            <span class="car-icon">🚘</span>
+                            <a href="{{ url_for('marketplace_detail', listing_id=inq.listing_id) }}">{{ inq.listing.title }}</a>
+                        </div>
+                        <div class="enquiry-meta-row">
+                            <span class="inquiry-status-pill status-{{ inq.status }}">{{ inq.status|upper }}</span>
+                            <span class="enquiry-date">{{ inq.created_at.strftime('%d %b %Y, %I:%M %p') }}</span>
+                        </div>
+                    </div>
+
+                    <div class="enquiry-buyer-info">
+                        <span class="buyer-tag">👤 Seller:</span>
+                        <strong>{{ inq.seller.full_name }}</strong>
+                        <span class="buyer-email">({{ inq.seller.email }})</span>
+                    </div>
+
+                    {% if inq.offer_price %}
+                    <div class="enquiry-offer-badge">
+                        <span>💰 Your Offer Price:</span>
+                        <strong>{{ inq.formatted_offer_price }}</strong>
+                    </div>
+                    {% endif %}
+
+                    <div class="enquiry-message-bubble">
+                        <div class="message-label">Your Message:</div>
+                        <p>{{ inq.message }}</p>
+                    </div>
+
+                    <div class="enquiry-card-actions">
+                        <a href="{{ url_for('marketplace_enquiry_thread', inquiry_id=inq.id) }}" class="btn-sm btn-open-thread">
+                            💬 Open Conversation
+                            {% set unread_thread = inq.unread_count_for(g.user.id) %}
+                            {% if unread_thread > 0 %}
+                            <span class="thread-badge-pill">{{ unread_thread }} new</span>
+                            {% endif %}
+                        </a>
+                        <a href="{{ url_for('marketplace_detail', listing_id=inq.listing_id) }}" class="btn-sm btn-view">
+                            View Vehicle Listing →
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="enquiry-empty-box">
+                <span class="empty-emoji">📤</span>
+                <p>You haven't sent any enquiries yet. Browse verified cars on the marketplace and send questions or offers directly to sellers.</p>
+                <div style="margin-top: 14px;">
+                    <a href="{{ url_for('marketplace') }}" class="btn-marketplace-primary">Explore Cars on Marketplace</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     CONVERSATION THREAD PAGE (BUYER - SELLER)
+===================================================== -->
+{% elif page == "enquiry_thread" %}
+
+<section class="enquiry-thread-page">
+
+    <div class="thread-header-nav">
+        <a href="{{ url_for('marketplace_enquiries') }}" class="btn-marketplace-secondary">
+            ← Back to Enquiries
+        </a>
+        <div class="mode-badge marketplace-badge">
+            💬 BUYER–SELLER CONVERSATION
+        </div>
+        <a href="{{ url_for('marketplace_detail', listing_id=listing.id) }}" class="btn-marketplace-secondary">
+            View Vehicle Page →
+        </a>
+    </div>
+
+    <!-- VEHICLE BANNER CARD -->
+    <div class="thread-vehicle-card">
+        <div class="thread-vehicle-info">
+            <div class="thread-car-icon">🚗</div>
+            <div>
+                <div class="thread-vehicle-title">
+                    <a href="{{ url_for('marketplace_detail', listing_id=listing.id) }}">{{ listing.title }}</a>
+                </div>
+                <div class="thread-vehicle-meta">
+                    <span>{{ listing.year }}</span>
+                    <span>•</span>
+                    <span>{{ "{:,.0f}".format(listing.km_driven) }} km</span>
+                    <span>•</span>
+                    <span>{{ listing.fuel_type }}</span>
+                    <span>•</span>
+                    <span class="thread-price-pill">{{ listing.formatted_price }}</span>
+                    {% if inquiry.offer_price %}
+                    <span class="thread-offer-badge">
+                        💰 Buyer's Offer: {{ inquiry.formatted_offer_price }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div>
+            <span class="inquiry-status-pill status-{{ inquiry.status }}">{{ inquiry.status|upper }}</span>
+        </div>
+    </div>
+
+    <!-- CHAT CONTAINER -->
+    <div class="thread-chat-box">
+        <div class="thread-chat-header">
+            <div class="thread-participant">
+                <div class="participant-avatar">👤</div>
+                <div>
+                    <div class="participant-name">{{ counterpart.full_name }}</div>
+                    <div class="participant-role">
+                        Role: <strong>{{ counterpart_role }}</strong>
+                        {% if not is_buyer and counterpart.phone %}
+                        • 📞 {{ counterpart.phone }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="thread-actions">
+                {% if not is_buyer %}
+                <!-- Seller status controls -->
+                <form action="{{ url_for('marketplace_inquiry_status', inquiry_id=inquiry.id) }}" method="POST" style="display: inline-flex; gap: 8px;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="next" value="{{ url_for('marketplace_enquiry_thread', inquiry_id=inquiry.id) }}">
+                    {% if inquiry.status != 'closed' %}
+                    <button type="submit" name="status" value="closed" class="btn-sm btn-status-close">Close Thread</button>
+                    {% else %}
+                    <button type="submit" name="status" value="read" class="btn-sm btn-status-read">Reopen Thread</button>
+                    {% endif %}
+                </form>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- CHAT HISTORY -->
+        <div class="chat-history" id="chatHistoryContainer">
+            {% for msg in messages %}
+            {% set is_me = (msg.sender_id == g.user.id) %}
+            <div class="chat-bubble-row {% if is_me %}outgoing{% else %}incoming{% endif %}">
+                <div class="chat-bubble {% if is_me %}outgoing{% else %}incoming{% endif %}">
+                    <div class="bubble-sender">
+                        <span>{% if is_me %}You ({{ 'Buyer' if is_buyer else 'Seller' }}){% else %}{{ counterpart.full_name }} ({{ counterpart_role }}){% endif %}</span>
+                    </div>
+                    <p class="bubble-text">{{ msg.message }}</p>
+                    <div class="bubble-footer">
+                        <span class="bubble-time">{{ msg.created_at.strftime('%d %b %Y, %I:%M %p') }}</span>
+                        {% if is_me %}
+                            {% if msg.is_read %}
+                            <span class="read-indicator read" title="Read by {{ counterpart.full_name }}">✓✓ Read</span>
+                            {% else %}
+                            <span class="read-indicator sent" title="Sent to {{ counterpart.full_name }}">✓ Sent</span>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- REPLY INPUT SECTION -->
+        <div class="thread-reply-section">
+            <form action="{{ url_for('marketplace_enquiry_reply', inquiry_id=inquiry.id) }}" method="POST" class="thread-reply-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <textarea
+                    name="message"
+                    rows="3"
+                    placeholder="Type your message to {{ counterpart.full_name }}..."
+                    required
+                    maxlength="3000"
+                ></textarea>
+                <div class="thread-reply-bottom">
+                    <span class="thread-safety-note">
+                        🔒 Safe & Private messaging between verified car buyer and seller.
+                    </span>
+                    <button type="submit" class="btn-marketplace-primary" style="padding: 10px 22px;">
+                        💬 Send Message →
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</section>
 
 
 {% endif %}
@@ -3263,6 +4682,14 @@ document.getElementById(
 /* =====================================================
    RUPEE FORMAT
 ===================================================== */
+
+function updateRoleCardSelection(radioInput) {
+    document.querySelectorAll('.role-select-card').forEach(function(card) {
+        card.classList.remove('selected');
+    });
+    radioInput.closest('.role-select-card').classList.add('selected');
+}
+
 
 function formatRupees(value) {
 

@@ -1,7 +1,9 @@
+import hashlib
 import os
 from datetime import datetime, timezone
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import CheckConstraint, UniqueConstraint
+from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
 
@@ -50,6 +52,13 @@ class User(db.Model):
         backref="user",
         lazy=True
     )
+    inquiry_messages = db.relationship(
+        "InquiryMessage",
+        backref="sender",
+        lazy=True,
+        cascade="all, delete-orphan",
+        foreign_keys="InquiryMessage.sender_id"
+    )
 
     @property
     def is_buyer(self):
@@ -58,6 +67,27 @@ class User(db.Model):
     @property
     def is_seller(self):
         return self.role == "seller"
+
+    def set_password(self, password):
+        """Hashes and stores the user's password."""
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        """Verifies the password against the stored password hash."""
+        if not self.password_hash:
+            return False
+        return check_password_hash(self.password_hash, password)
+
+    @property
+    def auth_fingerprint(self):
+        """Short SHA-256 fingerprint of password_hash for session verification."""
+        if not self.password_hash:
+            return ""
+        return hashlib.sha256(self.password_hash.encode("utf-8")).hexdigest()[:16]
+
+    def has_favourited(self, listing_id):
+        """Checks if the user has bookmarked a given car listing."""
+        return any(f.listing_id == listing_id for f in self.favourites)
 
     def __repr__(self):
         return f"<User {self.email} ({self.role})>"
@@ -110,6 +140,30 @@ class CarListing(db.Model):
         lazy=True,
         cascade="all, delete-orphan"
     )
+
+    @property
+    def formatted_price(self):
+        """Formats asking price in Indian Rupees format."""
+        try:
+            return f"₹ {int(self.asking_price):,}"
+        except (ValueError, TypeError):
+            return f"₹ {self.asking_price}"
+
+    @property
+    def formatted_km(self):
+        """Formats mileage with comma separation."""
+        try:
+            return f"{int(self.km_driven):,} km"
+        except (ValueError, TypeError):
+            return f"{self.km_driven} km"
+
+    @property
+    def is_active(self):
+        return self.status == "active"
+
+    @property
+    def is_sold(self):
+        return self.status == "sold"
 
     def __repr__(self):
         return f"<CarListing {self.id}: {self.brand} {self.model} ({self.status})>"
@@ -220,6 +274,127 @@ class Inquiry(db.Model):
         foreign_keys=[seller_id],
         backref="received_inquiries"
     )
+    messages = db.relationship(
+        "InquiryMessage",
+        backref="inquiry",
+        lazy=True,
+        cascade="all, delete-orphan",
+        order_by="InquiryMessage.created_at.asc()"
+    )
+
+    def unread_count_for(self, user_id):
+        """Returns the number of unread messages sent by the counterpart to this user."""
+        if self.messages:
+            return sum(1 for m in self.messages if m.sender_id != user_id and not m.is_read)
+        # Fallback for legacy enquiries with no separate InquiryMessage rows:
+        if user_id == self.seller_id and self.status == "unread":
+            return 1
+        return 0
+
+    @property
+    def conversation_messages(self):
+        """Returns all messages in this thread. If no InquiryMessage records exist yet
+        (legacy enquiry), synthesizes an initial message so thread view always works."""
+        if self.messages:
+            return self.messages
+
+        class SyntheticMessage:
+            def __init__(self, inq):
+                self.id = 0
+                self.inquiry_id = inq.id
+                self.sender_id = inq.buyer_id
+                self.sender = inq.buyer
+                self.message = inq.message
+                self.is_read = (inq.status in ("read", "replied", "closed"))
+                self.created_at = inq.created_at
+                self.is_synthetic = True
+
+            def __repr__(self):
+                return f"<SyntheticMessage Inq:{self.inquiry_id}>"
+
+        return [SyntheticMessage(self)]
+
+    @property
+    def formatted_offer_price(self):
+        """Formats optional buyer offer price in Indian Rupees format."""
+        if self.offer_price is not None:
+            try:
+                return f"₹ {int(self.offer_price):,}"
+            except (ValueError, TypeError):
+                return f"₹ {self.offer_price}"
+        return None
 
     def __repr__(self):
         return f"<Inquiry #{self.id} Listing:{self.listing_id} Buyer:{self.buyer_id}->Seller:{self.seller_id}>"
+
+class PasswordResetToken(db.Model):
+    """Stores cryptographically hashed, single-use, time-limited password reset tokens."""
+
+    __tablename__ = "password_reset_tokens"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True
+    )
+    token_hash = db.Column(db.String(64), nullable=False, unique=True, index=True)
+    expires_at = db.Column(db.DateTime, nullable=False, index=True)
+    used_at = db.Column(db.DateTime, nullable=True)
+    created_at = db.Column(db.DateTime, default=utcnow, nullable=False)
+
+    # Relationships
+    user = db.relationship(
+        "User",
+        backref=db.backref("reset_tokens", lazy=True, cascade="all, delete-orphan")
+    )
+
+    @classmethod
+    def hash_token(cls, raw_token):
+        """Hashes the raw token using SHA-256 for secure database storage."""
+        if not raw_token:
+            return ""
+        return hashlib.sha256(raw_token.strip().encode("utf-8")).hexdigest()
+
+    @property
+    def is_expired(self):
+        """Returns True if the token has passed its expiration time."""
+        now = datetime.now(timezone.utc)
+        expires = self.expires_at
+        if expires.tzinfo is None:
+            now = datetime.utcnow()
+        return now > expires
+
+    @property
+    def is_valid(self):
+        """Returns True if the token has not been consumed and is not expired."""
+        return self.used_at is None and not self.is_expired
+
+    def __repr__(self):
+        return f"<PasswordResetToken User:{self.user_id} Exp:{self.expires_at} Used:{bool(self.used_at)}>"
+
+class InquiryMessage(db.Model):
+    """An individual message in an inquiry conversation thread between buyer and seller."""
+
+    __tablename__ = "inquiry_messages"
+
+    id = db.Column(db.Integer, primary_key=True)
+    inquiry_id = db.Column(
+        db.Integer,
+        db.ForeignKey("inquiries.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True
+    )
+    sender_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True
+    )
+    message = db.Column(db.Text, nullable=False)
+    is_read = db.Column(db.Boolean, default=False, nullable=False)
+    created_at = db.Column(db.DateTime, default=utcnow, nullable=False)
+
+    def __repr__(self):
+        return f"<InquiryMessage #{self.id} Inq:{self.inquiry_id} Sender:{self.sender_id} Read:{self.is_read}>"
